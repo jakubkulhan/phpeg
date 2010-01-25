@@ -1,0 +1,94 @@
+#!/usr/bin/php
+<?php
+/*LIBS*/
+foreach (glob(dirname(dirname(__FILE__)) . '/lib/parse/*.php') as $f) { require_once $f; }
+foreach (glob(dirname(dirname(__FILE__)) . '/lib/generate/*.php') as $f) { require_once $f; }
+foreach (glob(dirname(dirname(__FILE__)) . '/lib/*.php') as $f) { require_once $f; }
+/*ENDLIBS*/
+
+// options
+$opts = array_merge(array(
+    'i' => '-',
+    'o' => '-',
+    'n' => NULL,
+), getopt('hi:fo:p:n:t:'));
+
+// print help
+if (isset($opts['h'])) { $h = <<<E
+{$_SERVER['argv'][0]} [ -h ] [ -i <input> ] [ -f ] [ -o <output> ] [ -p <parser> ] [ -n <namespace> ] [ -t <type> ]
+    -h              show this help
+    -i <input>      input file
+    -f              force output file overwrite if exists
+    -o <output>     output file
+    -p <parser>     parser name
+    -n <namespace>  put parser in this namespace
+    -t <type>       PEG input/output type
+
+E;
+die($h); }
+
+// initialize
+if (!isset($opts['p'])) {
+    foreach (array($opts['o'], $opts['i']) as $f) {
+        if ($f === '-') { continue; }
+        $opts['p'] = preg_replace('#\.[^.]+\.[^.]+$#S', '', basename($f));
+        if (preg_match('#^.*\.([^.]+)\.[^.]+$#S', basename($f), $m)) {
+            $opts['t'] = $m[1];
+        }
+    }
+
+    if (!isset($opts['p'])) { $opts['p'] = 'parse'; }
+}
+
+if ($opts['i'] === '-') { $opts['i'] = 'php://stdin'; }
+if ($opts['o'] === '-') { $opts['o'] = 'php://stdout'; }
+
+// type?
+if (!isset($opts['t'])) {
+    die("No input/output type specified. Use -t.\n");
+}
+
+// parse
+$parse = 'parse_' . $opts['t'];
+$content = file_get_contents($opts['i']);
+list($ok, $parsed, $p) = $parse($content);
+
+if (!$ok) {
+    $lines = explode("\n", str_replace(array("\r\n", "\r"), "\n", $content));
+    $pre = substr($content, 0, $p);
+    $pre_lines = explode("\n", str_replace(array("\r\n", "\r"), "\n", $pre));
+    $line = count($pre_lines);
+    $position = strlen(end($pre_lines)) + 1;
+
+    die("Parse error on line $line at position $position:\n" .
+        "{$line}: " . $lines[$line - 1] . "\n" .
+        str_repeat(" ", strlen((string) $line) + $position + 1) . "^\n");
+}
+
+$phpeg = new phpeg($opts['n'], $opts['p'], $parsed);
+
+// check
+$nr = $phpeg->getNonexistentRules();
+if (!empty($nr)) {
+    die("These rules needed, but do not exist: \n" .
+        "    " . implode(', ', $nr) . "\n");
+}
+
+$ilr = $phpeg->getIndirectlyLeftRecursive();
+if (!empty($ilr)) {
+    $e = "Indirectly recursive rules: \n";
+    foreach ($ilr as $chain) {
+        $e .= "    " . implode(' -> ', $chain) . "\n";
+    }
+    die($e);
+}
+
+// generate
+$generate = 'generate_' . $opts['t'];
+$generated = $generate($phpeg);
+
+if (file_exists($opts['o']) && !isset($opts['f'])) {
+    die("Output file already exists. Use -f to force overwrite.\n");
+}
+
+file_put_contents($opts['o'], $generated);

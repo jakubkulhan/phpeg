@@ -1,0 +1,90 @@
+grammar = rs:rule+ !. -> {
+    $ret = array();
+
+    foreach ($rs as $r) {
+        list($n, $e) = $r;
+
+        if (!isset($ret[$n])) { $ret[$n] = $e; }
+        else {
+            if ($ret[$n][0] === 'fst') { $ret[$n] = array_slice($ret[$n], 1); }
+            else { $ret[$n] = array($ret[$n]); }
+
+            if ($e[0] === 'fst') { $e = array_slice($e, 1); }
+            else { $e = array($e); }
+
+            $ret[$n] = array_merge(array('fst'), $ret[$n], $e);
+        }
+    }
+
+    return $ret;
+}
+
+rule = S n:ID S "=" e:expression -> { return array($n, $e); }
+
+expression = S s:sequence ss:(S "/" S is:sequence -> { return $is; })* S -> {
+                 $ss = array_merge(array($s), $ss);
+                 if (count($ss) < 2) { return $ss[0]; }
+                 return array_merge(array("fst"), $ss);
+             }
+
+sequence = ps:(S p:prefix -> { return $p; })+ a:(S "->" S ac:ACTION -> { return $ac; })? -> {
+               $all = count($ps) < 2 ? $ps[0] : array_merge(array("all"), $ps);
+               if ($a) { return array("act", $a, $all); }
+               return $all;
+           }
+
+prefix = p:[&!] s:suffix -> {
+             $predconv = array("&" => "and", "!" => "not");
+             return array($predconv[$p], $s);
+         }
+       / "?" a:ACTION -> { return array("spr", $a); }
+       / id:ID ":" s:suffix -> { return array("bnd", $id, $s); }
+       / suffix
+
+suffix = p:primary s:[?*+]? -> {
+    $suffixconv = array(
+        "?" => "opt",
+        "*" => "mr0",
+        "+" => "mr1",
+    );
+
+    if ($s) { return array($suffixconv[$s], $p); }
+    return $p;
+}
+
+primary = id:ID !(S "=") -> { return array("app", $id); }
+        / "(" S e:expression S ")" -> { return $e; }
+        / l:literal -> { return array("lit", $l); }
+        / r:range -> { return array_merge(array("rng"), $r); }
+        / "." -> { return array("any"); }
+
+S = [ \t\r\n]*
+
+EOL = "\r\n" / "\n" / "\r"
+
+ID = [a-zA-Z0-9] [a-zA-Z0-9_]*
+
+ACTION = "{" n:(braced / nonbrace)+ "}" -> { return implode("", $n); }
+       / l:(!EOL .)+ -> { return "return " . implode("", $l) . ";"; }
+
+braced = "{" n:(braced / nonbrace)+ "}" -> { return "{" . implode("", $n) . "}"; }
+
+nonbrace = !"}" .
+
+range = "[" r:( f:rchar "-" s:rchar -> { return array(ord($f), ord($s)); }
+              / c:rchar -> { return ord($c); }
+            )+
+        "]" -> { return $r; }
+
+rchar = ![\]\\] .
+      / "\\" e:[\]\\] -> { return $e; }
+      / eschar
+
+literal = ["] s:( !["\\] .
+                / "\\" e:["\\] -> { return $e; }
+                / eschar
+              )*
+          ["] -> { return implode("", $s); }
+
+eschar = [\\] e:[nrt] -> { $conv = array("n" => "\n", "r" => "\r", "t" => "\t"); return $conv[$e]; }
+       / [\\] "x" f:[0-9a-fA-F] s:[0-9a-fA-F] -> { return chr(hexdec($f . $s)); }
