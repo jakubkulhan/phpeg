@@ -21,7 +21,7 @@ Now you can use executable `bin/phpeg`. To make independent executable (that doe
 - *phpeg* supports semantic predicates – `?{ /* predicate expression */ }`.
 - Semantic actions are denoted by `->`.
 
-Check out `lib/parse/*.peg` for examples.
+Check out `lib/parse/*.peg` and `examples/` for examples.
 
 ## License
 

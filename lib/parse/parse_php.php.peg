@@ -65,7 +65,7 @@ EOL = "\r\n" / "\n" / "\r"
 ID = [a-zA-Z0-9] [a-zA-Z0-9_]*
 
 ACTION = "{" n:(braced / nonbrace)+ "}" -> { return implode("", $n); }
-       / l:(!EOL .)+ -> { return "return " . implode("", $l) . ";"; }
+       / l:(!EOL .)+ -> { return "return " . $l . ";"; }
 
 braced = "{" n:(braced / nonbrace)+ "}" -> { return "{" . implode("", $n) . "}"; }
 

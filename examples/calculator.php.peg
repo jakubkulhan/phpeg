@@ -1,0 +1,12 @@
+exp  = e:exp "+" f:frac  -> $e + $f
+     / e:exp "-" f:frac  -> $e - $f
+     / f:frac            -> $f
+
+frac = f:frac "*" n:num  -> $f * $n
+     / f:frac "/" n:num  -> $f / $n
+     / s "(" e:exp ")" s -> $e
+     / n:num             -> $n
+
+num  = s d:[0-9]+ s      -> intval($d)
+
+s    = [ \t\r\n]*
