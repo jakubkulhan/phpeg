@@ -23,6 +23,8 @@ Now you can use executable `bin/phpeg`. To make independent executable (that doe
 
 Check out `lib/parse/*.peg` and `examples/` for examples.
 
+Note: do not ever mutate parser global state in semantic actions' code. Use semantic predicates instead.
+
 ## License
 
 The MIT license

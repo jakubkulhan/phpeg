@@ -133,6 +133,7 @@ E;
     {
         $this->bind = array();
         $g = $this->g($i, $tree);
+        $safety = !$this->isSafe($tree) ? "// this rule is not safe, cannot set memo: " : "";
 
         if (isset($this->dlr[$name])) {
             return <<<E
@@ -157,7 +158,7 @@ public function $name() {
         }
 
         \$m = \$newm;
-        \$this->_setmemo('$name', \$oldp, \$newm);
+        $safety\$this->_setmemo('$name', \$oldp, \$newm);
 
     } else if (\$m === 0) { // seed
         \$this->_setmemo('$name', \$oldp, 1);
@@ -176,12 +177,13 @@ public function _{$name}_() {
 E;
 
         } else {
+
             return <<<E
 public function $name() {
     \$_m = \$this->_getmemo('$name', \$_oldp = \$this->_p());
     if (\$_m === NULL) {
         $g
-        \$this->_setmemo('$name', \$_oldp, \$_m = array_merge(\$_$i, array(\$this->_p())));
+        $safety\$this->_setmemo('$name', \$_oldp, \$_m = array_merge(\$_$i, array(\$this->_p())));
         return \$_$i;
     }
     \$this->_p(\$_m[2]);
@@ -330,7 +332,7 @@ E;
                    "else { \$_{$i}[1][] = \$_" . ($i + 1) . "[1]; }\n" .
                "} while (\$_" . ($i + 1) . "[0]);\n"//;
                .
-               ($this->isSimple($tree) ? "\$_{$i}[1] = implode('', \$_{$i}[1]);\n" : '');
+               ($this->isSimple($tree) ? "\$_{$i}[1] = implode('', (array) \$_{$i}[1]);\n" : '');
     }
 
     /** @return string */
@@ -348,7 +350,7 @@ E;
                    "else { \$_{$i}[1][] = \$_" . ($i + 1) . "[1]; };\n" .
                "}\n"//;
                .
-               ($this->isSimple($tree) ? "\$_{$i}[1] = implode('', \$_{$i}[1]);\n" : '');
+               ($this->isSimple($tree) ? "\$_{$i}[1] = implode('', (array) \$_{$i}[1]);\n" : '');
     }
 
     /** @return string */
@@ -484,4 +486,51 @@ E;
 
         return FALSE;
     }
+
+    /** @return array */
+    private function isSafe($tree)
+    {
+        $rest = array_slice($tree, 1);
+        $ret = NULL;
+
+        switch ($tree[0]) {
+            case 'opt':
+            case 'mr0':
+            case 'mr1':
+                return $this->isSafe($rest[0]);
+            break;
+
+            case 'fst':
+            case 'all':
+                $is = TRUE;
+                foreach ($rest as $exp) {
+                    if ($is && $this->isSafe($exp)) { continue; }
+                    $is = FALSE;
+                    break;
+                }
+                return $is;
+            break;
+
+            case 'spr':
+                return FALSE;
+            break;
+
+            case 'bnd':
+            case 'act':
+            case 'app':
+            case 'and':
+            case 'not':
+            case 'lit':
+            case 'rng':
+            case 'any':
+                return TRUE;
+            break;
+
+            default:
+                die('isSafe: ' . var_export($tree, TRUE));
+        }
+
+        return FALSE;
+    }
+
 }
