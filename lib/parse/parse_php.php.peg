@@ -58,7 +58,7 @@ primary = id:ID !(S "=") -> { return array("app", $id); }
         / r:range -> { return array_merge(array("rng"), $r); }
         / "." -> { return array("any"); }
 
-S = [ \t\r\n]*
+S = ([ \t\r\n] / "//" (!EOL .)* EOL)*
 
 EOL = "\r\n" / "\n" / "\r"
 
