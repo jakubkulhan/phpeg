@@ -43,32 +43,6 @@ function {$this->phpeg->getName()}(\$s, array \$opts = array()) {\n
                 \$this->_expected = \$this->_memo = array();
             }
 
-            function _failed(\$s)
-            {
-                if (\$this->_p > \$this->_maxp) {
-                    \$this->_maxp = \$this->_p;
-                    \$this->_expected = array();
-                }
-
-                if (!in_array(\$s, \$this->_expected)) {
-                    \$this->_expected[] = \$s;
-                }
-            }
-
-            function _getmemo(\$r, \$p)
-            {
-                \$k = ((string) \$r) . ':' . ((string) \$p);
-                if (isset(\$this->_memo[\$k])) {
-                    return \$this->_memo[\$k];
-                }
-                return NULL;
-            }
-
-            function _setmemo(\$r, \$p, \$v)
-            {
-                \$this->_memo[((string) \$r) . ':' . ((string) \$p)] = \$v;
-            }
-
 $inner
         }
     }
@@ -106,6 +80,7 @@ E;
         $this->dlr = array_flip($this->phpeg->getDirectlyLeftRecursive());
         $inner = '';
         foreach ($this->phpeg->getRules() as $name => $tree) {
+            if (ctype_upper($name[0]) && $this->isInlineable($tree)) { continue; }
             $inner .= $this->g(0, array('rule', $name, $tree));
         }
 
@@ -135,65 +110,81 @@ E;
     {
         $this->bind = array();
         $g = $this->g($i, $tree);
-        $safety = !$this->isSafe($tree) ? "// this rule is not safe, cannot set memo: " : "";
+        $safe = $this->isSafe($tree);
 
         if (isset($this->dlr[$name])) {
-            $g = $this->i($g, "    ");
+            $g1 = $this->i($g, "        ");
+            $g2 = $this->i($g, "                ");
+            $getmemo1 = $this->i($this->ggetmemo($name, "\$_oldp = \$this->_p", "_m"));
+            $getmemo2 = $this->i($this->ggetmemo($name, "\$_oldp", "_prevm"), "        ");
+            $setmemo1 = $this->i($this->gsetmemo($name, "\$_oldp", "0"), "        ");
+            $setmemo2 = $this->i($this->gsetmemo($name, "\$_oldp", "\$_newm"), "        ");
+            $setmemo3 = $this->i($this->gsetmemo($name, "\$_oldp", "\$_newm"), "                ");
+            $setmemo4 = $safe ? $setmemo2 : "";
+            $setmemo5 = $this->i($this->gsetmemo($name, "\$_oldp", "1"), "        ");
 
             return <<<E
 function _parse_$name() {
-    \$m = \$this->_getmemo('$name', \$oldp = \$this->_p);
-    if (\$m === NULL) {
-        \$this->_setmemo('$name', \$oldp, 0);
-        \$newm = array_merge(\$this->_{$name}_(), array(\$newp = \$this->_p));
-        \$prevm = \$this->_getmemo('$name', \$oldp);
-        \$this->_setmemo('$name', \$oldp, \$newm);
+$getmemo1
+    if (\$_m === NULL) {
+$setmemo1
+$g1
+        \$_newm = array_merge(\$_$i, array(\$_newp = \$this->_p));
+$getmemo2
+$setmemo2
 
-        if (\$prevm === 1) {
-            \$stop = \$newp;
+        if (\$_prevm === 1) {
+            \$_stop = \$_newp;
             for (;;) {
-                \$this->_p = \$oldp;
-                \$ans = \$this->_{$name}_();
-                \$newp = \$this->_p;
-                if (!\$ans[0] || \$newp <= \$stop) { break; }
-                \$newm = array_merge(\$ans, array(\$newp));
-                \$this->_setmemo('$name', \$oldp, \$newm);
+                \$this->_p = \$_oldp;
+$g2
+                \$_ans = \$_$i;
+                \$_newp = \$this->_p;
+                if (!\$_ans[0] || \$_newp <= \$_stop) { break; }
+                \$_newm = array_merge(\$_ans, array(\$_newp));
+$setmemo3
             }
         }
 
-        \$m = \$newm;
-        $safety\$this->_setmemo('$name', \$oldp, \$newm);
+        \$_m = \$_newm;
+$setmemo4
 
-    } else if (\$m === 0) { // seed
-        \$this->_setmemo('$name', \$oldp, 1);
+    } else if (\$_m === 0) { // seed
+$setmemo5
         return array(FALSE, NULL);
     }
 
-    \$this->_p = \$m[2];
-    return array(\$m[0], \$m[1]);
-}
-
-function _{$name}_() {        
-$g
-    return \$_$i;
+    \$this->_p = \$_m[2];
+    return array(\$_m[0], \$_m[1]);
 }
 
 E;
 
-        } else {
-
+        } else if ($safe) {
             $g = $this->i($g, "        ");
+            $getmemo = $this->i($this->ggetmemo($name, "\$_oldp = \$this->_p", "_m"));
+            $setmemo = $this->i($this->gsetmemo($name, "\$_oldp", "\$_m = array_merge(\$_$i, array(\$this->_p))"), "        ");
 
             return <<<E
 function _parse_$name() {
-    \$_m = \$this->_getmemo('$name', \$_oldp = \$this->_p);
+$getmemo
     if (\$_m === NULL) {
 $g
-        $safety\$this->_setmemo('$name', \$_oldp, \$_m = array_merge(\$_$i, array(\$this->_p)));
+$setmemo
         return \$_$i;
     }
     \$this->_p = \$_m[2];
     return array(\$_m[0], \$_m[1]);
+}
+
+E;
+        } else { // not recursive, not safe
+            $g = $this->i($g);
+
+            return <<<E
+function _parse_$name() {
+$g
+    return \$_$i;    
 }
 
 E;
@@ -359,7 +350,11 @@ E;
     /** @return string */
     private function gapp($i, $name)
     {
-        return "\$_$i = \$this->_parse_$name();\n";
+        if (ctype_upper($name[0]) && $this->isInlineable($tree = $this->phpeg->getRule($name))) {
+            return $this->g($i, $tree);
+        } else {
+            return "\$_$i = \$this->_parse_$name();\n";
+        }
     }
 
 
@@ -373,7 +368,7 @@ E;
                "    \$_$i = array(TRUE, \$_{$i}_);\n" .
                "    \$this->_p += " . strlen($s) . ";\n" .
                "} else {\n" .
-               "    \$this->_failed(" . var_export($encapsed_s, TRUE) . ");\n" .
+                    $this->i($this->gfailed(var_export($encapsed_s, TRUE))) .
                "}\n";
     }
 
@@ -404,7 +399,7 @@ E;
                "    \$_$i = array(TRUE, substr(\$this->_s, \$this->_p, 1));\n" .
                "    \$this->_p += 1;\n" .
                "} else {\n" .
-               "    \$this->_failed(" . var_export($str, TRUE) . ");\n" .
+                    $this->i($this->gfailed(var_export($str, TRUE))) .
                "}\n";
     }
 
@@ -436,7 +431,7 @@ E;
                "    \$_{$i}[1] = \$this->_s[\$this->_p];\n" .
                "    \$this->_p += 1;\n" .
                "} else {\n" .
-               "    \$this->_failed('any character');\n" .
+                    $this->i($this->gfailed("'any character'")) .
                "}\n";
     }
 
@@ -464,6 +459,46 @@ E;
 
         return "\$this->$methodname(" . implode(", ", $args) . ")";
     }
+
+    /** @return string */
+    private function gfailed($s)
+    {
+        return <<<E
+if (\$this->_p > \$this->_maxp) {
+    \$this->_maxp = \$this->_p;
+    \$this->_expected = array();
+}
+
+if (!in_array($s, \$this->_expected)) {
+    \$this->_expected[] = $s;
+}
+
+E;
+    }
+
+    private function ggetmemo($rule, $p, $retvar)
+    {
+        $rule = var_export($rule . ':', TRUE);
+        return <<<E
+\$$retvar = NULL;
+\$k = $rule . ((string) $p);
+if (isset(\$this->_memo[\$k])) {
+    \$$retvar = \$this->_memo[\$k];
+}
+
+E;
+    }
+
+    private function gsetmemo($rule, $p, $value)
+    {
+        $rule = var_export($rule . ':', TRUE);
+        return <<<E
+\$this->_memo[$rule . ((string) $p)] = $value;
+
+E;
+
+    }
+
 
     /** @return bool */
     private function isSimple($tree)
@@ -556,4 +591,48 @@ E;
         return FALSE;
     }
 
+    /** @return bool */
+    private function isInlineable($tree)
+    {
+        $rest = array_slice($tree, 1);
+        $ret = NULL;
+
+        switch ($tree[0]) {
+            case 'opt':
+            case 'mr0':
+            case 'mr1':
+                return $this->isInlineable($rest[0]);
+            break;
+
+            case 'fst':
+            case 'all':
+                $is = TRUE;
+                foreach ($rest as $exp) {
+                    if ($is && $this->isInlineable($exp)) { continue; }
+                    $is = FALSE;
+                }
+                return $is;
+            break;
+
+            case 'act':
+            case 'bnd':
+                return FALSE;
+            break;
+
+            case 'app':
+            case 'and':
+            case 'spr':
+            case 'not':
+            case 'lit':
+            case 'rng':
+            case 'any':
+                return TRUE;
+            break;
+
+            default:
+                die('isInlineable: ' . var_export($tree, TRUE));
+        }
+
+        return FALSE;
+    }
 }
