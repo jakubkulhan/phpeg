@@ -465,7 +465,7 @@ E;
         return "\$this->$methodname(" . implode(", ", $args) . ")";
     }
 
-    /** @return array */
+    /** @return bool */
     private function isSimple($tree)
     {
         $rest = array_slice($tree, 1);
@@ -510,7 +510,7 @@ E;
         return FALSE;
     }
 
-    /** @return array */
+    /** @return bool */
     private function isSafe($tree)
     {
         $rest = array_slice($tree, 1);
