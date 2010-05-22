@@ -464,13 +464,15 @@ E;
     private function gfailed($s)
     {
         return <<<E
-if (\$this->_p > \$this->_maxp) {
-    \$this->_maxp = \$this->_p;
-    \$this->_expected = array();
-}
+if (\$this->_p >= \$this->_maxp) {
+    if (\$this->_p > \$this->_maxp) {
+        \$this->_maxp = \$this->_p;
+        \$this->_expected = array();
+    }
 
-if (!in_array($s, \$this->_expected)) {
-    \$this->_expected[] = $s;
+    if (!in_array($s, \$this->_expected)) {
+        \$this->_expected[] = $s;
+    }
 }
 
 E;
