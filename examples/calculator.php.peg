@@ -1,12 +1,16 @@
-exp  = e:exp "+" f:frac  -> $e + $f
-     / e:exp "-" f:frac  -> $e - $f
-     / f:frac            -> $f
+start      = e:expression !.           -> $e
 
-frac = f:frac "*" n:num  -> $f * $n
-     / f:frac "/" n:num  -> $f / $n
-     / s "(" e:exp ")" s -> $e
-     / n:num             -> $n
+expression = e:expression "+" f:factor -> $e + $f
+           / e:expression "-" f:factor -> $e - $f
+           / f:factor                  -> $f 
 
-num  = s d:[0-9]+ s      -> intval($d)
+factor     = f:factor "*" p:primary    -> $f * $p
+           / f:factor "/" p:primary    -> $f / $p
+           / p:primary                 -> $p
 
-s    = [ \t\r\n]*
+primary    = S "(" e:expression ")" S  -> $e
+           / S n:number S              -> $n
+
+number     = d:[0-9]+                  -> intval($d)
+
+S          = [ \t\r\n]*
