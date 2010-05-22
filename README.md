@@ -4,13 +4,9 @@
 
 ## Get ready
 
-Firstly you will need [pacc](http://github.com/jakubkulhan/pacc) for bootstrapping. Install *pacc* according to instructions at referred page to `$PATH`. Then run:
+You can use executable `bin/phpeg`. To make independent executable (that does not depend on its location in filesystem), use `scripts/compile.php`. For example to install *phpeg* into `/usr/bin`:
 
-    $ ./scripts/bootstrap.sh
-
-Now you can use executable `bin/phpeg`. To make independent executable (that does not depends on its location in filesystem), use `scripts/compile.php`. For example to install *phpeg* into `/usr/bin`:
-
-    # ./scripts/compile.php /usr/bin/pacc
+    # ./scripts/compile.php /usr/bin/phpeg
 
 ## Write PEGs
 
