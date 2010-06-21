@@ -40,6 +40,6 @@ string = ["] cs:(!["] !"\\" c:. -> $c
              )*
          ["] -> implode('', $cs)
 
-number = minus:"-"? int:("0" / [1-9][0-9]*) frac:("." [0-9]+ [eE] [+-]? [0-9]+)? -> floatval($minus . $int . $frac)
+number = minus:"-"? int:("0" / [1-9][0-9]*) frac:("." [0-9]+ ([eE] [+-]? [0-9]+)?)? -> floatval($minus . $int . $frac)
 
 S = [ \t\r\n]*
