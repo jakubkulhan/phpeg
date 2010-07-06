@@ -1,0 +1,33 @@
+-import . "common/list.phpeg"
+-import . "common/arguments.phpeg"
+-import . "common/id.phpeg"
+-import . "common/whitespace.phpeg"
+-import . "common/code.phpeg"
+
+treewalker
+  = __
+    declarations:( "-namespace" _ namespace:( separator:"\\"? part:id -> $separator . $part
+                                            )+ __
+                   -> array("namespace", implode("", $namespace))
+
+                 / "-name" _ name:id __
+                   -> array("name", $name)
+
+                 / "-init" __ code:code __
+                   -> array("init", $code)
+
+                 / "-invoke" __ arguments:arguments? __ code:code __
+                   -> array("invoke", $arguments, $code)
+
+                 )*
+    definitions:( nodematcher
+                )+
+    !.
+    -> array("treewalker", array_merge($declarations, $definitions))
+
+nodematcher
+  = match:( "_" -> TRUE
+          / list(id, __ "," __)
+          )
+    __ arguments:arguments? __ code:code __
+    -> array("matcher", $match, (array) $arguments, $code)

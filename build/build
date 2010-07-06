@@ -1,0 +1,43 @@
+#!/usr/bin/php
+<?php
+$src = dirname(__FILE__) . '/../src';
+$dst = dirname(__FILE__);
+
+function needs_recompile($command, $input, $output)
+{
+    $command = trim($command);
+    return filemtime($input) > ((int) @filemtime($output)) ||
+           filemtime(__FILE__) > ((int) @filemtime($output)) ||
+           filemtime($command) > ((int) @filemtime($output));
+}
+
+$phpegs = glob($src . '/*.phpeg');
+if (is_array($phpegs)) {
+    foreach ($phpegs  as $phpeg) {
+        $name = preg_replace('~\.[^.]*$~', '', basename($phpeg));
+        $output = $dst . '/' . $name . '.php';
+        $binary = dirname(__FILE__) . '/../bin/phpeg';
+
+        if (needs_recompile($binary, $phpeg, $output)) {
+            $cmd = $binary . ' "' . $phpeg . '" "' . $output . '"';
+            echo $cmd . "\n";
+            echo shell_exec($cmd);
+        }
+    }
+}
+
+
+$phptws = glob($src . '/*.phptw');
+if (is_array($phptws)) {
+    foreach ($phptws as $phptw) {
+        $name = preg_replace('~\.[^.]*$~', '', basename($phptw));
+        $output = $dst . '/' . $name . '.php';
+        $binary = dirname(__FILE__) . '/../bin/phptwc';
+
+        if (needs_recompile($binary, $phptw, $output)) {
+            $cmd = $binary . ' "' . $phptw . '" "' . $output . '"';
+            echo $cmd . "\n";
+            echo shell_exec($cmd);
+        }
+    }
+}

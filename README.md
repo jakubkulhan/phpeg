@@ -2,25 +2,6 @@
 
 [PEG](http://en.wikipedia.org/wiki/Parsing_expression_grammar) parser generator for PHP.
 
-## Get ready
-
-You can use executable `bin/phpeg`. To make independent executable (that does not depend on its location in filesystem), use `scripts/compile.php`. For example to install *phpeg* into `/usr/bin`:
-
-    # ./scripts/compile.php /usr/bin/phpeg
-
-## Write PEGs
-
-*phpeg* uses [PEG](http://en.wikipedia.org/wiki/Parsing_expression_grammar) with some changes:
-
-- Parsing rules has form `A = e` instead of `A ← e`.
-- *phpeg* supports variables binding – `varname:e`.
-- *phpeg* supports semantic predicates – `?{ /* predicate expression */ }`.
-- Semantic actions are denoted by `->`.
-
-Check out `lib/parse/*.peg` and `examples/` for examples.
-
-Note: do not ever mutate parser global state in semantic actions' code. Use semantic predicates instead.
-
 ## License
 
 The MIT license

@@ -1,0 +1,51 @@
+-init {
+    $self = (object) array(
+        "macros" => array(),
+        "replaces" => array(),
+    );
+}
+
+-invoke (definitions) {
+    $self->macros = c(new select_nodes, array("macro"), $definitions);
+    return WALKEACH(c(new select_nodes, array("rule"), $definitions));
+}
+
+rule (name, node) -> array(NODETYPE(), $name, WALK($node))
+
+all, first (nodes) -> array(NODETYPE(), WALKEACH($nodes))
+
+action (node, code) -> array(NODETYPE(), WALK($node), $code)
+
+and, not, optional, zero_or_more, one_or_more, quarantine (node) -> array(NODETYPE(), WALK($node))
+
+bind (varname, node) -> array(NODETYPE(), $varname, WALK($node))
+
+_ -> NODE()
+
+apply (name) {
+    if (($replaces = end($self->replaces)) && isset($replaces[$name])) {
+        return $replaces[$name];
+
+    } else {
+        return array(NODETYPE(), $name);
+    }
+}
+
+expand (name, arguments) {
+    $parameters = $self->macros[$name][2];
+
+    if (count($arguments) !== count($parameters)) {
+        die("Incorrect number of arguments for macro {$self->macros[$name][1]}.\n");
+    }
+
+    $realarguments = array();
+
+    foreach ($arguments as $argument) {
+        $realarguments[] = array("quarantine", WALK($argument));
+    }
+
+    $self->replaces[] = array_combine($parameters, $realarguments);
+    $ret = WALK($self->macros[$name][3]);
+    array_pop($self->replaces);
+    return array("quarantine", $ret);
+}

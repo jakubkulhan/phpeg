@@ -1,0 +1,65 @@
+-init {
+    $self = (object) array(
+        "labels" => array(),
+    );
+}
+
+-invoke (definitions) {
+    reset($definitions);
+
+    $ret = array(
+        array("set", array("value", array()), array("register", "stack")),
+        array("set", array("value", FALSE), array("register", "fail")),
+        array("set", array("value", NULL), array("register", "value")),
+        array("set", array("value", NULL), array("register", "a")),
+        array("set", array("value", NULL), array("register", "b")),
+        array("set", array("value", NULL), array("register", "c")),
+        array("set", array("value", NULL), array("register", "d")),
+        array("set", array("value", array()), array("register", "env")),
+        array("push", array("offset", 2), array("register", "stack")),
+        array("jump", array("label", key($definitions))),
+        array("end"),
+    );
+
+    $codes = array();
+    $code_to_label = array();
+
+    foreach ($definitions as $label => $definition) {
+        $self->labels[$label] = count($ret);
+
+        list($instructions, $newcodes) = c(new compile_machine, $definition);
+
+        $startn = count($codes);
+        $codes = array_merge($codes, $newcodes);
+        for ($i = $startn, $n = $startn + count($newcodes); $i < $n; ++$i) {
+            $code_to_label[$i] = $label;
+        }
+
+        foreach ($instructions as &$instruction) {
+            if ($instruction[0] === "run") {
+                $instruction[1] += $startn;
+            }
+        }
+
+        $instructions[] = array("pop", array("register", "stack"), array("register", "a"));
+        $instructions[] = array("jump", array("register", "a"));
+        $ret = array_merge($ret, $instructions);
+    }
+
+    return array(WALKEACH($ret), $codes, $code_to_label);
+}
+
+
+set, push, pop, append (src, dst) -> array(NODETYPE(), WALK($src), WALK($dst))
+
+jump (addr) -> array(NODETYPE(), WALK($addr))
+
+jumpif (cond, addr) -> array(NODETYPE(), WALK($cond), WALK($addr))
+
+run (n, env) -> array(NODETYPE(), $n, WALK($env))
+
+offset (offset) -> array("value", INDEX() + $offset)
+
+label (label) -> array("value", $self->labels[$label])
+
+_ /* value, register, register_index, position, any, literal, range, not, end */ -> NODE()

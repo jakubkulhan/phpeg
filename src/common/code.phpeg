@@ -1,0 +1,11 @@
+-import . "whitespace.phpeg"
+
+code
+  = ("->" __)? "{" code:insidebraces "}" -> ltrim($code)
+  / "->" code:(!eol .)* eol              -> "return " . trim($code) . ";"
+
+insidebraces
+  = inside:( !"{" !"}" c:.          -> $c
+           / "{" i:insidebraces "}" -> "{" . $i . "}"
+           )*
+    -> implode("", $inside)

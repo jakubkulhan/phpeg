@@ -1,0 +1,203 @@
+-init {
+    $self = (object) array(
+        "inits" => array(),
+        "program" => array(),
+        "codes" => array(),
+        "code_to_label" => array(),
+        "common" => NULL,
+    );
+}
+
+-invoke (input) {
+    list($namespace, $name, $inits, $invoke, $definitions) = c(new process_input, $input);
+
+    list($self->program, $self->codes, $self->code_to_label) = c(new link_machine, $definitions);
+
+    return c($self->common = new generate_common, $this, $namespace, $name, $inits, $invoke);
+}
+
+prolog_ -> ""
+
+inits_ (inits) {
+    $self->inits = $inits;
+}
+
+parse_ {
+    $ret = "public function parse(\$_s) {\n" .
+           "    \$_addr = 0;\n" .
+           "    \$_maxp = \$_p = 0;\n" .
+           "    \$_expected = array();\n";
+
+    $gototable = "    Lgoto: switch (\$_addr) { ";
+
+    foreach ($self->program as $addr => $instruction) {
+        $ret .= "    L$addr: " . WALK($instruction) . "\n";
+        $gototable .= "case $addr: goto L$addr; ";
+    }
+
+    $gototable .= "}\n";
+    $ret .= $gototable;
+
+    $ret .= "    Lend:\n" .
+            "    list(\$ok, \$result) = array(!\$_fail, \$_value);\n" .
+            "    if (!\$ok) {\n" .
+            "        \$before = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", substr(\$_s, 0, \$_maxp));\n" .
+            "        \$after = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", substr(\$_s, \$_maxp));\n" .
+            "        \$line = 1;\n" .
+            "        if ((\$pos = strrpos(\$before, \"\\n\")) !== FALSE) {\n" .
+            "            \$line = substr_count(\$before, \"\\n\") + 1;\n" .
+            "            \$before = (string) substr(\$before, \$pos + 1);\n" .
+            "        }\n" .
+            "        if ((\$pos = strpos(\$after, \"\\n\")) !== FALSE) {\n" .
+            "            \$after = substr(\$after, 0, \$pos);\n" .
+            "        }\n" .
+            "        return array(FALSE, NULL, (object) array('position' => \$_maxp, 'line' => \$line, 'column' => strlen(\$before) + 1, 'context' => \$before . \$after, 'expected' => \$_expected));\n" .
+            "    }\n" .
+            "    return array(TRUE, \$result, NULL);\n" .
+            "}\n";
+
+    foreach ($self->codes as $k => $code) {
+        $ret .= "private function _$k() {\n" .
+                (isset($self->code_to_label[$k]) && isset($self->inits[$self->code_to_label[$k]]) ? "    extract(\$this->_envs[" . $self->inits[$self->code_to_label[$k]] . "], EXTR_OVERWRITE | EXTR_REFS);\n" : "") .
+                "    extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);\n" .
+                i($code) .
+                "\n}\n";
+    }
+
+    return $ret;
+}
+
+phpize_ (a) {
+    if (is_array($a)) {
+        $ret = array();
+
+        foreach ($a as $k => $v) {
+            $ret[] = WALK(array("phpize_", $k)) . " => " . WALK(array("phpize_", $v));
+        }
+
+        return "array(" . implode(", ", $ret) . ")";
+
+    } else if (is_string($a)) {
+        return '"' . $self->common->walk(array("format_", $a)) . '"';
+
+    } else if (is_null($a)) {
+        return "NULL";
+
+    } else {
+        return var_export($a, TRUE);
+    }
+}
+
+set (src, dst) -> WALK($dst) . " = " . WALK($src) . ";"
+
+push (src, dst) -> "array_push(" . WALK($dst) . ", " . WALK($src) . ");"
+
+pop (src, dst) -> ($dst !== NULL ? WALK($dst) . " = " : "") . "array_pop(" . WALK($src) . ");";
+
+append (src, dst) -> WALK($dst) . " .= " . WALK($src) . ";"
+
+jump (addr) {
+    $addr = WALK($addr);
+
+    if ($addr[0] !== "$") {
+        return "goto L$addr;";
+
+    } else {
+        return "\$_addr = $addr; goto Lgoto;";
+    }
+}
+
+jumpif (cond, addr) -> "if (" . WALK($cond) . ") { " . WALK(array("jump", $addr)) . " }"
+
+run (n, env) -> "\$_value = \$this->_$n(" . WALK($env) . ");"
+
+value (v) -> WALK(array("phpize_", $v))
+
+not (v) -> "!" . WALK($v)
+
+register (r) -> "\$_{$r}"
+
+register_index (r, i) -> "\$_{$r}[" . WALK(array("phpize_", $i)) . "]"
+
+position {
+    return "\$_a = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", (string) substr(\$_s, 0, \$_p)); " .
+           "\$_b = 1; " .
+           "if ((\$_c = strrpos(\$_a, \"\\n\")) !== FALSE) { " .
+               "\$_b = substr_count(\$_a, \"\\n\") + 1; " .
+               "\$_a = (string) substr(\$_a, \$_c + 1); " .
+           "} " .
+           "\$_fail = FALSE; " .
+           "\$_value = array(\$_b, strlen(\$_a) + 1);";
+}
+
+any {
+    return "\$_fail = TRUE; " .
+           "if (isset(\$_s[\$_p])) { " .
+               "\$_fail = FALSE; " .
+               "\$_value = \$_s[\$_p]; " .
+               "\$_p++; " .
+           "} else { " .
+               WALK(array("failed_", "any character")) .
+           "}";
+}
+
+literal (s) {
+    $encapsed_s = '"' . $self->common->walk(array("format_", $s)) . '"';
+
+    return "\$_fail = TRUE; " .
+           "if ((\$_a = substr(\$_s, \$_p, " . strlen($s) . ")) === " . $encapsed_s . ") { " .
+               "\$_fail = FALSE; " .
+               "\$_value = \$_a; " .
+               "\$_p += " . strlen($s) . "; " .
+           "} else { " .
+               WALK(array("failed_", $encapsed_s)) .
+           "}";
+}
+
+range (match) {
+    $or = array();
+    $str = "";
+
+    foreach ($match as $r) {
+        if (is_array($r)) {
+            $or[] = "(" . $r[0] . " <= \$_a && \$_a <= " . $r[1] . ")";
+            $str .= chr($r[0]) . "-" . chr($r[1]);
+        } else {
+            $or[] = "(\$_a === $r)";
+            $str .= chr($r);
+        }
+    }
+
+    $str = $self->common->walk(array("format_", "[" . $str . "]"));
+
+    return "\$_fail = TRUE; " .
+           "if (isset(\$_s[\$_p]) && " .
+                   "is_int(\$_a = ord(\$_s[\$_p])) && " .
+                   "(" . implode(" || ", $or) . ")) { " .
+               "\$_fail = FALSE; " .
+               "\$_value = \$_s[\$_p]; " .
+               "\$_p++; " .
+           "} else { " .
+                WALK(array("failed_", $str)) .
+           "}";
+}
+
+end -> "goto Lend;"
+
+failed_ (on) {
+    return "if (\$_p >= \$_maxp) { " .
+               "if (\$_p > \$_maxp) { " .
+                   "\$_maxp = \$_p; " .
+                   "\$_expected = array(); " .
+               "} " .
+               "if (!in_array(" . WALK(array("phpize_", $on)) . ", \$_expected)) { " .
+                   "\$_expected[] = " . WALK(array("phpize_", $on)) . "; " .
+               "} " .
+           "} ";
+}
+
+_ {
+    var_dump(NODE());
+    throw new InvalidArgumentException("What? What?? What???!");
+        $ret .= ")";
+}

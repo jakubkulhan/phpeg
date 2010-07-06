@@ -1,94 +1,97 @@
 #!/usr/bin/php
 <?php
 /*LIBS*/
-foreach (glob(dirname(dirname(__FILE__)) . '/lib/parse/*.php') as $f) { require_once $f; }
-foreach (glob(dirname(dirname(__FILE__)) . '/lib/generate/*.php') as $f) { require_once $f; }
-foreach (glob(dirname(dirname(__FILE__)) . '/lib/*.php') as $f) { require_once $f; }
+$phps = glob(dirname(__FILE__) . '/../build/*.php');
+if (is_array($phps)) {
+    foreach ($phps  as $php) {
+        require_once $php;
+    }
+}
 /*ENDLIBS*/
 
-// options
-$opts = array_merge(array(
-    'i' => '-',
-    'o' => '-',
-    'n' => NULL,
-), getopt('hi:fo:p:n:t:'));
+function o($o)
+{
+    return $o;
+}
 
-// print help
-if (isset($opts['h'])) { $h = <<<E
-{$_SERVER['argv'][0]} [ -h ] [ -i <input> ] [ -f ] [ -o <output> ] [ -p <parser> ] [ -n <namespace> ] [ -t <type> ]
-    -h              show this help
-    -i <input>      input file
-    -f              force output file overwrite if exists
-    -o <output>     output file
-    -p <parser>     parser name
-    -n <namespace>  put parser in this namespace
-    -t <type>       PEG input/output type
+function c($o)
+{
+    $args = func_get_args();
+    $o = array_shift($args);
+    return call_user_func_array(array($o, '__invoke'), $args);
+}
+
+function i($s, $i = '    ')
+{
+    return $i . str_replace("\n", "\n" . $i,
+        rtrim(str_replace(array("\r\n", "\r"), "\n", $s), "\n")) . "\n";
+}
+
+$help = FALSE;
+$input = '-';
+$output = '-';
+$types = array('php', 'gotomachine');
+$type = current($types);
+
+for ($i = 1; $i < $_SERVER['argc']; ++$i) {
+    switch ($_SERVER['argv'][$i]) {
+        case '-h':
+        case '--help':
+            echo <<<E
+{$_SERVER['argv'][0]} [ -t <type> ] [ <input> ] [ <output> ]
+    -h, --help      show this help
+
+    -t <type>       parser output type
+
+    <input>         input file, if omitted standard input is used instead
+
+    <output>        output file, if omitted and <input> supplied, <input>
+                    with extension changed to .php, else standard output
+                    is used instead
 
 E;
-die($h); }
+            die();
+        break;
 
-// initialize
-if (!isset($opts['p'])) {
-    foreach (array($opts['o'], $opts['i']) as $f) {
-        if ($f === '-') { continue; }
-        $opts['p'] = preg_replace('#\.[^.]+\.[^.]+$#S', '', basename($f));
-        if (preg_match('#^.*\.([^.]+)\.[^.]+$#S', basename($f), $m)) {
-            $opts['t'] = $m[1];
+        case '-t':
+        case '--type':
+            if (!isset($_SERVER['argv'][$i + 1])) {
+                die("-t flag used, but not type supplied.\n");
+            }
+            $type = $_SERVER['argv'][$i + 1];
+            if (strcasecmp($type, 'help') === 0) {
+                die("available types: " . implode('', $types) . "\n");
+            }
+            if (!in_array($type, $types)) {
+                die("output type $type not available.\n");
+            }
+            ++$i;
+        break;
+
+        default:
+            if ($_SERVER['argc'] - $i < 3) {
+                list($input, $output) = array_pad(array_slice($_SERVER['argv'], $i), 2, '-');
+                break 2; // jump out of for loop
+            } else {
+                die("wrong parameters. use -h or --help to show help.\n");
+            }
+    }
+}
+
+if ($output === '-') {
+    if ($input !== '-') {
+        $output = preg_replace('~\.[^.]+$~', '.php', $input);
+        if ($output === $input) {
+            $output = $input . '.php';
         }
+    } else {
+        $output = 'php://stdout';
     }
-
-    if (!isset($opts['p'])) { $opts['p'] = 'parse'; }
 }
 
-if ($opts['i'] === '-') { $opts['i'] = 'php://stdin'; }
-if ($opts['o'] === '-') { $opts['o'] = 'php://stdout'; }
-
-// type?
-if (!isset($opts['t'])) {
-    die("No input/output type specified. Use -t.\n");
+if ($input === '-') {
+    $input = 'php://stdin';
 }
 
-// parse
-$parse = 'parse_' . $opts['t'];
-$content = file_get_contents($opts['i']);
-list($ok, $parsed, $p) = $parse($content);
-
-if (!$ok) {
-    $lines = explode("\n", str_replace(array("\r\n", "\r"), "\n", $content));
-    $pre = substr($content, 0, $p);
-    $pre_lines = explode("\n", str_replace(array("\r\n", "\r"), "\n", $pre));
-    $line = count($pre_lines);
-    $position = strlen(end($pre_lines)) + 1;
-
-    die("Parse error on line $line at position $position:\n" .
-        "{$line}: " . $lines[$line - 1] . "\n" .
-        str_repeat(" ", strlen((string) $line) + $position + 1) . "^\n");
-}
-
-$phpeg = new phpeg($opts['n'], $opts['p'], $parsed);
-
-// check
-$nr = $phpeg->getNonexistentRules();
-if (!empty($nr)) {
-    die("These rules needed, but do not exist: \n" .
-        "    " . implode(', ', $nr) . "\n");
-}
-
-$ilr = $phpeg->getIndirectlyLeftRecursive();
-if (!empty($ilr)) {
-    $e = "Indirectly recursive rules: \n";
-    foreach ($ilr as $chain) {
-        $e .= "    " . implode(' -> ', $chain) . "\n";
-    }
-    die($e);
-}
-
-// generate
-$generate = 'generate_' . $opts['t'];
-$generated = $generate($phpeg);
-
-if (file_exists($opts['o']) && !isset($opts['f'])) {
-    die("Output file already exists. Use -f to force overwrite.\n");
-}
-
-file_put_contents($opts['o'], $generated);
+$generator = 'generate_' . $type;
+file_put_contents($output, c(new $generator, $input));

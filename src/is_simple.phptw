@@ -1,0 +1,17 @@
+first, all (nodes) {
+    foreach (WALKEACH($nodes) as $node) {
+        if (!$node) {
+            return FALSE;
+        }
+    }
+
+    return TRUE;
+}
+
+optional, zero_or_more, one_or_more, quarantine (node) -> WALK($node)
+
+apply, action, bind -> FALSE
+
+and, semantic_predicate, not, literal, range, any, position -> TRUE
+
+_ -> FALSE

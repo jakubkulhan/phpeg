@@ -1,0 +1,270 @@
+-init {
+    $self = (object) array(
+        "codes" => array(),
+    );
+}
+
+-invoke (node) {
+    $ret = WALK($node);
+    return array($ret, $self->codes);
+}
+
+first (nodes) {
+    foreach ($nodes as $k => $node) {
+        $nodes[$k] = WALK($node);
+    }
+
+    $ret = array_pop($nodes);
+
+    while ($node = array_pop($nodes)) {
+        $ret = array_merge(
+            array(
+                array("push", array("register", "p"), array("register", "stack")),
+            ),
+            $node,
+            array(
+                array("pop", array("register", "stack"), array("register", "a")),
+                array("jumpif", array("not", array("register", "fail")), array("offset", count($ret) + 2)),
+                array("set", array("register", "a"), array("register", "p")),
+            ),
+            $ret
+        );
+    }
+
+    return $ret;
+}
+
+all (nodes) {
+    $is_simple = c(new is_simple, array(NODETYPE(), $nodes));
+    $ret = array();
+
+    $first = TRUE;
+    $push = FALSE;
+    foreach ($nodes as $k => $node) {
+        if ($first) {
+            $type = $node[0];
+            if ($type === "bind") {
+                $type = $node[2][0];
+            }
+
+            if (!in_array($type, array("and", "not", "semantic_predicate"))) {
+                $first = FALSE;
+                $push = TRUE;
+            }
+        }
+
+        $nodes[$k] = WALK($node);
+
+        if ($is_simple) {
+            $nodes[$k][] = array("pop", array("register", "stack"), array("register", "a"));
+            $nodes[$k][] = array("append", array("register", "value"), array("register", "a"));
+            $nodes[$k][] = array("push", array("register", "a"), array("register", "stack"));
+
+        } else if ($push) {
+            $push = FALSE;
+            $nodes[$k][] = array("pop", array("register", "stack"), NULL);
+            $nodes[$k][] = array("push", array("register", "value"), array("register", "stack"));
+        }
+    }
+
+    $ret = array_merge($ret, array_pop($nodes));
+
+    while ($node = array_pop($nodes)) {
+        $ret = array_merge(
+            $node,
+            array(
+                array("jumpif", array("register", "fail"), array("offset", count($ret) + 1)),
+            ),
+            $ret
+        );
+    }
+
+    // because nodes are inserted from back, this is the first instruction and it has
+    // to be added after nodes
+    $ret = array_merge(
+        array(
+            array("push", array("value", $is_simple ? "" : NULL), array("register", "stack"))
+        ),
+        $ret
+    );
+
+    // last instruction transfers value from stack to %value register
+    $ret[] = array("pop", array("register", "stack"), array("register", "value"));
+
+
+    return $ret;
+}
+
+action (node, code) {
+    $n = count($self->codes);
+    $self->codes[$n] = $code;
+
+    return array_merge(
+        array(
+            array("push", array("register", "env"), array("register", "stack")),
+        ),
+        WALK($node),
+        array(
+            array("jumpif", array("register", "fail"), array("offset", 2)),
+            array("run", $n, array("register", "env")),
+            array("pop", array("register", "stack"), array("register", "env")),
+        )
+    );
+}
+
+bind (varname, node) {
+    return array_merge(
+        WALK($node),
+        array(
+            array("set", array("register", "value"), array("register_index", "env", $varname)),
+        )
+    );
+}
+
+quarantine (node) {
+    return array_merge(
+        array(
+            array("push", array("register", "env"), array("register", "stack")),
+            array("set", array("value", array()), array("register", "env")),
+        ),
+        WALK($node),
+        array(
+            array("pop", array("register", "stack"), array("register", "env")),
+        )
+    );
+}
+
+and, not (node) {
+    return array_merge(
+        array(
+            array("push", array("register", "p"), array("register", "stack")),
+        ),
+        WALK($node),
+        array(
+            array("pop", array("register", "stack"), array("register", "p")),
+            array("set", array("value", NULL), array("register", "value")),
+        ),
+        (NODETYPE() === "not"
+        ? array(
+            array("set", array("not", array("register", "fail")), array("register", "fail")),
+        )
+        : array())
+    );
+}
+
+optional (node) {
+    return array_merge(
+        array(
+            array("push", array("register", "p"), array("register", "stack")),
+        ),
+        WALK($node),
+        array(
+            array("pop", array("register", "stack"), array("register", "a")),
+            array("jumpif", array("not", array("register", "fail")), array("offset", 4)),
+            array("set", array("value", FALSE), array("register", "fail")),
+            array("set", array("value", NULL), array("register", "value")),
+            array("set", array("register", "a"), array("register", "p")),
+        )
+    );
+}
+
+zero_or_more (node) {
+    $is_simple = c(new is_simple, $node);
+    $ret = WALK($node);
+
+    return array_merge(
+        array(
+            array("push", array("register", "p"), array("register", "stack")),
+            array("push", array("value", $is_simple ? "" : array()), array("register", "stack")),
+        ),
+        $ret,
+        array(
+            array("jumpif", array("register", "fail"), array("offset", 7)),
+            array("pop", array("register", "stack"), array("register", "a")),
+            array($is_simple ? "append" : "push", array("register", "value"), array("register", "a")),
+            array("pop", array("register", "stack"), NULL),
+            array("push", array("register", "p"), array("register", "stack")),
+            array("push", array("register", "a"), array("register", "stack")),
+            array("jump", array("offset", -(6 + count($ret)))),
+            array("pop", array("register", "stack"), array("register", "value")),
+            array("pop", array("register", "stack"), array("register", "p")),
+            array("set", array("value", FALSE), array("register", "fail")),
+        )
+    );
+}
+
+one_or_more (node) {
+    $is_simple = c(new is_simple, $node);
+    $ret = WALK($node);
+
+    return array_merge(
+        array(
+            array("push", array("register", "p"), array("register", "stack")),
+            array("push", array("value", $is_simple ? "" : array()), array("register", "stack")),
+            array("push", array("value", TRUE), array("register", "stack")),
+        ),
+        $ret,
+        array(
+            array("jumpif", array("register", "fail"), array("offset", 9)),
+            array("pop", array("register", "stack"), NULL),
+            array("pop", array("register", "stack"), array("register", "a")),
+            array($is_simple ? "append" : "push", array("register", "value"), array("register", "a")),
+            array("pop", array("register", "stack"), NULL),
+            array("push", array("register", "p"), array("register", "stack")),
+            array("push", array("register", "a"), array("register", "stack")),
+            array("push", array("value", FALSE), array("register", "stack")),
+            array("jump", array("offset", -(8 + count($ret)))),
+            array("pop", array("register", "stack"), array("register", "a")),
+            array("pop", array("register", "stack"), array("register", "value")),
+            array("pop", array("register", "stack"), array("register", "p")),
+            array("jumpif", array("register", "a"), array("offset", 2)),
+            array("set", array("value", FALSE), array("register", "fail")),
+        )
+    );
+}
+
+apply (name) {
+    return array(
+        array("push", array("offset", 2), array("register", "stack")),
+        array("jump", array("label", $name)),
+    );
+}
+
+literal (s) {
+    return array(
+        array("literal", $s),
+    );
+}
+
+range (match) {
+    return array(
+        array("range", $match),
+    );
+}
+
+any {
+    return array(
+        array("any"),
+    );
+}
+
+semantic_predicate (code) {
+    $n = count($self->codes);
+    $self->codes[$n] = $code;
+
+    return array(
+        array("run", $n, array("register", "env")),
+        array("set", array("not", array("register", "value")), array("register", "fail")),
+        array("set", array("value", NULL), array("register", "value")),
+    );
+}
+
+position {
+    return array(
+        array("position"),
+    );
+}
+
+_ {
+    throw new InvalidArgumentException("What? What?? What???!");
+}

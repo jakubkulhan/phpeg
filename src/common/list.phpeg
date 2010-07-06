@@ -1,0 +1,4 @@
+list(expression, separator)
+  = first:expression rest:(separator next:expression -> $next
+                          )*
+    -> array_merge(array($first), $rest)

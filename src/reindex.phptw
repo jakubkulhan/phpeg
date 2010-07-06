@@ -1,0 +1,53 @@
+-init {
+    $self = (object) array(
+        "reindex" => array(),
+        "exclusions" => array(),
+        "doesnt_exist" => array(),
+    );
+}
+
+-invoke (definitions, reindex) {
+    $self->reindex = $reindex;
+    $ret = WALKEACH($definitions);
+    return array(array_keys($self->doesnt_exist), $ret);
+}
+
+
+macro (name, arguments, node) {
+    $self->exclusions = $arguments;
+    $ret = array(NODETYPE(), $name, $arguments, WALK($node));
+    $self->exclusions = array();
+    return $ret;
+}
+
+rule (name, node) -> array(NODETYPE(), $name, WALK($node));
+
+first, all (nodes) -> array(NODETYPE(), WALKEACH($nodes));
+
+action (node, code) -> array(NODETYPE(), WALK($node), $code)
+
+and, not, optional, zero_or_more, one_or_more, quarantine (node) -> array(NODETYPE(), WALK($node))
+
+bind (varname, node) -> array(NODETYPE(), $varname, WALK($node))
+
+apply (name) -> array(NODETYPE(), WALK(array("name_", $name)))
+
+expand (name, arguments) -> array(NODETYPE(), WALK(array("name_", $name)), WALKEACH($arguments))
+
+name_ (name) {
+    if (in_array($name, $self->exclusions)) {
+        return $name;
+    }
+
+    $key = implode(".", (array) $name);
+
+    if (isset($self->reindex[$key])) {
+        $name = $self->reindex[$key];
+    } else {
+        $self->doesnt_exist[$key] = TRUE;
+    }
+
+    return $name;
+}
+
+_ /* literal, range, any, position, ...? */ -> NODE()

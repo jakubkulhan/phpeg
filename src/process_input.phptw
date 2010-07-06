@@ -1,0 +1,67 @@
+-invoke (input) {
+    list($provides, $definitions) = c(new parse_input, $input, array(), array());
+
+    $definitions = c(new expand_macros, $definitions);
+    $used = array_flip(c(new used, $definitions));
+
+    $reindex = array();
+    $newdefinitions = array();
+    foreach ($definitions as $k => $definition) {
+        if (isset($used[$k])) {
+            $newdefinitions[] = $definition;
+            $reindex[] = $k;
+        }
+    }
+    $reindex = array_flip($reindex);
+
+    list($_, $definitions) = c(new reindex, $newdefinitions, $reindex);
+
+    $first = TRUE;
+    $namespace = NULL;
+    $name = NULL;
+    $inits = array();
+    $invoke = NULL;
+
+    foreach ($provides as $k => $about) {
+        foreach ($about->reindex as $l => $r) {
+            if (!isset($reindex[$r])) {
+                unset($about->reindex[$l]);
+                continue;
+            }
+
+            $about->reindex[$l] = $reindex[$r];
+        }
+
+        reset($about->reindex);
+        $about->start = current($about->reindex);
+        $about->count = count($about->reindex);
+
+        if ($about->count < 1) {
+            unset($provides[$k]);
+            continue;
+        }
+
+        if ($first) {
+            $first = FALSE;
+            $namespace = $about->namespace;
+            $name = $about->name;
+            if ($name === NULL && strncmp($k, "php:", 4) === 0) {
+                $name = "parser";
+            } if ($name === NULL) {
+                $name = basename($k);
+                if (($pos = strrpos($name, ".")) !== FALSE) {
+                    $name = substr($name, 0, $pos);
+                }
+            }
+            $invoke = $about->invoke;
+        }
+
+        if ($about->init) {
+            $inits[] = array(array_values($about->reindex), $about->init);
+        }
+    }
+
+    return array($namespace, $name, $inits, $invoke, WALKEACH($definitions));
+}
+
+rule (name, node) -> $node

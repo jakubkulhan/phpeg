@@ -1,0 +1,357 @@
+-init {
+    $self = (object) array(
+        "inits" => array(),
+        "i" => 0,
+        "bound" => array(),
+        "env" => NULL,
+        "codes" => array(),
+        "definitions" => array(),
+        "common" => NULL,
+    );
+}
+
+-invoke (input) {
+    list($namespace, $name, $inits, $invoke, $self->definitions) = c(new process_input, $input);
+    return c($self->common = new generate_common, $this, $namespace, $name, $inits, $invoke);
+}
+
+prolog_ {
+    return "private \$_s;\n" .
+           "private \$_p;\n" .
+           "private \$_maxp;\n" .
+           "private \$_expected;\n";
+}
+
+inits_ (inits) {
+    $self->inits = $inits;
+}
+
+parse_ {
+    $ret = "public function parse(\$s) {\n" .
+           "    \$this->_s = \$s;\n" .
+           "    \$this->_p = \$this->_maxp = 0;\n" .
+           "    \$this->_expected = array();\n" .
+           "    list(\$ok, \$result) = \$this->_parse_0();\n" .
+           "    if (!\$ok) {\n" .
+           "        \$before = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", substr(\$s, 0, \$this->_maxp));\n" .
+           "        \$after = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", substr(\$s, \$this->_maxp));\n" .
+           "        \$line = 1;\n" .
+           "\n" .
+           "        if ((\$pos = strrpos(\$before, \"\\n\")) !== FALSE) {\n" .
+           "            \$line = substr_count(\$before, \"\\n\") + 1;\n" .
+           "            \$before = (string) substr(\$before, \$pos + 1);\n" .
+           "        }\n" .
+           "\n" .
+           "        if ((\$pos = strpos(\$after, \"\\n\")) !== FALSE) {\n" .
+           "            \$after = substr(\$after, 0, \$pos);\n" .
+           "        }\n" .
+           "\n" .
+           "        return array(FALSE, NULL, (object) array('position' => \$this->_maxp, 'line' => \$line, 'column' => strlen(\$before) + 1, 'context' => \$before . \$after, 'expected' => \$this->_expected));\n" .
+           "    }\n" .
+           "\n" .
+           "    return array(TRUE, \$result, NULL);\n" .
+           "}\n";
+
+    foreach ($self->definitions as $k => $definition) {
+        $ret .= WALK(array("rule_", $k, $definition));
+    }
+
+    $ret .= WALK(array("codes_"));
+
+    return $ret;
+}
+
+codes_ {
+    $ret = "";
+
+    foreach ($self->codes as $code) {
+        $ret .= $code . "\n";
+    }
+
+    return $ret;
+}
+
+rule_ (name, node) {
+    $self->i = 0;
+    $self->bound = array();
+
+    $self->env = NULL;
+    if (isset($self->inits[$name])) {
+        $self->env = $self->inits[$name];
+    }
+
+    return "private function _parse_$name() {\n" .
+                i(WALK($node)) .
+           "    return \$_0;\n" .
+           "}\n";
+}
+
+quarantine (node) {
+    $saved_bound = $self->bound;
+    $self->bound = array();
+
+    $ret = WALK($node);
+
+    $self->bound = $saved_bound;
+
+    return $ret;
+}
+
+first (nodes) {
+    $myi = $self->i;
+    $self->i++;
+
+    $ret = "\$_{$myi} = array(FALSE, NULL);\n" .
+           "\$_pos{$myi} = \$this->_p;\n" .
+           "do {\n";
+
+    foreach ($nodes as $node) {
+        $ret .= i(WALK($node) .
+                "if (!\$_{$self->i}[0]) {\n" .
+                "    \$this->_p = \$_pos{$myi};\n" .
+                "} else {\n" .
+                "    \$_{$myi} = \$_{$self->i};\n" .
+                "    break;\n" .
+                "}\n");
+        $self->i++;
+    }
+
+    $ret .= "} while(0);\n";
+
+    $self->i = $myi;
+
+    return $ret;
+}
+
+all (nodes) {
+    $is_simple = c(new is_simple, array(NODETYPE(), $nodes));
+
+    $myi  = $self->i;
+
+    foreach ($nodes as $k => $node) {
+        if ($node[0] === "bind") {
+            $node = $node[2];
+        }
+
+        if (in_array($node[0], array("and", "not", "semantic_predicate"))) {
+            continue;
+        }
+
+        $reti = $myi + $k + 1;
+        break;
+    }
+
+    if ($reti === NULL) {
+        $reti = $myi;
+    }
+
+    $ret = "";
+
+    if ($is_simple) {
+        $ret .= "\$_s{$myi} = '';\n";
+    }
+
+    $ret .= "do {\n";
+
+    foreach ($nodes as $k => $node) {
+        $self->i = $myi + $k + 1;
+        $ret .= i(WALK($node) .
+                "if (!\$_{$self->i}[0]) {\n" .
+                "    \$_{$reti} = array(FALSE, NULL);\n" .
+                "    break;\n" .
+                "}\n");
+
+        if ($is_simple) {
+            $ret .= i("\$_s{$myi} .= \$_{$self->i}[1];\n");
+        }
+    }
+
+    $ret .= "} while(0);\n" .
+            "\$_{$myi} = \$_{$reti};\n" .
+            ($is_simple ? "\$_{$myi}[1] = \$_s{$myi};\n" : "");
+
+    $self->i = $myi;
+
+    return $ret;
+}
+
+action (node, code) {
+    $myi = $self->i;
+    $self->i = $myi + 1;
+    $saved_bound = $self->bound;
+
+    $ret = WALK($node) .
+           "\$_{$myi} = array(FALSE, NULL);\n" .
+           "if (\$_{$self->i}[0]) {\n" .
+           "    \$_{$myi} = array(TRUE, " . WALK(array("code_", $code)) . ");\n" .
+           "}\n";
+
+    $self->bound = $saved_bound;
+    $self->i = $myi;
+
+    return $ret;
+}
+
+bind (varname, node) {
+    $self->bound[$varname] = $self->i;
+
+    return WALK($node);
+}
+
+and, not (node) {
+    $myi = $self->i;
+    $self->i = $myi + 1;
+
+    $ret = "\$_pos{$myi} = \$this->_p;\n" .
+           WALK($node) .
+           "\$_{$myi} = array(" . (NODETYPE() === "not" ? "!" : "") . "\$_{$self->i}[0], NULL);\n" .
+           "\$this->_p = \$_pos{$myi};\n";
+
+    $self->i = $myi;
+
+    return $ret;
+}
+
+optional (node) {
+    $myi = $self->i;
+    $self->i = $myi + 1;
+
+    $ret = "\$_{$myi} = array(TRUE, NULL);\n" .
+           "\$_pos{$myi} = \$this->_p;\n" .
+           WALK($node) .
+           "if (!\$_{$self->i}[0]) {\n" .
+           "    \$this->_p = \$_pos{$myi};\n" .
+           "} else {\n" .
+           "    \$_{$myi} = \$_{$self->i};\n" .
+           "}\n";
+
+    $self->i = $myi;
+
+    return $ret;
+}
+
+zero_or_more, one_or_more (node) {
+    $is_simple = c(new is_simple, $node);
+
+    $myi = $self->i;
+    $self->i = $myi + 1;
+
+    $ret = "\$_{$myi} = array(" . (NODETYPE() === "zero_or_more" ? "TRUE" : "FALSE") .
+                ", " . ($is_simple ? "''" : "array()") . ");\n" .
+           "do {\n" .
+           "    \$_pos{$myi} = \$this->_p;\n" .
+                i(WALK($node)) .
+           "    if (!\$_{$self->i}[0]) { \$this->_p = \$_pos{$myi}; }\n" .
+           "    else {\n" .
+           "        \$_{$myi}[0] = TRUE;\n" . ($is_simple ?
+           "        \$_{$myi}[1] .= \$_{$self->i}[1];\n" :
+           "        \$_{$myi}[1][] = \$_{$self->i}[1];\n") .
+           "    }\n" .
+           "} while (\$_{$self->i}[0]);\n";
+
+    $self->i = $myi;
+
+    return $ret;
+}
+
+apply (name) {
+    return "\$_{$self->i} = \$this->_parse_$name();\n";
+}
+
+literal (s) {
+    $encapsed_s = '"' . $self->common->walk(array("format_", $s)) . '"';
+
+    return "\$_{$self->i} = array(FALSE, NULL);\n" .
+           "if ((\$_{$self->i}_ = substr(\$this->_s, \$this->_p, " . strlen($s) . ")) === " . $encapsed_s . ") {\n" .
+           "    \$_{$self->i} = array(TRUE, \$_{$self->i}_);\n" .
+           "    \$this->_p += " . strlen($s) . ";\n" .
+           "} else {\n" .
+                i(WALK(array("failed_", $encapsed_s))) .
+           "}\n";
+}
+
+range (match) {
+    $or = array();
+    $str = "";
+
+    foreach ($match as $r) {
+        if (is_array($r)) {
+            $or[] = "(" . $r[0] . " <= \$_{$self->i}_ && \$_{$self->i}_ <= " . $r[1] . ")";
+            $str .= chr($r[0]) . "-" . chr($r[1]);
+        } else {
+            $or[] = "(\$_{$self->i}_ === $r)";
+            $str .= chr($r);
+        }
+    }
+
+    $str = $self->common->walk(array("format_", "[" . $str . "]"));
+
+    return "\$_{$self->i} = array(FALSE, NULL);\n" .
+           "if (isset(\$this->_s[\$this->_p]) && " .
+               "is_int(\$_{$self->i}_ = ord(\$this->_s[\$this->_p])) && " .
+               "(" . implode(" || ", $or) . ")) {\n" .
+           "    \$_{$self->i} = array(TRUE, \$this->_s[\$this->_p]);\n" .
+           "    \$this->_p++;\n" .
+           "} else {\n" .
+                i(WALK(array("failed_", $str))) .
+           "}\n";
+}
+
+any {
+    return "\$_{$self->i} = array(FALSE, NULL);\n" .
+           "if (isset(\$this->_s[\$this->_p])) {\n" .
+           "    \$_{$self->i} = array(TRUE, \$this->_s[\$this->_p]);\n" .
+           "    \$this->_p++;\n" .
+           "} else {\n" .
+                i(WALK(array("failed_", "any character"))) .
+           "}\n";
+}
+
+semantic_predicate (code) {
+    return "\$_{$self->i} = array((bool) " . WALK(array("code_", $code)) . ", NULL);\n";
+}
+
+position {
+    return "\$_before{$self->i} = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", (string) substr(\$this->_s, 0, \$this->_p));\n" .
+           "\$_line{$self->i} = 1;\n" .
+           "if ((\$_pos{$self->i} = strrpos(\$_before{$self->i}, \"\\n\")) !== FALSE) {\n" .
+           "    \$_line{$self->i} = substr_count(\$_before{$self->i}, \"\\n\") + 1;\n" .
+           "    \$_before{$self->i} = (string) substr(\$_before{$self->i}, \$_pos{$self->i} + 1);\n" .
+           "}\n" .
+           "\$_{$self->i} = array(TRUE, array(\$_line{$self->i}, strlen(\$_before{$self->i}) + 1));\n";
+}
+
+code_ (code) {
+    $input = array();
+
+    foreach ($self->bound as $varname => $i) {
+        $input[] = "'{$varname}' => &\$_{$i}[1]";
+    }
+
+    $name = "_" . count($self->codes);
+    $self->codes[] = "private function " . $name . "() {\n" .
+                     ($self->env !== NULL ? "    extract(\$this->_envs[{$self->env}], EXTR_OVERWRITE | EXTR_REFS);\n" : "") .
+                     "    extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);\n" .
+                          i($code) .
+                     "\n}\n";
+
+    return "\$this->$name(array(" . implode(", ", $input) . "))";
+}
+
+
+failed_ (on) {
+    return "if (\$this->_p >= \$this->_maxp) {\n" .
+           "    if (\$this->_p > \$this->_maxp) {\n" .
+           "        \$this->_maxp = \$this->_p;\n" .
+           "        \$this->_expected = array();\n" .
+           "    }\n" .
+           "    if (!in_array(" . var_export($on, TRUE) . ", \$this->_expected)) {\n" .
+           "        \$this->_expected[] = " . var_export($on, TRUE) . ";\n" .
+           "    }\n" .
+           "}\n";
+}
+
+_ {
+    var_dump(NODE());
+    throw new InvalidArgumentException("What? What?? What???!");
+}

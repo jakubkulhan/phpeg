@@ -1,0 +1,75 @@
+-init {
+    $self = (object) array(
+        "current" => NULL,
+        "recursion" => array(),
+    );
+}
+
+-invoke (file, macros) {
+    WALKEACH($macros);
+
+    $recursive = array();
+
+    foreach ($self->recursion as $name => $recursion) {
+        $chains = array();
+        foreach ($recursion as $r) {
+            $chains[] = array($r);
+        }
+
+        $newchains = array();
+
+        do {
+            $done = TRUE;
+            foreach ($chains as $chain) {
+                if (!isset($self->recursion[end($chain)])) { continue; }
+                foreach ($self->recursion[end($chain)] as $r) {
+                    if (in_array($r, $chain)) {
+                        if ($r === $chain[0]) {
+                            $recursive[] = array_merge($chain, array($r));
+                        }
+                    } else {
+                        $newchains[] = array_merge($chain, array($r));
+                        $done = FALSE;
+                    }
+                }
+            }
+
+            $chains = $newchains;
+            $newchains = array();
+        } while (!$done);
+    }
+
+    if (!empty($recursive)) {
+        foreach ($recursive as $i => $r) {
+            $recursive[$i] = implode(" -> ", $r);
+        }
+
+        die("Recursive macros in file {$file}:\n" .
+            "  " . implode("\n  ", $recursive) . "\n");
+    }
+
+    return TRUE;
+}
+
+macro (name, arguments, node) {
+    $self->current = $name;
+    $self->recursion[$self->current] = array();
+    WALK($node);
+    $self->recursion[$self->current] =
+        array_flip(array_flip($self->recursion[$self->current]));
+}
+
+all, first (nodes) -> WALKEACH($nodes)
+
+action (node, code) -> WALK($node)
+
+and, not, optional, zero_or_more, one_or_more (node) -> WALK($node)
+
+bind (varname, node) -> WALK($node)
+
+expand (name, arguments) {
+    $self->recursion[$self->current][] = $name;
+    WALKEACH($arguments);
+}
+
+_ -> NULL

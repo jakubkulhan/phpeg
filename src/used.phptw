@@ -1,0 +1,32 @@
+-invoke (definitions) {
+    reset($definitions);
+    $used = array(key($definitions) => 0);
+
+    foreach ($definitions as $definition) {
+        $used = array_merge($used, array_flip(WALK($definition)));
+    }
+
+    return array_keys($used);
+}
+
+rule (name, node) -> WALK($node)
+
+first, all (nodes) {
+    $used = array();
+
+    foreach ($nodes as $node) {
+        $used = array_merge($used, array_flip(WALK($node)));
+    }
+
+    return array_keys($used);
+}
+
+optional, zero_or_more, one_or_more, quarantine (node) -> WALK($node)
+
+action (node, code) -> WALK($node)
+
+bind (varname, node) -> WALK($node)
+
+apply (name) -> array($name)
+
+_ -> array()

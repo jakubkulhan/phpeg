@@ -1,0 +1,18 @@
+-init {
+    $self = (object) array(
+        "select" => array()
+    );
+}
+
+-invoke (select, nodes) {
+    $self->select = $select;
+    return array_filter(WALKEACH($nodes));
+}
+
+_ {
+    if (in_array(NODETYPE(), $self->select)) {
+        return NODE();
+    }
+
+    return FALSE;
+}

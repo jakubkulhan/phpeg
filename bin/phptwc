@@ -1,0 +1,228 @@
+#!/usr/bin/php
+<?php
+/*LIBS*/
+$phps = glob(dirname(__FILE__) . '/../build/*.php');
+if (is_array($phps)) {
+    foreach ($phps  as $php) {
+        require_once $php;
+    }
+}
+/*ENDLIBS*/
+
+function i($code, $indent = '    ')
+{
+    return $indent . str_replace("\n", "\n$indent", rtrim($code, "\n")) . "\n";
+}
+
+if ($_SERVER['argc'] < 2) {
+    echo "usage: " . $_SERVER['argv'][0] . " input [output]\n";
+    die();
+}
+
+$input = $_SERVER['argv'][1];
+
+$classname = basename($input);
+if (($pos = strrpos($classname, '.')) !== FALSE) {
+    $classname = substr($classname, 0, $pos);
+}
+
+$output = $input . '.php';
+if ($_SERVER['argc'] > 2) {
+    $output = $_SERVER['argv'][2];
+} else {
+    if (($pos = strrpos($input, '.')) !== FALSE) {
+        $output = substr($input, 0, $pos) . '.php';
+    }
+}
+
+$inputstring = file_get_contents($input);
+$instance = new parse_treewalker;
+list($ok, $result, $errinfo) = $instance->parse($inputstring);
+if (!$ok) {
+    die("Parser error on line {$errinfo->line}, column {$errinfo->column}:\n" .
+        "{$errinfo->context}\n" .
+        str_repeat(' ', $errinfo->column - 1) . "\n" .
+        "Expected: " . implode(', ', $errinfo->expected));
+}
+
+list($_, $nodes) = $result;
+
+$init = NULL;
+$invoke = NULL;
+$invokeargs = array();
+$matchers = array();
+foreach ($nodes as $node) {
+    if ($node[0] === "init") {
+        list($_, $init) = $node;
+
+    } else if ($node[0] === "invoke") {
+        list($_, $invokeargs, $invoke) = $node;
+
+    } else if ($node[0] === "matcher") {
+        array_shift($node);
+        $matchers[] = $node;
+
+    } else {
+        var_dump($node);
+        die();
+    }
+}
+
+$switch = "switch (\$node[0]) {\n";
+$default = NULL;
+$codes = "";
+$i = 0;
+$replaces = array(
+    'WALK' => '$this->_walk',
+    'WALKEACH' => '$this->_walkeach',
+    'NODE' => '$this->_node',
+    'NODETYPE' => '$this->_nodetype',
+    'ROOT' => '$this->_root',
+    'STACK' => '$this->_stack',
+    'INDEX' => '$this->_index',
+);
+foreach ($matchers as $matcher) {
+    list($types, $args, $code) = $matcher;
+
+    $arglist = array();
+    $numlist = array();
+    $j = 0;
+    foreach ($args as $arg) {
+        $arglist[] = "$$arg";
+        $numlist[] = '$_' . ($j++);
+    }
+    $arglist = implode(', ', $arglist);
+    $numlist = implode(', ', $numlist);
+
+    $codes .= "protected function _$i($arglist) { extract(\$this->_env, EXTR_REFS); " . strtr($code, $replaces) . "\n}\n";
+
+    $append_to =& $switch;
+    if ($types === TRUE) {
+        $default .= "default:\n";
+        $append_to =& $default;
+
+    } else {
+        foreach ($types as $type) {
+            $switch .= "case '" . $type . "':\n";
+        }
+    }
+
+    if (!empty($arglist)) {
+        $append_to .= "    list(\$_, $numlist) = \$node;\n";
+    }
+    $append_to .= "    \$ret = \$this->_$i($numlist);\n";
+    $append_to .= "break;\n";
+
+    ++$i;
+}
+
+$switch .= $default;
+$switch .= "}\n";
+
+$switch = i($switch, '        ');
+//$codes = i($codes);
+
+
+if ($invoke === NULL) {
+    $invokeargs = array('node');
+    $invoke = 'return WALK($node);';
+}
+foreach ($invokeargs as &$arg) {
+    $arg = "$$arg";
+}
+$invokearglist = implode(', ', $invokeargs);
+$invoke = strtr($invoke, $replaces);
+$invoke = i($invoke, '        ');
+
+file_put_contents($output, <<<E
+<?php
+class $classname
+{
+    private \$_stack = array();
+    private \$_env;
+    private \$_index;
+
+    public function __construct()
+    {
+        \$this->_init();
+    }
+
+    public function walk(\$node)
+    {
+        /*\$this->_init();*/
+        return \$this->_walk(\$node);
+    }
+
+    public function walkeach(array \$nodes)
+    {
+        /*\$this->_init();*/
+        return \$this->_walkeach(\$nodes);
+    }
+
+    protected function _init()
+    {
+        \$this->_env = array();
+$init
+        \$this->_env = get_defined_vars();
+    }
+
+    protected function _node()
+    {
+        return end(\$this->_stack);
+    }
+
+    protected function _nodetype()
+    {
+        return current(\$this->_node());
+    }
+
+    protected function _stack()
+    {
+        return \$this->_stack;
+    }
+
+    protected function _root()
+    {
+        reset(\$this->_stack);
+        return current(\$this->_stack);
+    }
+
+    protected function _index()
+    {
+        return \$this->_index;
+    }
+
+    protected function _walkeach(array \$nodes)
+    {
+        \$ret = array();
+
+        foreach (\$nodes as \$k => \$node) {
+            \$this->_index = \$k;
+            \$ret[\$k] = \$this->_walk(\$node);
+        }
+
+        return \$ret;
+    }
+
+    protected function _walk(\$node)
+    {
+        array_push(\$this->_stack, \$node);
+        \$ret = NULL;
+
+$switch
+        array_pop(\$this->_stack);
+        return \$ret;
+    }
+
+    public function __invoke($invokearglist)
+    {
+        /*\$this->_init();*/
+        extract(\$this->_env, EXTR_REFS);
+$invoke
+    }
+
+$codes
+}
+
+E
+);
