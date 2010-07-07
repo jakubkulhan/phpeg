@@ -30,6 +30,7 @@ $self = (object) array(
         "program" => array(),
         "codes" => array(),
         "code_to_label" => array(),
+        "returns" => array(),
         "common" => NULL,
     );
 
@@ -118,49 +119,53 @@ $self = (object) array(
             list($_, $_0, $_1) = $node;
             $ret = $this->_9($_0, $_1);
         break;
-        case 'run':
+        case 'return':
             list($_, $_0, $_1) = $node;
             $ret = $this->_10($_0, $_1);
         break;
-        case 'value':
-            list($_, $_0) = $node;
-            $ret = $this->_11($_0);
+        case 'run':
+            list($_, $_0, $_1) = $node;
+            $ret = $this->_11($_0, $_1);
         break;
-        case 'not':
+        case 'value':
             list($_, $_0) = $node;
             $ret = $this->_12($_0);
         break;
-        case 'register':
+        case 'not':
             list($_, $_0) = $node;
             $ret = $this->_13($_0);
         break;
+        case 'register':
+            list($_, $_0) = $node;
+            $ret = $this->_14($_0);
+        break;
         case 'register_index':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_14($_0, $_1);
+            $ret = $this->_15($_0, $_1);
         break;
         case 'position':
-            $ret = $this->_15();
+            $ret = $this->_16();
         break;
         case 'any':
-            $ret = $this->_16();
+            $ret = $this->_17();
         break;
         case 'literal':
             list($_, $_0) = $node;
-            $ret = $this->_17($_0);
+            $ret = $this->_18($_0);
         break;
         case 'range':
             list($_, $_0) = $node;
-            $ret = $this->_18($_0);
+            $ret = $this->_19($_0);
         break;
         case 'end':
-            $ret = $this->_19();
+            $ret = $this->_20();
         break;
         case 'failed_':
             list($_, $_0) = $node;
-            $ret = $this->_20($_0);
+            $ret = $this->_21($_0);
         break;
         default:
-            $ret = $this->_21();
+            $ret = $this->_22();
         break;
         }
 
@@ -174,9 +179,10 @@ $self = (object) array(
         extract($this->_env, EXTR_REFS);
         list($namespace, $name, $inits, $invoke, $definitions) = c(new process_input, $input);
         
-            list($self->program, $self->codes, $self->code_to_label) = c(new link_machine, $definitions);
+            list($self->program, $self->codes, $self->code_to_label, $self->returns) = c(new link_machine, $definitions);
         
-            return c($self->common = new generate_common, $this, $namespace, $name, $inits, $invoke);
+            $ret = c($self->common = new generate_common, $this, $namespace, $name, $inits, $invoke);
+            return $ret;
 
     }
 
@@ -190,15 +196,9 @@ protected function _2() { extract($this->_env, EXTR_REFS); $ret = "public functi
            "    \$_maxp = \$_p = 0;\n" .
            "    \$_expected = array();\n";
 
-    $gototable = "    Lgoto: switch (\$_addr) { ";
-
     foreach ($self->program as $addr => $instruction) {
         $ret .= "    L$addr: " . $this->_walk($instruction) . "\n";
-        $gototable .= "case $addr: goto L$addr; ";
     }
-
-    $gototable .= "}\n";
-    $ret .= $gototable;
 
     $ret .= "    Lend:\n" .
             "    list(\$ok, \$result) = array(!\$_fail, \$_value);\n" .
@@ -269,17 +269,25 @@ protected function _8($addr) { extract($this->_env, EXTR_REFS); $addr = $this->_
 }
 protected function _9($cond, $addr) { extract($this->_env, EXTR_REFS); return "if (" . $this->_walk($cond) . ") { " . $this->_walk(array("jump", $addr)) . " }";
 }
-protected function _10($n, $env) { extract($this->_env, EXTR_REFS); return "\$_value = \$this->_$n(" . $this->_walk($env) . ");";
+protected function _10($label, $addr) { extract($this->_env, EXTR_REFS); $ret = "return array(FALSE, NULL, NULL);";
+    $addr = $this->_walk($addr);
+    foreach ($self->returns[$label] as $to) {
+        $ret = "if ($addr === $to) { goto L$to; } else { $ret }";
+    }
+    return $ret;
+
 }
-protected function _11($v) { extract($this->_env, EXTR_REFS); return $this->_walk(array("phpize_", $v));
+protected function _11($n, $env) { extract($this->_env, EXTR_REFS); return "\$_value = \$this->_$n(" . $this->_walk($env) . ");";
 }
-protected function _12($v) { extract($this->_env, EXTR_REFS); return "!" . $this->_walk($v);
+protected function _12($v) { extract($this->_env, EXTR_REFS); return $this->_walk(array("phpize_", $v));
 }
-protected function _13($r) { extract($this->_env, EXTR_REFS); return "\$_{$r}";
+protected function _13($v) { extract($this->_env, EXTR_REFS); return "!" . $this->_walk($v);
 }
-protected function _14($r, $i) { extract($this->_env, EXTR_REFS); return "\$_{$r}[" . $this->_walk(array("phpize_", $i)) . "]";
+protected function _14($r) { extract($this->_env, EXTR_REFS); return "\$_{$r}";
 }
-protected function _15() { extract($this->_env, EXTR_REFS); return "\$_a = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", (string) substr(\$_s, 0, \$_p)); " .
+protected function _15($r, $i) { extract($this->_env, EXTR_REFS); return "\$_{$r}[" . $this->_walk(array("phpize_", $i)) . "]";
+}
+protected function _16() { extract($this->_env, EXTR_REFS); return "\$_a = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", (string) substr(\$_s, 0, \$_p)); " .
            "\$_b = 1; " .
            "if ((\$_c = strrpos(\$_a, \"\\n\")) !== FALSE) { " .
                "\$_b = substr_count(\$_a, \"\\n\") + 1; " .
@@ -289,7 +297,7 @@ protected function _15() { extract($this->_env, EXTR_REFS); return "\$_a = str_r
            "\$_value = array(\$_b, strlen(\$_a) + 1);";
 
 }
-protected function _16() { extract($this->_env, EXTR_REFS); return "\$_fail = TRUE; " .
+protected function _17() { extract($this->_env, EXTR_REFS); return "\$_fail = TRUE; " .
            "if (isset(\$_s[\$_p])) { " .
                "\$_fail = FALSE; " .
                "\$_value = \$_s[\$_p]; " .
@@ -299,7 +307,7 @@ protected function _16() { extract($this->_env, EXTR_REFS); return "\$_fail = TR
            "}";
 
 }
-protected function _17($s) { extract($this->_env, EXTR_REFS); $encapsed_s = '"' . $self->common->walk(array("format_", $s)) . '"';
+protected function _18($s) { extract($this->_env, EXTR_REFS); $encapsed_s = '"' . $self->common->walk(array("format_", $s)) . '"';
 
     return "\$_fail = TRUE; " .
            "if ((\$_a = substr(\$_s, \$_p, " . strlen($s) . ")) === " . $encapsed_s . ") { " .
@@ -311,7 +319,7 @@ protected function _17($s) { extract($this->_env, EXTR_REFS); $encapsed_s = '"' 
            "}";
 
 }
-protected function _18($match) { extract($this->_env, EXTR_REFS); $or = array();
+protected function _19($match) { extract($this->_env, EXTR_REFS); $or = array();
     $str = "";
 
     foreach ($match as $r) {
@@ -338,9 +346,9 @@ protected function _18($match) { extract($this->_env, EXTR_REFS); $or = array();
            "}";
 
 }
-protected function _19() { extract($this->_env, EXTR_REFS); return "goto Lend;";
+protected function _20() { extract($this->_env, EXTR_REFS); return "goto Lend;";
 }
-protected function _20($on) { extract($this->_env, EXTR_REFS); return "if (\$_p >= \$_maxp) { " .
+protected function _21($on) { extract($this->_env, EXTR_REFS); return "if (\$_p >= \$_maxp) { " .
                "if (\$_p > \$_maxp) { " .
                    "\$_maxp = \$_p; " .
                    "\$_expected = array(); " .
@@ -351,7 +359,7 @@ protected function _20($on) { extract($this->_env, EXTR_REFS); return "if (\$_p 
            "} ";
 
 }
-protected function _21() { extract($this->_env, EXTR_REFS); var_dump($this->_node());
+protected function _22() { extract($this->_env, EXTR_REFS); var_dump($this->_node());
     throw new InvalidArgumentException("What? What?? What???!");
         $ret .= ")";
 

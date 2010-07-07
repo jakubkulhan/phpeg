@@ -4,15 +4,14 @@
         "program" => array(),
         "codes" => array(),
         "code_to_label" => array(),
+        "returns" => array(),
         "common" => NULL,
     );
 }
 
 -invoke (input) {
     list($namespace, $name, $inits, $invoke, $definitions) = c(new process_input, $input);
-
-    list($self->program, $self->codes, $self->code_to_label) = c(new link_machine, $definitions);
-
+    list($self->program, $self->codes, $self->code_to_label, $self->returns) = c(new link_machine, $definitions);
     return c($self->common = new generate_common, $this, $namespace, $name, $inits, $invoke);
 }
 
@@ -28,15 +27,9 @@ parse_ {
            "    \$_maxp = \$_p = 0;\n" .
            "    \$_expected = array();\n";
 
-    $gototable = "    Lgoto: switch (\$_addr) { ";
-
     foreach ($self->program as $addr => $instruction) {
         $ret .= "    L$addr: " . WALK($instruction) . "\n";
-        $gototable .= "case $addr: goto L$addr; ";
     }
-
-    $gototable .= "}\n";
-    $ret .= $gototable;
 
     $ret .= "    Lend:\n" .
             "    list(\$ok, \$result) = array(!\$_fail, \$_value);\n" .
@@ -108,6 +101,15 @@ jump (addr) {
 }
 
 jumpif (cond, addr) -> "if (" . WALK($cond) . ") { " . WALK(array("jump", $addr)) . " }"
+
+return (label, addr) {
+    $ret = "return array(FALSE, NULL, NULL);";
+    $addr = WALK($addr);
+    foreach ($self->returns[$label] as $to) {
+        $ret = "if ($addr === $to) { goto L$to; } else { $ret }";
+    }
+    return $ret;
+}
 
 run (n, env) -> "\$_value = \$this->_$n(" . WALK($env) . ");"
 

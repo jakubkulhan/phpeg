@@ -27,6 +27,7 @@ class link_machine
         $this->_env = array();
 $self = (object) array(
         "labels" => array(),
+        "returns" => array(),
     );
 
         $this->_env = get_defined_vars();
@@ -137,6 +138,7 @@ $self = (object) array(
         
             foreach ($definitions as $label => $definition) {
                 $self->labels[$label] = count($ret);
+                $self->returns[$label] = array();
         
                 list($instructions, $newcodes) = c(new compile_machine, $definition);
         
@@ -153,11 +155,13 @@ $self = (object) array(
                 }
         
                 $instructions[] = array("pop", array("register", "stack"), array("register", "a"));
-                $instructions[] = array("jump", array("register", "a"));
+                $instructions[] = array("return", $label, array("register", "a"));
                 $ret = array_merge($ret, $instructions);
             }
         
-            return array($this->_walkeach($ret), $codes, $code_to_label);
+            $ret = $this->_walkeach($ret);
+        
+            return array($ret, $codes, $code_to_label, $self->returns);
 
     }
 
@@ -171,7 +175,9 @@ protected function _3($n, $env) { extract($this->_env, EXTR_REFS); return array(
 }
 protected function _4($offset) { extract($this->_env, EXTR_REFS); return array("value", $this->_index() + $offset);
 }
-protected function _5($label) { extract($this->_env, EXTR_REFS); return array("value", $self->labels[$label]);
+protected function _5($label) { extract($this->_env, EXTR_REFS); $self->returns[$label][] = $this->_index() + 1;
+    return array("value", $self->labels[$label]);
+
 }
 protected function _6() { extract($this->_env, EXTR_REFS); return $this->_node();
 }

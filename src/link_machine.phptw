@@ -1,6 +1,7 @@
 -init {
     $self = (object) array(
         "labels" => array(),
+        "returns" => array(),
     );
 }
 
@@ -26,6 +27,7 @@
 
     foreach ($definitions as $label => $definition) {
         $self->labels[$label] = count($ret);
+        $self->returns[$label] = array();
 
         list($instructions, $newcodes) = c(new compile_machine, $definition);
 
@@ -42,11 +44,13 @@
         }
 
         $instructions[] = array("pop", array("register", "stack"), array("register", "a"));
-        $instructions[] = array("jump", array("register", "a"));
+        $instructions[] = array("return", $label, array("register", "a"));
         $ret = array_merge($ret, $instructions);
     }
 
-    return array(WALKEACH($ret), $codes, $code_to_label);
+    $ret = WALKEACH($ret);
+
+    return array($ret, $codes, $code_to_label, $self->returns);
 }
 
 
@@ -60,6 +64,9 @@ run (n, env) -> array(NODETYPE(), $n, WALK($env))
 
 offset (offset) -> array("value", INDEX() + $offset)
 
-label (label) -> array("value", $self->labels[$label])
+label (label) {
+    $self->returns[$label][] = INDEX() + 1;
+    return array("value", $self->labels[$label]);
+}
 
 _ /* value, register, register_index, position, any, literal, range, not, end */ -> NODE()
