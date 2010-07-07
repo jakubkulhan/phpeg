@@ -2,3 +2,9 @@ list(expression, separator)
   = first:expression rest:(separator next:expression -> $next
                           )*
     -> array_merge(array($first), $rest)
+
+
+join(expression, separator)
+  = first:expression rest:(s:separator next:expression -> $s . $next
+                          )*
+    -> $first . implode("", $rest)

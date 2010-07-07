@@ -192,8 +192,8 @@ failed_ (on) {
                    "\$_maxp = \$_p; " .
                    "\$_expected = array(); " .
                "} " .
-               "if (!in_array(" . WALK(array("phpize_", $on)) . ", \$_expected)) { " .
-                   "\$_expected[] = " . WALK(array("phpize_", $on)) . "; " .
+               "if (!in_array(" . var_export($on, TRUE) . ", \$_expected)) { " .
+                   "\$_expected[] = " . var_export($on, TRUE) . "; " .
                "} " .
            "} ";
 }

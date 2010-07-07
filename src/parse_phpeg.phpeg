@@ -2,12 +2,12 @@
 -import . "common/id.phpeg"
 -import . "common/code.phpeg"
 -import . "common/whitespace.phpeg"
--import . "common/arguments.phpeg"
+-import . "common/parameters.phpeg"
 
 phpeg
   = __
-    declarations:( "-namespace" _ namespace:list(id, "\\") __
-                   -> array("namespace", implode("", $namespace))
+    declarations:( "-namespace" _ namespace:join(id, "\\") __
+                   -> array("namespace", $namespace)
 
                  / "-name" _ name:id __
                    -> array("name", $name)
@@ -15,14 +15,14 @@ phpeg
                  / "-init" __ code:code __
                    -> array("init", $code)
 
-                 / "-invoke" __ arguments:arguments? __ code:code __
-                   -> array("invoke", (array) $arguments, $code)
+                 / "-invoke" __ parameters:parameters? __ code:code __
+                   -> array("invoke", (array) $parameters, $code)
 
                  / "-import" _
-                   spec:( "."     -> TRUE
-                        / name:id -> $name
+                   spec:( "." _     -> TRUE
+                        / name:id _ -> $name
                         )?
-                   __ path:string __
+                   path:string __
                    -> array("import", $spec, $path)
                  )*
 
@@ -33,10 +33,12 @@ phpeg
     -> array("phpeg", array_merge($declarations, $definitions))
 
 macro
-  = name:id arguments:arguments __ "=" __ expression:expression __ -> array("macro", $name, $arguments, $expression)
+  = name:id parameters:parameters __ "=" __ expression:expression __
+    -> array("macro", $name, $parameters, $expression)
 
 rule
-  = name:id __ "=" __ expression:expression __ -> array("rule", $name, $expression)
+  = name:id __ "=" __ expression:expression __
+    -> array("rule", $name, $expression)
 
 expression
   = expressions:list(sequence, __ "/" __)
@@ -81,10 +83,8 @@ primary
   = importname:( name:id "." -> $name
                )?
     macroname:id
-    "(" __ first:expression rest:(__ "," __ next:expression -> $next
-                                 )*
-    __ ")" !(__ "=")
-    -> array("expand", $importname ? array($importname, $macroname) : $macroname, array_merge(array($first), $rest))
+    "(" __ arguments:list(expression, __ "," __)? __ ")" !(__ "=")
+    -> array("expand", $importname ? array($importname, $macroname) : $macroname, (array) $arguments)
 
   / importname:( name:id "." -> $name
                )?

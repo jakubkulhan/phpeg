@@ -116,7 +116,7 @@ class parse_phpeg {
                                 $_14 = $_15;
                                 $_13 = array(FALSE, NULL);
                                 if ($_14[0]) {
-                                    $_13 = array(TRUE, $this->_0(array('first' => &$_11[1], 'rest' => &$_12[1], 'next' => &$_16[1])));
+                                    $_13 = array(TRUE, $this->_0(array('first' => &$_11[1], 'rest' => &$_12[1], 's' => &$_15[1], 'next' => &$_16[1])));
                                 }
                                 if (!$_13[0]) { $this->_p = $_pos12; }
                                 else {
@@ -305,7 +305,7 @@ class parse_phpeg {
                     $_9 = $_10;
                     $_8 = array(FALSE, NULL);
                     if ($_9[0]) {
-                        $_8 = array(TRUE, $this->_5(array('declarations' => &$_3[1], 'arguments' => &$_12[1], 'code' => &$_14[1])));
+                        $_8 = array(TRUE, $this->_5(array('declarations' => &$_3[1], 'parameters' => &$_12[1], 'code' => &$_14[1])));
                     }
                     if (!$_8[0]) {
                         $this->_p = $_pos4;
@@ -343,21 +343,33 @@ class parse_phpeg {
                         $_14 = array(FALSE, NULL);
                         $_pos14 = $this->_p;
                         do {
-                            $_16 = array(FALSE, NULL);
-                            if (($_16_ = substr($this->_s, $this->_p, 1)) === ".") {
-                                $_16 = array(TRUE, $_16_);
-                                $this->_p += 1;
-                            } else {
-                                if ($this->_p >= $this->_maxp) {
-                                    if ($this->_p > $this->_maxp) {
-                                        $this->_maxp = $this->_p;
-                                        $this->_expected = array();
-                                    }
-                                    if (!in_array('"."', $this->_expected)) {
-                                        $this->_expected[] = '"."';
+                            do {
+                                $_17 = array(FALSE, NULL);
+                                if (($_17_ = substr($this->_s, $this->_p, 1)) === ".") {
+                                    $_17 = array(TRUE, $_17_);
+                                    $this->_p += 1;
+                                } else {
+                                    if ($this->_p >= $this->_maxp) {
+                                        if ($this->_p > $this->_maxp) {
+                                            $this->_maxp = $this->_p;
+                                            $this->_expected = array();
+                                        }
+                                        if (!in_array('"."', $this->_expected)) {
+                                            $this->_expected[] = '"."';
+                                        }
                                     }
                                 }
-                            }
+                                if (!$_17[0]) {
+                                    $_17 = array(FALSE, NULL);
+                                    break;
+                                }
+                                $_18 = $this->_parse_15();
+                                if (!$_18[0]) {
+                                    $_17 = array(FALSE, NULL);
+                                    break;
+                                }
+                            } while(0);
+                            $_16 = $_17;
                             $_15 = array(FALSE, NULL);
                             if ($_16[0]) {
                                 $_15 = array(TRUE, $this->_6(array('declarations' => &$_3[1], 'spec' => &$_13[1])));
@@ -368,10 +380,22 @@ class parse_phpeg {
                                 $_14 = $_15;
                                 break;
                             }
-                            $_17 = $this->_parse_11();
+                            do {
+                                $_18 = $this->_parse_11();
+                                if (!$_18[0]) {
+                                    $_18 = array(FALSE, NULL);
+                                    break;
+                                }
+                                $_19 = $this->_parse_15();
+                                if (!$_19[0]) {
+                                    $_18 = array(FALSE, NULL);
+                                    break;
+                                }
+                            } while(0);
+                            $_17 = $_18;
                             $_16 = array(FALSE, NULL);
                             if ($_17[0]) {
-                                $_16 = array(TRUE, $this->_7(array('declarations' => &$_3[1], 'spec' => &$_13[1], 'name' => &$_17[1])));
+                                $_16 = array(TRUE, $this->_7(array('declarations' => &$_3[1], 'spec' => &$_13[1], 'name' => &$_18[1])));
                             }
                             if (!$_16[0]) {
                                 $this->_p = $_pos14;
@@ -389,18 +413,13 @@ class parse_phpeg {
                             $_11 = array(FALSE, NULL);
                             break;
                         }
-                        $_14 = $this->_parse_14();
+                        $_14 = $this->_parse_9();
                         if (!$_14[0]) {
                             $_11 = array(FALSE, NULL);
                             break;
                         }
-                        $_15 = $this->_parse_9();
+                        $_15 = $this->_parse_14();
                         if (!$_15[0]) {
-                            $_11 = array(FALSE, NULL);
-                            break;
-                        }
-                        $_16 = $this->_parse_14();
-                        if (!$_16[0]) {
                             $_11 = array(FALSE, NULL);
                             break;
                         }
@@ -408,7 +427,7 @@ class parse_phpeg {
                     $_10 = $_11;
                     $_9 = array(FALSE, NULL);
                     if ($_10[0]) {
-                        $_9 = array(TRUE, $this->_8(array('declarations' => &$_3[1], 'spec' => &$_13[1], 'path' => &$_15[1])));
+                        $_9 = array(TRUE, $this->_8(array('declarations' => &$_3[1], 'spec' => &$_13[1], 'path' => &$_14[1])));
                     }
                     if (!$_9[0]) {
                         $this->_p = $_pos4;
@@ -543,7 +562,7 @@ class parse_phpeg {
         $_1 = $_2;
         $_0 = array(FALSE, NULL);
         if ($_1[0]) {
-            $_0 = array(TRUE, $this->_10(array('name' => &$_2[1], 'arguments' => &$_3[1], 'expression' => &$_7[1])));
+            $_0 = array(TRUE, $this->_10(array('name' => &$_2[1], 'parameters' => &$_3[1], 'expression' => &$_7[1])));
         }
         return $_0;
     }
@@ -1139,73 +1158,98 @@ class parse_phpeg {
                     $_3 = array(FALSE, NULL);
                     break;
                 }
-                $_7 = $this->_parse_3();
+                $_7 = array(TRUE, NULL);
+                $_pos7 = $this->_p;
+                do {
+                    $_10 = $this->_parse_3();
+                    if (!$_10[0]) {
+                        $_10 = array(FALSE, NULL);
+                        break;
+                    }
+                    $_11 = array(TRUE, array());
+                    do {
+                        $_pos11 = $this->_p;
+                        do {
+                            do {
+                                $_15 = $this->_parse_14();
+                                if (!$_15[0]) {
+                                    $_15 = array(FALSE, NULL);
+                                    break;
+                                }
+                                $_16 = array(FALSE, NULL);
+                                if (($_16_ = substr($this->_s, $this->_p, 1)) === ",") {
+                                    $_16 = array(TRUE, $_16_);
+                                    $this->_p += 1;
+                                } else {
+                                    if ($this->_p >= $this->_maxp) {
+                                        if ($this->_p > $this->_maxp) {
+                                            $this->_maxp = $this->_p;
+                                            $this->_expected = array();
+                                        }
+                                        if (!in_array('","', $this->_expected)) {
+                                            $this->_expected[] = '","';
+                                        }
+                                    }
+                                }
+                                if (!$_16[0]) {
+                                    $_15 = array(FALSE, NULL);
+                                    break;
+                                }
+                                $_17 = $this->_parse_14();
+                                if (!$_17[0]) {
+                                    $_15 = array(FALSE, NULL);
+                                    break;
+                                }
+                            } while(0);
+                            $_14 = $_15;
+                            if (!$_14[0]) {
+                                $_14 = array(FALSE, NULL);
+                                break;
+                            }
+                            $_15 = $this->_parse_3();
+                            if (!$_15[0]) {
+                                $_14 = array(FALSE, NULL);
+                                break;
+                            }
+                        } while(0);
+                        $_13 = $_14;
+                        $_12 = array(FALSE, NULL);
+                        if ($_13[0]) {
+                            $_12 = array(TRUE, $this->_28(array('first' => &$_10[1], 'rest' => &$_11[1], 'next' => &$_15[1])));
+                        }
+                        if (!$_12[0]) { $this->_p = $_pos11; }
+                        else {
+                            $_11[0] = TRUE;
+                            $_11[1][] = $_12[1];
+                        }
+                    } while ($_12[0]);
+                    if (!$_11[0]) {
+                        $_10 = array(FALSE, NULL);
+                        break;
+                    }
+                } while(0);
+                $_9 = $_10;
+                $_8 = array(FALSE, NULL);
+                if ($_9[0]) {
+                    $_8 = array(TRUE, $this->_29(array('first' => &$_10[1], 'rest' => &$_11[1])));
+                }
+                if (!$_8[0]) {
+                    $this->_p = $_pos7;
+                } else {
+                    $_7 = $_8;
+                }
                 if (!$_7[0]) {
                     $_3 = array(FALSE, NULL);
                     break;
                 }
-                $_8 = array(TRUE, array());
-                do {
-                    $_pos8 = $this->_p;
-                    do {
-                        $_11 = $this->_parse_14();
-                        if (!$_11[0]) {
-                            $_11 = array(FALSE, NULL);
-                            break;
-                        }
-                        $_12 = array(FALSE, NULL);
-                        if (($_12_ = substr($this->_s, $this->_p, 1)) === ",") {
-                            $_12 = array(TRUE, $_12_);
-                            $this->_p += 1;
-                        } else {
-                            if ($this->_p >= $this->_maxp) {
-                                if ($this->_p > $this->_maxp) {
-                                    $this->_maxp = $this->_p;
-                                    $this->_expected = array();
-                                }
-                                if (!in_array('","', $this->_expected)) {
-                                    $this->_expected[] = '","';
-                                }
-                            }
-                        }
-                        if (!$_12[0]) {
-                            $_11 = array(FALSE, NULL);
-                            break;
-                        }
-                        $_13 = $this->_parse_14();
-                        if (!$_13[0]) {
-                            $_11 = array(FALSE, NULL);
-                            break;
-                        }
-                        $_14 = $this->_parse_3();
-                        if (!$_14[0]) {
-                            $_11 = array(FALSE, NULL);
-                            break;
-                        }
-                    } while(0);
-                    $_10 = $_11;
-                    $_9 = array(FALSE, NULL);
-                    if ($_10[0]) {
-                        $_9 = array(TRUE, $this->_28(array('importname' => &$_3[1], 'macroname' => &$_4[1], 'first' => &$_7[1], 'rest' => &$_8[1], 'next' => &$_14[1])));
-                    }
-                    if (!$_9[0]) { $this->_p = $_pos8; }
-                    else {
-                        $_8[0] = TRUE;
-                        $_8[1][] = $_9[1];
-                    }
-                } while ($_9[0]);
+                $_8 = $this->_parse_14();
                 if (!$_8[0]) {
                     $_3 = array(FALSE, NULL);
                     break;
                 }
-                $_9 = $this->_parse_14();
-                if (!$_9[0]) {
-                    $_3 = array(FALSE, NULL);
-                    break;
-                }
-                $_10 = array(FALSE, NULL);
-                if (($_10_ = substr($this->_s, $this->_p, 1)) === ")") {
-                    $_10 = array(TRUE, $_10_);
+                $_9 = array(FALSE, NULL);
+                if (($_9_ = substr($this->_s, $this->_p, 1)) === ")") {
+                    $_9 = array(TRUE, $_9_);
                     $this->_p += 1;
                 } else {
                     if ($this->_p >= $this->_maxp) {
@@ -1218,20 +1262,20 @@ class parse_phpeg {
                         }
                     }
                 }
-                if (!$_10[0]) {
+                if (!$_9[0]) {
                     $_3 = array(FALSE, NULL);
                     break;
                 }
-                $_pos11 = $this->_p;
+                $_pos10 = $this->_p;
                 do {
-                    $_13 = $this->_parse_14();
-                    if (!$_13[0]) {
-                        $_13 = array(FALSE, NULL);
+                    $_12 = $this->_parse_14();
+                    if (!$_12[0]) {
+                        $_12 = array(FALSE, NULL);
                         break;
                     }
-                    $_14 = array(FALSE, NULL);
-                    if (($_14_ = substr($this->_s, $this->_p, 1)) === "=") {
-                        $_14 = array(TRUE, $_14_);
+                    $_13 = array(FALSE, NULL);
+                    if (($_13_ = substr($this->_s, $this->_p, 1)) === "=") {
+                        $_13 = array(TRUE, $_13_);
                         $this->_p += 1;
                     } else {
                         if ($this->_p >= $this->_maxp) {
@@ -1244,15 +1288,15 @@ class parse_phpeg {
                             }
                         }
                     }
-                    if (!$_14[0]) {
-                        $_13 = array(FALSE, NULL);
+                    if (!$_13[0]) {
+                        $_12 = array(FALSE, NULL);
                         break;
                     }
                 } while(0);
-                $_12 = $_13;
-                $_11 = array(!$_12[0], NULL);
-                $this->_p = $_pos11;
-                if (!$_11[0]) {
+                $_11 = $_12;
+                $_10 = array(!$_11[0], NULL);
+                $this->_p = $_pos10;
+                if (!$_10[0]) {
                     $_3 = array(FALSE, NULL);
                     break;
                 }
@@ -1260,7 +1304,7 @@ class parse_phpeg {
             $_2 = $_3;
             $_1 = array(FALSE, NULL);
             if ($_2[0]) {
-                $_1 = array(TRUE, $this->_29(array('importname' => &$_3[1], 'macroname' => &$_4[1], 'first' => &$_7[1], 'rest' => &$_8[1])));
+                $_1 = array(TRUE, $this->_30(array('importname' => &$_3[1], 'macroname' => &$_4[1], 'arguments' => &$_7[1])));
             }
             if (!$_1[0]) {
                 $this->_p = $_pos0;
@@ -1300,7 +1344,7 @@ class parse_phpeg {
                 $_6 = $_7;
                 $_5 = array(FALSE, NULL);
                 if ($_6[0]) {
-                    $_5 = array(TRUE, $this->_30(array('importname' => &$_4[1], 'name' => &$_7[1])));
+                    $_5 = array(TRUE, $this->_31(array('importname' => &$_4[1], 'name' => &$_7[1])));
                 }
                 if (!$_5[0]) {
                     $this->_p = $_pos4;
@@ -1385,7 +1429,7 @@ class parse_phpeg {
             $_3 = $_4;
             $_2 = array(FALSE, NULL);
             if ($_3[0]) {
-                $_2 = array(TRUE, $this->_31(array('importname' => &$_4[1], 'rulename' => &$_5[1])));
+                $_2 = array(TRUE, $this->_32(array('importname' => &$_4[1], 'rulename' => &$_5[1])));
             }
             if (!$_2[0]) {
                 $this->_p = $_pos0;
@@ -1451,7 +1495,7 @@ class parse_phpeg {
             $_4 = $_5;
             $_3 = array(FALSE, NULL);
             if ($_4[0]) {
-                $_3 = array(TRUE, $this->_32(array('expression' => &$_7[1])));
+                $_3 = array(TRUE, $this->_33(array('expression' => &$_7[1])));
             }
             if (!$_3[0]) {
                 $this->_p = $_pos0;
@@ -1462,7 +1506,7 @@ class parse_phpeg {
             $_5 = $this->_parse_9();
             $_4 = array(FALSE, NULL);
             if ($_5[0]) {
-                $_4 = array(TRUE, $this->_33(array('literal' => &$_5[1])));
+                $_4 = array(TRUE, $this->_34(array('literal' => &$_5[1])));
             }
             if (!$_4[0]) {
                 $this->_p = $_pos0;
@@ -1473,7 +1517,7 @@ class parse_phpeg {
             $_6 = $this->_parse_8();
             $_5 = array(FALSE, NULL);
             if ($_6[0]) {
-                $_5 = array(TRUE, $this->_34(array('range' => &$_6[1])));
+                $_5 = array(TRUE, $this->_35(array('range' => &$_6[1])));
             }
             if (!$_5[0]) {
                 $this->_p = $_pos0;
@@ -1498,7 +1542,7 @@ class parse_phpeg {
             }
             $_6 = array(FALSE, NULL);
             if ($_7[0]) {
-                $_6 = array(TRUE, $this->_35(array()));
+                $_6 = array(TRUE, $this->_36(array()));
             }
             if (!$_6[0]) {
                 $this->_p = $_pos0;
@@ -1614,7 +1658,7 @@ class parse_phpeg {
                     $_6 = $_8;
                     $_5 = array(FALSE, NULL);
                     if ($_6[0]) {
-                        $_5 = array(TRUE, $this->_36(array('matches' => &$_3[1], 'a' => &$_8[1], 'b' => &$_11[1])));
+                        $_5 = array(TRUE, $this->_37(array('matches' => &$_3[1], 'a' => &$_8[1], 'b' => &$_11[1])));
                     }
                     if (!$_5[0]) {
                         $this->_p = $_pos4;
@@ -1654,7 +1698,7 @@ class parse_phpeg {
                     $_7 = $_9;
                     $_6 = array(FALSE, NULL);
                     if ($_7[0]) {
-                        $_6 = array(TRUE, $this->_37(array('matches' => &$_3[1], 'c' => &$_9[1])));
+                        $_6 = array(TRUE, $this->_38(array('matches' => &$_3[1], 'c' => &$_9[1])));
                     }
                     if (!$_6[0]) {
                         $this->_p = $_pos4;
@@ -1696,7 +1740,7 @@ class parse_phpeg {
         $_1 = $_2;
         $_0 = array(FALSE, NULL);
         if ($_1[0]) {
-            $_0 = array(TRUE, $this->_38(array('matches' => &$_3[1])));
+            $_0 = array(TRUE, $this->_39(array('matches' => &$_3[1])));
         }
         return $_0;
     }
@@ -1790,7 +1834,7 @@ class parse_phpeg {
             $_2 = $_3;
             $_1 = array(FALSE, NULL);
             if ($_2[0]) {
-                $_1 = array(TRUE, $this->_39(array('value' => &$_4[1])));
+                $_1 = array(TRUE, $this->_40(array('value' => &$_4[1])));
             }
             if (!$_1[0]) {
                 $this->_p = $_pos0;
@@ -1884,7 +1928,7 @@ class parse_phpeg {
             $_3 = $_4;
             $_2 = array(FALSE, NULL);
             if ($_3[0]) {
-                $_2 = array(TRUE, $this->_40(array('value' => &$_5[1])));
+                $_2 = array(TRUE, $this->_41(array('value' => &$_5[1])));
             }
             if (!$_2[0]) {
                 $this->_p = $_pos0;
@@ -1970,7 +2014,7 @@ class parse_phpeg {
             }
             $_2 = array(FALSE, NULL);
             if ($_3[0]) {
-                $_2 = array(TRUE, $this->_41(array()));
+                $_2 = array(TRUE, $this->_42(array()));
             }
             if (!$_2[0]) {
                 $this->_p = $_pos0;
@@ -1995,7 +2039,7 @@ class parse_phpeg {
             }
             $_3 = array(FALSE, NULL);
             if ($_4[0]) {
-                $_3 = array(TRUE, $this->_42(array()));
+                $_3 = array(TRUE, $this->_43(array()));
             }
             if (!$_3[0]) {
                 $this->_p = $_pos0;
@@ -2020,7 +2064,7 @@ class parse_phpeg {
             }
             $_4 = array(FALSE, NULL);
             if ($_5[0]) {
-                $_4 = array(TRUE, $this->_43(array()));
+                $_4 = array(TRUE, $this->_44(array()));
             }
             if (!$_4[0]) {
                 $this->_p = $_pos0;
@@ -2045,7 +2089,7 @@ class parse_phpeg {
             }
             $_5 = array(FALSE, NULL);
             if ($_6[0]) {
-                $_5 = array(TRUE, $this->_44(array()));
+                $_5 = array(TRUE, $this->_45(array()));
             }
             if (!$_5[0]) {
                 $this->_p = $_pos0;
@@ -2070,7 +2114,7 @@ class parse_phpeg {
             }
             $_6 = array(FALSE, NULL);
             if ($_7[0]) {
-                $_6 = array(TRUE, $this->_45(array()));
+                $_6 = array(TRUE, $this->_46(array()));
             }
             if (!$_6[0]) {
                 $this->_p = $_pos0;
@@ -2095,7 +2139,7 @@ class parse_phpeg {
             }
             $_7 = array(FALSE, NULL);
             if ($_8[0]) {
-                $_7 = array(TRUE, $this->_46(array()));
+                $_7 = array(TRUE, $this->_47(array()));
             }
             if (!$_7[0]) {
                 $this->_p = $_pos0;
@@ -2120,7 +2164,7 @@ class parse_phpeg {
             }
             $_8 = array(FALSE, NULL);
             if ($_9[0]) {
-                $_8 = array(TRUE, $this->_47(array()));
+                $_8 = array(TRUE, $this->_48(array()));
             }
             if (!$_8[0]) {
                 $this->_p = $_pos0;
@@ -2190,7 +2234,7 @@ class parse_phpeg {
             $_10 = $_11;
             $_9 = array(FALSE, NULL);
             if ($_10[0]) {
-                $_9 = array(TRUE, $this->_48(array('a' => &$_12[1], 'b' => &$_13[1])));
+                $_9 = array(TRUE, $this->_49(array('a' => &$_12[1], 'b' => &$_13[1])));
             }
             if (!$_9[0]) {
                 $this->_p = $_pos0;
@@ -2348,7 +2392,7 @@ class parse_phpeg {
             $_2 = $_3;
             $_1 = array(FALSE, NULL);
             if ($_2[0]) {
-                $_1 = array(TRUE, $this->_49(array('code' => &$_5[1])));
+                $_1 = array(TRUE, $this->_50(array('code' => &$_5[1])));
             }
             if (!$_1[0]) {
                 $this->_p = $_pos0;
@@ -2423,16 +2467,11 @@ class parse_phpeg {
                     $_4 = array(FALSE, NULL);
                     break;
                 }
-                $_6 = $this->_parse_16();
-                if (!$_6[0]) {
-                    $_4 = array(FALSE, NULL);
-                    break;
-                }
             } while(0);
             $_3 = $_4;
             $_2 = array(FALSE, NULL);
             if ($_3[0]) {
-                $_2 = array(TRUE, $this->_50(array('code' => &$_5[1])));
+                $_2 = array(TRUE, $this->_51(array('code' => &$_5[1])));
             }
             if (!$_2[0]) {
                 $this->_p = $_pos0;
@@ -2518,7 +2557,7 @@ class parse_phpeg {
                 $_4 = $_7;
                 $_3 = array(FALSE, NULL);
                 if ($_4[0]) {
-                    $_3 = array(TRUE, $this->_51(array('inside' => &$_1[1], 'c' => &$_7[1])));
+                    $_3 = array(TRUE, $this->_52(array('inside' => &$_1[1], 'c' => &$_7[1])));
                 }
                 if (!$_3[0]) {
                     $this->_p = $_pos2;
@@ -2574,7 +2613,7 @@ class parse_phpeg {
                 $_5 = $_6;
                 $_4 = array(FALSE, NULL);
                 if ($_5[0]) {
-                    $_4 = array(TRUE, $this->_52(array('inside' => &$_1[1], 'i' => &$_7[1])));
+                    $_4 = array(TRUE, $this->_53(array('inside' => &$_1[1], 'i' => &$_7[1])));
                 }
                 if (!$_4[0]) {
                     $this->_p = $_pos2;
@@ -2591,7 +2630,7 @@ class parse_phpeg {
         } while ($_2[0]);
         $_0 = array(FALSE, NULL);
         if ($_1[0]) {
-            $_0 = array(TRUE, $this->_53(array('inside' => &$_1[1])));
+            $_0 = array(TRUE, $this->_54(array('inside' => &$_1[1])));
         }
         return $_0;
     }
@@ -3166,25 +3205,27 @@ class parse_phpeg {
                 $_2 = array(FALSE, NULL);
                 break;
             }
+            $_4 = array(TRUE, NULL);
+            $_pos4 = $this->_p;
             do {
-                $_6 = $this->_parse_11();
-                if (!$_6[0]) {
-                    $_6 = array(FALSE, NULL);
+                $_7 = $this->_parse_11();
+                if (!$_7[0]) {
+                    $_7 = array(FALSE, NULL);
                     break;
                 }
-                $_7 = array(TRUE, array());
+                $_8 = array(TRUE, array());
                 do {
-                    $_pos7 = $this->_p;
+                    $_pos8 = $this->_p;
                     do {
                         do {
-                            $_11 = $this->_parse_14();
-                            if (!$_11[0]) {
-                                $_11 = array(FALSE, NULL);
+                            $_12 = $this->_parse_14();
+                            if (!$_12[0]) {
+                                $_12 = array(FALSE, NULL);
                                 break;
                             }
-                            $_12 = array(FALSE, NULL);
-                            if (($_12_ = substr($this->_s, $this->_p, 1)) === ",") {
-                                $_12 = array(TRUE, $_12_);
+                            $_13 = array(FALSE, NULL);
+                            if (($_13_ = substr($this->_s, $this->_p, 1)) === ",") {
+                                $_13 = array(TRUE, $_13_);
                                 $this->_p += 1;
                             } else {
                                 if ($this->_p >= $this->_maxp) {
@@ -3197,47 +3238,52 @@ class parse_phpeg {
                                     }
                                 }
                             }
-                            if (!$_12[0]) {
-                                $_11 = array(FALSE, NULL);
+                            if (!$_13[0]) {
+                                $_12 = array(FALSE, NULL);
                                 break;
                             }
-                            $_13 = $this->_parse_14();
-                            if (!$_13[0]) {
-                                $_11 = array(FALSE, NULL);
+                            $_14 = $this->_parse_14();
+                            if (!$_14[0]) {
+                                $_12 = array(FALSE, NULL);
                                 break;
                             }
                         } while(0);
-                        $_10 = $_11;
-                        if (!$_10[0]) {
-                            $_10 = array(FALSE, NULL);
+                        $_11 = $_12;
+                        if (!$_11[0]) {
+                            $_11 = array(FALSE, NULL);
                             break;
                         }
-                        $_11 = $this->_parse_11();
-                        if (!$_11[0]) {
-                            $_10 = array(FALSE, NULL);
+                        $_12 = $this->_parse_11();
+                        if (!$_12[0]) {
+                            $_11 = array(FALSE, NULL);
                             break;
                         }
                     } while(0);
-                    $_9 = $_10;
-                    $_8 = array(FALSE, NULL);
-                    if ($_9[0]) {
-                        $_8 = array(TRUE, $this->_54(array('first' => &$_6[1], 'rest' => &$_7[1], 'next' => &$_11[1])));
+                    $_10 = $_11;
+                    $_9 = array(FALSE, NULL);
+                    if ($_10[0]) {
+                        $_9 = array(TRUE, $this->_55(array('first' => &$_7[1], 'rest' => &$_8[1], 'next' => &$_12[1])));
                     }
-                    if (!$_8[0]) { $this->_p = $_pos7; }
+                    if (!$_9[0]) { $this->_p = $_pos8; }
                     else {
-                        $_7[0] = TRUE;
-                        $_7[1][] = $_8[1];
+                        $_8[0] = TRUE;
+                        $_8[1][] = $_9[1];
                     }
-                } while ($_8[0]);
-                if (!$_7[0]) {
-                    $_6 = array(FALSE, NULL);
+                } while ($_9[0]);
+                if (!$_8[0]) {
+                    $_7 = array(FALSE, NULL);
                     break;
                 }
             } while(0);
-            $_5 = $_6;
-            $_4 = array(FALSE, NULL);
-            if ($_5[0]) {
-                $_4 = array(TRUE, $this->_55(array('first' => &$_6[1], 'rest' => &$_7[1])));
+            $_6 = $_7;
+            $_5 = array(FALSE, NULL);
+            if ($_6[0]) {
+                $_5 = array(TRUE, $this->_56(array('first' => &$_7[1], 'rest' => &$_8[1])));
+            }
+            if (!$_5[0]) {
+                $this->_p = $_pos4;
+            } else {
+                $_4 = $_5;
             }
             if (!$_4[0]) {
                 $_2 = array(FALSE, NULL);
@@ -3271,25 +3317,25 @@ class parse_phpeg {
         $_1 = $_2;
         $_0 = array(FALSE, NULL);
         if ($_1[0]) {
-            $_0 = array(TRUE, $this->_56(array('arguments' => &$_4[1])));
+            $_0 = array(TRUE, $this->_57(array('parameters' => &$_4[1])));
         }
         return $_0;
     }
     private function _0() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return $next;
+        return $s . $next;
     
     }
     
     private function _1() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array_merge(array($first), $rest);
+        return $first . implode("", $rest);
     
     }
     
     private function _2() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("namespace", implode("", $namespace));
+        return array("namespace", $namespace);
     
     }
     
@@ -3307,7 +3353,7 @@ class parse_phpeg {
     
     private function _5() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("invoke", (array) $arguments, $code);
+        return array("invoke", (array) $parameters, $code);
     
     }
     
@@ -3337,7 +3383,7 @@ class parse_phpeg {
     
     private function _10() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("macro", $name, $arguments, $expression);
+        return array("macro", $name, $parameters, $expression);
     
     }
     
@@ -3465,67 +3511,67 @@ class parse_phpeg {
     
     private function _29() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("expand", $importname ? array($importname, $macroname) : $macroname, array_merge(array($first), $rest));
+        return array_merge(array($first), $rest);
     
     }
     
     private function _30() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return $name;
+        return array("expand", $importname ? array($importname, $macroname) : $macroname, (array) $arguments);
     
     }
     
     private function _31() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("apply", $importname ? array($importname, $rulename) : $rulename);
+        return $name;
     
     }
     
     private function _32() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return $expression;
+        return array("apply", $importname ? array($importname, $rulename) : $rulename);
     
     }
     
     private function _33() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("literal", $literal);
+        return $expression;
     
     }
     
     private function _34() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("range", $range);
+        return array("literal", $literal);
     
     }
     
     private function _35() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("any");
+        return array("range", $range);
     
     }
     
     private function _36() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array(ord($a), ord($b));
+        return array("any");
     
     }
     
     private function _37() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return ord($c);
+        return array(ord($a), ord($b));
     
     }
     
     private function _38() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return $matches;
+        return ord($c);
     
     }
     
     private function _39() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return implode("", $value);
+        return $matches;
     
     }
     
@@ -3537,97 +3583,103 @@ class parse_phpeg {
     
     private function _41() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return "\n";
+        return implode("", $value);
     
     }
     
     private function _42() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return "\r";
+        return "\n";
     
     }
     
     private function _43() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return "\t";
+        return "\r";
     
     }
     
     private function _44() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return "\\";
+        return "\t";
     
     }
     
     private function _45() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return '"';
+        return "\\";
     
     }
     
     private function _46() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return "'";
+        return '"';
     
     }
     
     private function _47() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return ']';
+        return "'";
     
     }
     
     private function _48() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return chr(hexdec($a . $b));
+        return ']';
     
     }
     
     private function _49() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return ltrim($code);
+        return chr(hexdec($a . $b));
     
     }
     
     private function _50() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return "return " . trim($code) . ";";
+        return ltrim($code);
     
     }
     
     private function _51() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return $c;
+        return "return " . trim($code) . ";";
     
     }
     
     private function _52() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return "{" . $i . "}";
+        return $c;
     
     }
     
     private function _53() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return implode("", $inside);
+        return "{" . $i . "}";
     
     }
     
     private function _54() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return $next;
+        return implode("", $inside);
     
     }
     
     private function _55() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array_merge(array($first), $rest);
+        return $next;
     
     }
     
     private function _56() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return $arguments;
+        return array_merge(array($first), $rest);
+    
+    }
+    
+    private function _57() {
+        extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
+        return (array) $parameters;
     
     }
 }

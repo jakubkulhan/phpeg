@@ -1,7 +1,0 @@
--import . "list.phpeg"
--import . "whitespace.phpeg"
--import . "id.phpeg"
-
-arguments
-  = "(" __ arguments:list(id, __ "," __) __ ")"
-    -> $arguments

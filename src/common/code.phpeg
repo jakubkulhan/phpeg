@@ -2,7 +2,7 @@
 
 code
   = ("->" __)? "{" code:insidebraces "}" -> ltrim($code)
-  / "->" code:(!eol .)* eol              -> "return " . trim($code) . ";"
+  / "->" code:(!eol .)*                  -> "return " . trim($code) . ";"
 
 insidebraces
   = inside:( !"{" !"}" c:.          -> $c

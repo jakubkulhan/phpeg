@@ -178,11 +178,8 @@ $self = (object) array(
         /*$this->_init();*/
         extract($this->_env, EXTR_REFS);
         list($namespace, $name, $inits, $invoke, $definitions) = c(new process_input, $input);
-        
             list($self->program, $self->codes, $self->code_to_label, $self->returns) = c(new link_machine, $definitions);
-        
-            $ret = c($self->common = new generate_common, $this, $namespace, $name, $inits, $invoke);
-            return $ret;
+            return c($self->common = new generate_common, $this, $namespace, $name, $inits, $invoke);
 
     }
 
@@ -353,8 +350,8 @@ protected function _21($on) { extract($this->_env, EXTR_REFS); return "if (\$_p 
                    "\$_maxp = \$_p; " .
                    "\$_expected = array(); " .
                "} " .
-               "if (!in_array(" . $this->_walk(array("phpize_", $on)) . ", \$_expected)) { " .
-                   "\$_expected[] = " . $this->_walk(array("phpize_", $on)) . "; " .
+               "if (!in_array(" . var_export($on, TRUE) . ", \$_expected)) { " .
+                   "\$_expected[] = " . var_export($on, TRUE) . "; " .
                "} " .
            "} ";
 

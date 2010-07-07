@@ -1,14 +1,13 @@
 -import . "common/list.phpeg"
--import . "common/arguments.phpeg"
+-import . "common/parameters.phpeg"
 -import . "common/id.phpeg"
 -import . "common/whitespace.phpeg"
 -import . "common/code.phpeg"
 
 treewalker
   = __
-    declarations:( "-namespace" _ namespace:( separator:"\\"? part:id -> $separator . $part
-                                            )+ __
-                   -> array("namespace", implode("", $namespace))
+    declarations:( "-namespace" _ namespace:join(id, "\\") __
+                   -> array("namespace", $namespace)
 
                  / "-name" _ name:id __
                    -> array("name", $name)
@@ -16,8 +15,8 @@ treewalker
                  / "-init" __ code:code __
                    -> array("init", $code)
 
-                 / "-invoke" __ arguments:arguments? __ code:code __
-                   -> array("invoke", $arguments, $code)
+                 / "-invoke" __ parameters:parameters? __ code:code __
+                   -> array("invoke", $parameters, $code)
 
                  )*
     definitions:( nodematcher
@@ -29,5 +28,5 @@ nodematcher
   = match:( "_" -> TRUE
           / list(id, __ "," __)
           )
-    __ arguments:arguments? __ code:code __
-    -> array("matcher", $match, (array) $arguments, $code)
+    __ parameters:parameters? __ code:code __
+    -> array("matcher", $match, (array) $parameters, $code)

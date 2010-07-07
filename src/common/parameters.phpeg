@@ -1,0 +1,7 @@
+-import . "list.phpeg"
+-import . "whitespace.phpeg"
+-import . "id.phpeg"
+
+parameters
+  = "(" __ parameters:list(id, __ "," __)? __ ")"
+    -> (array) $parameters

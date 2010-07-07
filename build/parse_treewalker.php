@@ -78,53 +78,62 @@ class parse_treewalker {
                             $_7 = array(FALSE, NULL);
                             break;
                         }
-                        $_9 = array(FALSE, array());
                         do {
-                            $_pos9 = $this->_p;
+                            $_11 = $this->_parse_6();
+                            if (!$_11[0]) {
+                                $_11 = array(FALSE, NULL);
+                                break;
+                            }
+                            $_12 = array(TRUE, array());
                             do {
-                                $_12 = array(TRUE, NULL);
                                 $_pos12 = $this->_p;
-                                $_13 = array(FALSE, NULL);
-                                if (($_13_ = substr($this->_s, $this->_p, 1)) === "\\") {
-                                    $_13 = array(TRUE, $_13_);
-                                    $this->_p += 1;
-                                } else {
-                                    if ($this->_p >= $this->_maxp) {
-                                        if ($this->_p > $this->_maxp) {
-                                            $this->_maxp = $this->_p;
-                                            $this->_expected = array();
-                                        }
-                                        if (!in_array('"\\\\"', $this->_expected)) {
-                                            $this->_expected[] = '"\\\\"';
+                                do {
+                                    $_15 = array(FALSE, NULL);
+                                    if (($_15_ = substr($this->_s, $this->_p, 1)) === "\\") {
+                                        $_15 = array(TRUE, $_15_);
+                                        $this->_p += 1;
+                                    } else {
+                                        if ($this->_p >= $this->_maxp) {
+                                            if ($this->_p > $this->_maxp) {
+                                                $this->_maxp = $this->_p;
+                                                $this->_expected = array();
+                                            }
+                                            if (!in_array('"\\\\"', $this->_expected)) {
+                                                $this->_expected[] = '"\\\\"';
+                                            }
                                         }
                                     }
+                                    if (!$_15[0]) {
+                                        $_15 = array(FALSE, NULL);
+                                        break;
+                                    }
+                                    $_16 = $this->_parse_6();
+                                    if (!$_16[0]) {
+                                        $_15 = array(FALSE, NULL);
+                                        break;
+                                    }
+                                } while(0);
+                                $_14 = $_15;
+                                $_13 = array(FALSE, NULL);
+                                if ($_14[0]) {
+                                    $_13 = array(TRUE, $this->_0(array('first' => &$_11[1], 'rest' => &$_12[1], 's' => &$_15[1], 'next' => &$_16[1])));
                                 }
-                                if (!$_13[0]) {
-                                    $this->_p = $_pos12;
-                                } else {
-                                    $_12 = $_13;
+                                if (!$_13[0]) { $this->_p = $_pos12; }
+                                else {
+                                    $_12[0] = TRUE;
+                                    $_12[1][] = $_13[1];
                                 }
-                                if (!$_12[0]) {
-                                    $_12 = array(FALSE, NULL);
-                                    break;
-                                }
-                                $_13 = $this->_parse_6();
-                                if (!$_13[0]) {
-                                    $_12 = array(FALSE, NULL);
-                                    break;
-                                }
-                            } while(0);
-                            $_11 = $_12;
-                            $_10 = array(FALSE, NULL);
-                            if ($_11[0]) {
-                                $_10 = array(TRUE, $this->_0(array('declarations' => &$_3[1], 'namespace' => &$_9[1], 'separator' => &$_12[1], 'part' => &$_13[1])));
+                            } while ($_13[0]);
+                            if (!$_12[0]) {
+                                $_11 = array(FALSE, NULL);
+                                break;
                             }
-                            if (!$_10[0]) { $this->_p = $_pos9; }
-                            else {
-                                $_9[0] = TRUE;
-                                $_9[1][] = $_10[1];
-                            }
-                        } while ($_10[0]);
+                        } while(0);
+                        $_10 = $_11;
+                        $_9 = array(FALSE, NULL);
+                        if ($_10[0]) {
+                            $_9 = array(TRUE, $this->_1(array('first' => &$_11[1], 'rest' => &$_12[1])));
+                        }
                         if (!$_9[0]) {
                             $_7 = array(FALSE, NULL);
                             break;
@@ -138,7 +147,7 @@ class parse_treewalker {
                     $_6 = $_7;
                     $_5 = array(FALSE, NULL);
                     if ($_6[0]) {
-                        $_5 = array(TRUE, $this->_1(array('declarations' => &$_3[1], 'namespace' => &$_9[1])));
+                        $_5 = array(TRUE, $this->_2(array('declarations' => &$_3[1], 'namespace' => &$_9[1])));
                     }
                     if (!$_5[0]) {
                         $this->_p = $_pos4;
@@ -185,7 +194,7 @@ class parse_treewalker {
                     $_7 = $_8;
                     $_6 = array(FALSE, NULL);
                     if ($_7[0]) {
-                        $_6 = array(TRUE, $this->_2(array('declarations' => &$_3[1], 'name' => &$_10[1])));
+                        $_6 = array(TRUE, $this->_3(array('declarations' => &$_3[1], 'name' => &$_10[1])));
                     }
                     if (!$_6[0]) {
                         $this->_p = $_pos4;
@@ -232,7 +241,7 @@ class parse_treewalker {
                     $_8 = $_9;
                     $_7 = array(FALSE, NULL);
                     if ($_8[0]) {
-                        $_7 = array(TRUE, $this->_3(array('declarations' => &$_3[1], 'code' => &$_11[1])));
+                        $_7 = array(TRUE, $this->_4(array('declarations' => &$_3[1], 'code' => &$_11[1])));
                     }
                     if (!$_7[0]) {
                         $this->_p = $_pos4;
@@ -296,7 +305,7 @@ class parse_treewalker {
                     $_9 = $_10;
                     $_8 = array(FALSE, NULL);
                     if ($_9[0]) {
-                        $_8 = array(TRUE, $this->_4(array('declarations' => &$_3[1], 'arguments' => &$_12[1], 'code' => &$_14[1])));
+                        $_8 = array(TRUE, $this->_5(array('declarations' => &$_3[1], 'parameters' => &$_12[1], 'code' => &$_14[1])));
                     }
                     if (!$_8[0]) {
                         $this->_p = $_pos4;
@@ -355,7 +364,7 @@ class parse_treewalker {
         $_1 = $_2;
         $_0 = array(FALSE, NULL);
         if ($_1[0]) {
-            $_0 = array(TRUE, $this->_5(array('declarations' => &$_3[1], 'definitions' => &$_4[1])));
+            $_0 = array(TRUE, $this->_6(array('declarations' => &$_3[1], 'definitions' => &$_4[1])));
         }
         return $_0;
     }
@@ -381,7 +390,7 @@ class parse_treewalker {
                 }
                 $_3 = array(FALSE, NULL);
                 if ($_4[0]) {
-                    $_3 = array(TRUE, $this->_6(array('match' => &$_2[1])));
+                    $_3 = array(TRUE, $this->_7(array('match' => &$_2[1])));
                 }
                 if (!$_3[0]) {
                     $this->_p = $_pos2;
@@ -444,7 +453,7 @@ class parse_treewalker {
                         $_9 = $_10;
                         $_8 = array(FALSE, NULL);
                         if ($_9[0]) {
-                            $_8 = array(TRUE, $this->_7(array('first' => &$_6[1], 'rest' => &$_7[1], 'next' => &$_11[1])));
+                            $_8 = array(TRUE, $this->_8(array('first' => &$_6[1], 'rest' => &$_7[1], 'next' => &$_11[1])));
                         }
                         if (!$_8[0]) { $this->_p = $_pos7; }
                         else {
@@ -460,7 +469,7 @@ class parse_treewalker {
                 $_5 = $_6;
                 $_4 = array(FALSE, NULL);
                 if ($_5[0]) {
-                    $_4 = array(TRUE, $this->_8(array('first' => &$_6[1], 'rest' => &$_7[1])));
+                    $_4 = array(TRUE, $this->_9(array('first' => &$_6[1], 'rest' => &$_7[1])));
                 }
                 if (!$_4[0]) {
                     $this->_p = $_pos2;
@@ -509,7 +518,7 @@ class parse_treewalker {
         $_1 = $_2;
         $_0 = array(FALSE, NULL);
         if ($_1[0]) {
-            $_0 = array(TRUE, $this->_9(array('match' => &$_2[1], 'arguments' => &$_4[1], 'code' => &$_6[1])));
+            $_0 = array(TRUE, $this->_10(array('match' => &$_2[1], 'parameters' => &$_4[1], 'code' => &$_6[1])));
         }
         return $_0;
     }
@@ -539,25 +548,27 @@ class parse_treewalker {
                 $_2 = array(FALSE, NULL);
                 break;
             }
+            $_4 = array(TRUE, NULL);
+            $_pos4 = $this->_p;
             do {
-                $_6 = $this->_parse_6();
-                if (!$_6[0]) {
-                    $_6 = array(FALSE, NULL);
+                $_7 = $this->_parse_6();
+                if (!$_7[0]) {
+                    $_7 = array(FALSE, NULL);
                     break;
                 }
-                $_7 = array(TRUE, array());
+                $_8 = array(TRUE, array());
                 do {
-                    $_pos7 = $this->_p;
+                    $_pos8 = $this->_p;
                     do {
                         do {
-                            $_11 = $this->_parse_3();
-                            if (!$_11[0]) {
-                                $_11 = array(FALSE, NULL);
+                            $_12 = $this->_parse_3();
+                            if (!$_12[0]) {
+                                $_12 = array(FALSE, NULL);
                                 break;
                             }
-                            $_12 = array(FALSE, NULL);
-                            if (($_12_ = substr($this->_s, $this->_p, 1)) === ",") {
-                                $_12 = array(TRUE, $_12_);
+                            $_13 = array(FALSE, NULL);
+                            if (($_13_ = substr($this->_s, $this->_p, 1)) === ",") {
+                                $_13 = array(TRUE, $_13_);
                                 $this->_p += 1;
                             } else {
                                 if ($this->_p >= $this->_maxp) {
@@ -570,47 +581,52 @@ class parse_treewalker {
                                     }
                                 }
                             }
-                            if (!$_12[0]) {
-                                $_11 = array(FALSE, NULL);
+                            if (!$_13[0]) {
+                                $_12 = array(FALSE, NULL);
                                 break;
                             }
-                            $_13 = $this->_parse_3();
-                            if (!$_13[0]) {
-                                $_11 = array(FALSE, NULL);
+                            $_14 = $this->_parse_3();
+                            if (!$_14[0]) {
+                                $_12 = array(FALSE, NULL);
                                 break;
                             }
                         } while(0);
-                        $_10 = $_11;
-                        if (!$_10[0]) {
-                            $_10 = array(FALSE, NULL);
+                        $_11 = $_12;
+                        if (!$_11[0]) {
+                            $_11 = array(FALSE, NULL);
                             break;
                         }
-                        $_11 = $this->_parse_6();
-                        if (!$_11[0]) {
-                            $_10 = array(FALSE, NULL);
+                        $_12 = $this->_parse_6();
+                        if (!$_12[0]) {
+                            $_11 = array(FALSE, NULL);
                             break;
                         }
                     } while(0);
-                    $_9 = $_10;
-                    $_8 = array(FALSE, NULL);
-                    if ($_9[0]) {
-                        $_8 = array(TRUE, $this->_10(array('first' => &$_6[1], 'rest' => &$_7[1], 'next' => &$_11[1])));
+                    $_10 = $_11;
+                    $_9 = array(FALSE, NULL);
+                    if ($_10[0]) {
+                        $_9 = array(TRUE, $this->_11(array('first' => &$_7[1], 'rest' => &$_8[1], 'next' => &$_12[1])));
                     }
-                    if (!$_8[0]) { $this->_p = $_pos7; }
+                    if (!$_9[0]) { $this->_p = $_pos8; }
                     else {
-                        $_7[0] = TRUE;
-                        $_7[1][] = $_8[1];
+                        $_8[0] = TRUE;
+                        $_8[1][] = $_9[1];
                     }
-                } while ($_8[0]);
-                if (!$_7[0]) {
-                    $_6 = array(FALSE, NULL);
+                } while ($_9[0]);
+                if (!$_8[0]) {
+                    $_7 = array(FALSE, NULL);
                     break;
                 }
             } while(0);
-            $_5 = $_6;
-            $_4 = array(FALSE, NULL);
-            if ($_5[0]) {
-                $_4 = array(TRUE, $this->_11(array('first' => &$_6[1], 'rest' => &$_7[1])));
+            $_6 = $_7;
+            $_5 = array(FALSE, NULL);
+            if ($_6[0]) {
+                $_5 = array(TRUE, $this->_12(array('first' => &$_7[1], 'rest' => &$_8[1])));
+            }
+            if (!$_5[0]) {
+                $this->_p = $_pos4;
+            } else {
+                $_4 = $_5;
             }
             if (!$_4[0]) {
                 $_2 = array(FALSE, NULL);
@@ -644,7 +660,7 @@ class parse_treewalker {
         $_1 = $_2;
         $_0 = array(FALSE, NULL);
         if ($_1[0]) {
-            $_0 = array(TRUE, $this->_12(array('arguments' => &$_4[1])));
+            $_0 = array(TRUE, $this->_13(array('parameters' => &$_4[1])));
         }
         return $_0;
     }
@@ -1340,7 +1356,7 @@ class parse_treewalker {
             $_2 = $_3;
             $_1 = array(FALSE, NULL);
             if ($_2[0]) {
-                $_1 = array(TRUE, $this->_13(array('code' => &$_5[1])));
+                $_1 = array(TRUE, $this->_14(array('code' => &$_5[1])));
             }
             if (!$_1[0]) {
                 $this->_p = $_pos0;
@@ -1415,16 +1431,11 @@ class parse_treewalker {
                     $_4 = array(FALSE, NULL);
                     break;
                 }
-                $_6 = $this->_parse_5();
-                if (!$_6[0]) {
-                    $_4 = array(FALSE, NULL);
-                    break;
-                }
             } while(0);
             $_3 = $_4;
             $_2 = array(FALSE, NULL);
             if ($_3[0]) {
-                $_2 = array(TRUE, $this->_14(array('code' => &$_5[1])));
+                $_2 = array(TRUE, $this->_15(array('code' => &$_5[1])));
             }
             if (!$_2[0]) {
                 $this->_p = $_pos0;
@@ -1510,7 +1521,7 @@ class parse_treewalker {
                 $_4 = $_7;
                 $_3 = array(FALSE, NULL);
                 if ($_4[0]) {
-                    $_3 = array(TRUE, $this->_15(array('inside' => &$_1[1], 'c' => &$_7[1])));
+                    $_3 = array(TRUE, $this->_16(array('inside' => &$_1[1], 'c' => &$_7[1])));
                 }
                 if (!$_3[0]) {
                     $this->_p = $_pos2;
@@ -1566,7 +1577,7 @@ class parse_treewalker {
                 $_5 = $_6;
                 $_4 = array(FALSE, NULL);
                 if ($_5[0]) {
-                    $_4 = array(TRUE, $this->_16(array('inside' => &$_1[1], 'i' => &$_7[1])));
+                    $_4 = array(TRUE, $this->_17(array('inside' => &$_1[1], 'i' => &$_7[1])));
                 }
                 if (!$_4[0]) {
                     $this->_p = $_pos2;
@@ -1583,113 +1594,119 @@ class parse_treewalker {
         } while ($_2[0]);
         $_0 = array(FALSE, NULL);
         if ($_1[0]) {
-            $_0 = array(TRUE, $this->_17(array('inside' => &$_1[1])));
+            $_0 = array(TRUE, $this->_18(array('inside' => &$_1[1])));
         }
         return $_0;
     }
     private function _0() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return $separator . $part;
+        return $s . $next;
     
     }
     
     private function _1() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("namespace", implode("", $namespace));
+        return $first . implode("", $rest);
     
     }
     
     private function _2() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("name", $name);
+        return array("namespace", $namespace);
     
     }
     
     private function _3() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("init", $code);
+        return array("name", $name);
     
     }
     
     private function _4() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("invoke", $arguments, $code);
+        return array("init", $code);
     
     }
     
     private function _5() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("treewalker", array_merge($declarations, $definitions));
+        return array("invoke", $parameters, $code);
     
     }
     
     private function _6() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return TRUE;
+        return array("treewalker", array_merge($declarations, $definitions));
     
     }
     
     private function _7() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return $next;
+        return TRUE;
     
     }
     
     private function _8() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array_merge(array($first), $rest);
+        return $next;
     
     }
     
     private function _9() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array("matcher", $match, (array) $arguments, $code);
+        return array_merge(array($first), $rest);
     
     }
     
     private function _10() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return $next;
+        return array("matcher", $match, (array) $parameters, $code);
     
     }
     
     private function _11() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return array_merge(array($first), $rest);
+        return $next;
     
     }
     
     private function _12() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return $arguments;
+        return array_merge(array($first), $rest);
     
     }
     
     private function _13() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return ltrim($code);
+        return (array) $parameters;
     
     }
     
     private function _14() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return "return " . trim($code) . ";";
+        return ltrim($code);
     
     }
     
     private function _15() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return $c;
+        return "return " . trim($code) . ";";
     
     }
     
     private function _16() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
-        return "{" . $i . "}";
+        return $c;
     
     }
     
     private function _17() {
+        extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
+        return "{" . $i . "}";
+    
+    }
+    
+    private function _18() {
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return implode("", $inside);
     
