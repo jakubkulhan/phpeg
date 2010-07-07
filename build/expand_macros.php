@@ -161,9 +161,16 @@ protected function _7($name, $arguments) { extract($this->_env, EXTR_REFS); $par
         $realarguments[] = array("quarantine", $this->_walk($argument));
     }
 
-    $self->replaces[] = array_combine($parameters, $realarguments);
+    if (empty($parameters)) {
+        $self->replaces[] = array();
+    } else {
+        $self->replaces[] = array_combine($parameters, $realarguments);
+    }
+
     $ret = $this->_walk($self->macros[$name][3]);
+
     array_pop($self->replaces);
+
     return array("quarantine", $ret);
 
 }

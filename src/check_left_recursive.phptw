@@ -64,7 +64,7 @@ optional, zero_or_more, one_or_more (node) -> WALK($node)
 
 bind (varname, node) -> WALK($node)
 
-expand (name, arguments) -> call_user_func_array("array_merge", WALKEACH($arguments))
+expand (name, arguments) -> empty($arguments) ? array() : call_user_func_array("array_merge", WALKEACH($arguments))
 
 apply (name) -> is_string($name) ? array($name) : array()
 

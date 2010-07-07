@@ -180,7 +180,7 @@ protected function _3($node) { extract($this->_env, EXTR_REFS); return $this->_w
 }
 protected function _4($varname, $node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
 }
-protected function _5($name, $arguments) { extract($this->_env, EXTR_REFS); $self->recursion[$self->current][] = $name;
+protected function _5($name, $arguments) { extract($this->_env, EXTR_REFS); $self->recursion[$self->current][] = implode('.', (array) $name);
     $this->_walkeach($arguments);
 
 }

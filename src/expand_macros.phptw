@@ -44,8 +44,15 @@ expand (name, arguments) {
         $realarguments[] = array("quarantine", WALK($argument));
     }
 
-    $self->replaces[] = array_combine($parameters, $realarguments);
+    if (empty($parameters)) {
+        $self->replaces[] = array();
+    } else {
+        $self->replaces[] = array_combine($parameters, $realarguments);
+    }
+
     $ret = WALK($self->macros[$name][3]);
+
     array_pop($self->replaces);
+
     return array("quarantine", $ret);
 }

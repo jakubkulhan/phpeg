@@ -182,7 +182,7 @@ protected function _4($node) { extract($this->_env, EXTR_REFS); return $this->_w
 }
 protected function _5($varname, $node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
 }
-protected function _6($name, $arguments) { extract($this->_env, EXTR_REFS); return call_user_func_array("array_merge", $this->_walkeach($arguments));
+protected function _6($name, $arguments) { extract($this->_env, EXTR_REFS); return empty($arguments) ? array() : call_user_func_array("array_merge", $this->_walkeach($arguments));
 }
 protected function _7($name) { extract($this->_env, EXTR_REFS); return is_string($name) ? array($name) : array();
 }

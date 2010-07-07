@@ -68,7 +68,7 @@ and, not, optional, zero_or_more, one_or_more (node) -> WALK($node)
 bind (varname, node) -> WALK($node)
 
 expand (name, arguments) {
-    $self->recursion[$self->current][] = $name;
+    $self->recursion[$self->current][] = implode('.', (array) $name);
     WALKEACH($arguments);
 }
 
