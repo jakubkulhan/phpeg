@@ -28,6 +28,7 @@ class expand_macros
 $self = (object) array(
         "macros" => array(),
         "replaces" => array(),
+        "environments" => array(),
     );
 
         $this->_env = get_defined_vars();
@@ -81,14 +82,18 @@ $self = (object) array(
             list($_, $_0, $_1) = $node;
             $ret = $this->_0($_0, $_1);
         break;
+        case 'environment_':
+            list($_, $_0, $_1) = $node;
+            $ret = $this->_1($_0, $_1);
+        break;
         case 'all':
         case 'first':
             list($_, $_0) = $node;
-            $ret = $this->_1($_0);
+            $ret = $this->_2($_0);
         break;
         case 'action':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_2($_0, $_1);
+            $ret = $this->_3($_0, $_1);
         break;
         case 'and':
         case 'not':
@@ -97,11 +102,11 @@ $self = (object) array(
         case 'one_or_more':
         case 'quarantine':
             list($_, $_0) = $node;
-            $ret = $this->_3($_0);
+            $ret = $this->_4($_0);
         break;
         case 'bind':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_4($_0, $_1);
+            $ret = $this->_5($_0, $_1);
         break;
         case 'apply':
             list($_, $_0) = $node;
@@ -112,7 +117,7 @@ $self = (object) array(
             $ret = $this->_7($_0, $_1);
         break;
         default:
-            $ret = $this->_5();
+            $ret = $this->_8();
         break;
         }
 
@@ -120,26 +125,42 @@ $self = (object) array(
         return $ret;
     }
 
-    public function __invoke($definitions)
+    public function __invoke($provided, $definitions)
     {
         /*$this->_init();*/
         extract($this->_env, EXTR_REFS);
-        $self->macros = c(new select_nodes, array("macro"), $definitions);
+        foreach ($provided as $file => $about) {
+                if (!$about->init) {
+                    continue;
+                }
+        
+                foreach ($about->reindex as $k => $r) {
+                    $self->environments[$r] = $file;
+                }
+            }
+        
+            $self->macros = c(new select_nodes, array("macro"), $definitions);
+        
             return $this->_walkeach(c(new select_nodes, array("rule"), $definitions));
 
     }
 
-protected function _0($name, $node) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $name, $this->_walk($node));
+protected function _0($name, $node) { extract($this->_env, EXTR_REFS); return $this->_walk(array("environment_", $this->_index(), $node));
 }
-protected function _1($nodes) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walkeach($nodes));
+protected function _1($index, $node) { extract($this->_env, EXTR_REFS); if (isset($self->environments[$index])) {
+        return array("environment", $self->environments[$index], $this->_walk($node));
+    } else {
+        return array("empty_environment", $this->_walk($node));
+    }
+
 }
-protected function _2($node, $code) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk($node), $code);
+protected function _2($nodes) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walkeach($nodes));
 }
-protected function _3($node) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk($node));
+protected function _3($node, $code) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk($node), $code);
 }
-protected function _4($varname, $node) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $varname, $this->_walk($node));
+protected function _4($node) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk($node));
 }
-protected function _5() { extract($this->_env, EXTR_REFS); return $this->_node();
+protected function _5($varname, $node) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $varname, $this->_walk($node));
 }
 protected function _6($name) { extract($this->_env, EXTR_REFS); if (($replaces = end($self->replaces)) && isset($replaces[$name])) {
         return $replaces[$name];
@@ -158,7 +179,8 @@ protected function _7($name, $arguments) { extract($this->_env, EXTR_REFS); $par
     $realarguments = array();
 
     foreach ($arguments as $argument) {
-        $realarguments[] = array("quarantine", $this->_walk($argument));
+        $realarguments[] =
+            array("quarantine", $this->_walk(array("environment_", $this->_index(), $argument)));
     }
 
     if (empty($parameters)) {
@@ -171,8 +193,10 @@ protected function _7($name, $arguments) { extract($this->_env, EXTR_REFS); $par
 
     array_pop($self->replaces);
 
-    return array("quarantine", $ret);
+    return array("quarantine", $this->_walk(array("environment_", $name, $ret)));
 
+}
+protected function _8() { extract($this->_env, EXTR_REFS); return $this->_node();
 }
 
 }

@@ -153,7 +153,6 @@ $self = (object) array(
 
 protected function _0($nodes) { extract($this->_env, EXTR_REFS); $this->_walkeach(c(new select_nodes, array("namespace", "name", "init", "invoke"), $nodes));
 
-    c(new check_left_recursive, $self->file, c(new select_nodes, array("rule"), $nodes));
     c(new check_macros_recursive, $self->file, c(new select_nodes, array("macro"), $nodes));
 
     $self->definitions = array_values(c(new select_nodes, array("rule", "macro"), $nodes));

@@ -82,27 +82,32 @@ class used
             list($_, $_0) = $node;
             $ret = $this->_1($_0);
         break;
+        case 'environment':
+            list($_, $_0, $_1) = $node;
+            $ret = $this->_2($_0, $_1);
+        break;
         case 'optional':
         case 'zero_or_more':
         case 'one_or_more':
         case 'quarantine':
+        case 'empty_environment':
             list($_, $_0) = $node;
-            $ret = $this->_2($_0);
+            $ret = $this->_3($_0);
         break;
         case 'action':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_3($_0, $_1);
+            $ret = $this->_4($_0, $_1);
         break;
         case 'bind':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_4($_0, $_1);
+            $ret = $this->_5($_0, $_1);
         break;
         case 'apply':
             list($_, $_0) = $node;
-            $ret = $this->_5($_0);
+            $ret = $this->_6($_0);
         break;
         default:
-            $ret = $this->_6();
+            $ret = $this->_7();
         break;
         }
 
@@ -136,15 +141,17 @@ protected function _1($nodes) { extract($this->_env, EXTR_REFS); $used = array()
     return array_keys($used);
 
 }
-protected function _2($node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
+protected function _2($i, $node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
 }
-protected function _3($node, $code) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
+protected function _3($node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
 }
-protected function _4($varname, $node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
+protected function _4($node, $code) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
 }
-protected function _5($name) { extract($this->_env, EXTR_REFS); return array($name);
+protected function _5($varname, $node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
 }
-protected function _6() { extract($this->_env, EXTR_REFS); return array();
+protected function _6($name) { extract($this->_env, EXTR_REFS); return array($name);
+}
+protected function _7() { extract($this->_env, EXTR_REFS); return array();
 }
 
 }

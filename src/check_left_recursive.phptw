@@ -4,12 +4,13 @@
     );
 }
 
--invoke (file, rules) {
-    WALKEACH($rules);
+-invoke (provided, definitions) {
+    $self->leftmost = WALKEACH($definitions);
 
     $left_recursive = array();
 
     foreach ($self->leftmost as $name => $leftmost) {
+        $leftmost = array_unique($leftmost);
         $chains = array();
         foreach ($leftmost as $l) {
             $chains[] = array($l);
@@ -38,20 +39,28 @@
         } while (!$done);
     }
 
+    $left_recursive = array_unique($left_recursive);
+
     if (!empty($left_recursive)) {
-        foreach ($left_recursive as $i => $l) {
-            $left_recursive[$i] = implode(" -> ", $l);
+        $index_to_name = array();
+        foreach ($provided as $file => $about) {
+            foreach ($about->reindex as $name => $k) {
+                $index_to_name[$k] = $name . "(" . $file . ")";
+            }
         }
 
-        die("Left recursive rules in file {$file}:\n" .
+        foreach ($left_recursive as $i => $l) {
+            $left_recursive[$i] = $index_to_name[array_shift($l)];
+            foreach ($l as $k) {
+                $left_recursive[$i] .= " -> " . $index_to_name[$k];
+            }
+        }
+
+        die("Left recursive rules:\n" .
             "  " . implode("\n  ", $left_recursive) . "\n");
     }
 
     return TRUE;
-}
-
-rule (name, node) {
-    $self->leftmost[$name] = array_flip(array_flip(WALK($node)));
 }
 
 first (nodes) -> call_user_func_array("array_merge", WALKEACH($nodes))
@@ -60,12 +69,12 @@ all (nodes) -> WALK($nodes[0])
 
 action (node, code) -> WALK($node)
 
-optional, zero_or_more, one_or_more (node) -> WALK($node)
+optional, zero_or_more, one_or_more, quarantine, empty_environment (node) -> WALK($node)
+
+environment (i, node) -> WALK($node)
 
 bind (varname, node) -> WALK($node)
 
-expand (name, arguments) -> empty($arguments) ? array() : call_user_func_array("array_merge", WALKEACH($arguments))
-
-apply (name) -> is_string($name) ? array($name) : array()
+apply (name) -> array($name)
 
 _ -> array()

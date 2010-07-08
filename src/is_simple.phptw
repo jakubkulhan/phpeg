@@ -8,7 +8,9 @@ first, all (nodes) {
     return TRUE;
 }
 
-optional, zero_or_more, one_or_more, quarantine (node) -> WALK($node)
+environment (i, node) -> WALK($node)
+
+optional, zero_or_more, one_or_more, quarantine, empty_environment (node) -> WALK($node)
 
 apply, action, bind -> FALSE
 

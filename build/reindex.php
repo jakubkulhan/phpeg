@@ -95,33 +95,38 @@ $self = (object) array(
             list($_, $_0, $_1) = $node;
             $ret = $this->_3($_0, $_1);
         break;
+        case 'environment':
+            list($_, $_0, $_1) = $node;
+            $ret = $this->_4($_0, $_1);
+        break;
         case 'and':
         case 'not':
         case 'optional':
         case 'zero_or_more':
         case 'one_or_more':
         case 'quarantine':
+        case 'empty_environment':
             list($_, $_0) = $node;
-            $ret = $this->_4($_0);
+            $ret = $this->_5($_0);
         break;
         case 'bind':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_5($_0, $_1);
+            $ret = $this->_6($_0, $_1);
         break;
         case 'apply':
             list($_, $_0) = $node;
-            $ret = $this->_6($_0);
+            $ret = $this->_7($_0);
         break;
         case 'expand':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_7($_0, $_1);
+            $ret = $this->_8($_0, $_1);
         break;
         case 'name_':
             list($_, $_0) = $node;
-            $ret = $this->_8($_0);
+            $ret = $this->_9($_0);
         break;
         default:
-            $ret = $this->_9();
+            $ret = $this->_10();
         break;
         }
 
@@ -151,15 +156,17 @@ protected function _2($nodes) { extract($this->_env, EXTR_REFS); return array($t
 }
 protected function _3($node, $code) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk($node), $code);
 }
-protected function _4($node) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk($node));
+protected function _4($i, $node) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $i, $this->_walk($node));
 }
-protected function _5($varname, $node) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $varname, $this->_walk($node));
+protected function _5($node) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk($node));
 }
-protected function _6($name) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk(array("name_", $name)));
+protected function _6($varname, $node) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $varname, $this->_walk($node));
 }
-protected function _7($name, $arguments) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk(array("name_", $name)), $this->_walkeach($arguments));
+protected function _7($name) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk(array("name_", $name)));
 }
-protected function _8($name) { extract($this->_env, EXTR_REFS); if (in_array($name, $self->exclusions)) {
+protected function _8($name, $arguments) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk(array("name_", $name)), $this->_walkeach($arguments));
+}
+protected function _9($name) { extract($this->_env, EXTR_REFS); if (in_array($name, $self->exclusions)) {
         return $name;
     }
 
@@ -174,7 +181,7 @@ protected function _8($name) { extract($this->_env, EXTR_REFS); if (in_array($na
     return $name;
 
 }
-protected function _9() { extract($this->_env, EXTR_REFS); return $this->_node();
+protected function _10() { extract($this->_env, EXTR_REFS); return $this->_node();
 }
 
 }

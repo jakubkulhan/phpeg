@@ -78,17 +78,22 @@ class is_simple
             list($_, $_0) = $node;
             $ret = $this->_0($_0);
         break;
+        case 'environment':
+            list($_, $_0, $_1) = $node;
+            $ret = $this->_1($_0, $_1);
+        break;
         case 'optional':
         case 'zero_or_more':
         case 'one_or_more':
         case 'quarantine':
+        case 'empty_environment':
             list($_, $_0) = $node;
-            $ret = $this->_1($_0);
+            $ret = $this->_2($_0);
         break;
         case 'apply':
         case 'action':
         case 'bind':
-            $ret = $this->_2();
+            $ret = $this->_3();
         break;
         case 'and':
         case 'semantic_predicate':
@@ -97,10 +102,10 @@ class is_simple
         case 'range':
         case 'any':
         case 'position':
-            $ret = $this->_3();
+            $ret = $this->_4();
         break;
         default:
-            $ret = $this->_4();
+            $ret = $this->_5();
         break;
         }
 
@@ -125,13 +130,15 @@ protected function _0($nodes) { extract($this->_env, EXTR_REFS); foreach ($this-
     return TRUE;
 
 }
-protected function _1($node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
+protected function _1($i, $node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
 }
-protected function _2() { extract($this->_env, EXTR_REFS); return FALSE;
+protected function _2($node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
 }
-protected function _3() { extract($this->_env, EXTR_REFS); return TRUE;
+protected function _3() { extract($this->_env, EXTR_REFS); return FALSE;
 }
-protected function _4() { extract($this->_env, EXTR_REFS); return FALSE;
+protected function _4() { extract($this->_env, EXTR_REFS); return TRUE;
+}
+protected function _5() { extract($this->_env, EXTR_REFS); return FALSE;
 }
 
 }

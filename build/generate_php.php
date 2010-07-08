@@ -26,10 +26,8 @@ class generate_php
     {
         $this->_env = array();
 $self = (object) array(
-        "inits" => array(),
         "i" => 0,
         "bound" => array(),
-        "env" => NULL,
         "codes" => array(),
         "definitions" => array(),
         "common" => NULL,
@@ -85,86 +83,90 @@ $self = (object) array(
         case 'prolog_':
             $ret = $this->_0();
         break;
-        case 'inits_':
-            list($_, $_0) = $node;
-            $ret = $this->_1($_0);
-        break;
         case 'parse_':
-            $ret = $this->_2();
+            $ret = $this->_1();
         break;
         case 'codes_':
-            $ret = $this->_3();
+            $ret = $this->_2();
         break;
         case 'rule_':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_4($_0, $_1);
+            $ret = $this->_3($_0, $_1);
         break;
         case 'quarantine':
             list($_, $_0) = $node;
-            $ret = $this->_5($_0);
+            $ret = $this->_4($_0);
         break;
-        case 'first':
+        case 'environment':
+            list($_, $_0, $_1) = $node;
+            $ret = $this->_5($_0, $_1);
+        break;
+        case 'empty_environment':
             list($_, $_0) = $node;
             $ret = $this->_6($_0);
         break;
-        case 'all':
+        case 'first':
             list($_, $_0) = $node;
             $ret = $this->_7($_0);
         break;
+        case 'all':
+            list($_, $_0) = $node;
+            $ret = $this->_8($_0);
+        break;
         case 'action':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_8($_0, $_1);
+            $ret = $this->_9($_0, $_1);
         break;
         case 'bind':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_9($_0, $_1);
+            $ret = $this->_10($_0, $_1);
         break;
         case 'and':
         case 'not':
             list($_, $_0) = $node;
-            $ret = $this->_10($_0);
+            $ret = $this->_11($_0);
         break;
         case 'optional':
             list($_, $_0) = $node;
-            $ret = $this->_11($_0);
+            $ret = $this->_12($_0);
         break;
         case 'zero_or_more':
         case 'one_or_more':
             list($_, $_0) = $node;
-            $ret = $this->_12($_0);
+            $ret = $this->_13($_0);
         break;
         case 'apply':
             list($_, $_0) = $node;
-            $ret = $this->_13($_0);
+            $ret = $this->_14($_0);
         break;
         case 'literal':
             list($_, $_0) = $node;
-            $ret = $this->_14($_0);
+            $ret = $this->_15($_0);
         break;
         case 'range':
             list($_, $_0) = $node;
-            $ret = $this->_15($_0);
+            $ret = $this->_16($_0);
         break;
         case 'any':
-            $ret = $this->_16();
+            $ret = $this->_17();
         break;
         case 'semantic_predicate':
             list($_, $_0) = $node;
-            $ret = $this->_17($_0);
+            $ret = $this->_18($_0);
         break;
         case 'position':
-            $ret = $this->_18();
+            $ret = $this->_19();
         break;
         case 'code_':
             list($_, $_0) = $node;
-            $ret = $this->_19($_0);
+            $ret = $this->_20($_0);
         break;
         case 'failed_':
             list($_, $_0) = $node;
-            $ret = $this->_20($_0);
+            $ret = $this->_21($_0);
         break;
         default:
-            $ret = $this->_21();
+            $ret = $this->_22();
         break;
         }
 
@@ -187,10 +189,7 @@ protected function _0() { extract($this->_env, EXTR_REFS); return "private \$_s;
            "private \$_expected;\n";
 
 }
-protected function _1($inits) { extract($this->_env, EXTR_REFS); $self->inits = $inits;
-
-}
-protected function _2() { extract($this->_env, EXTR_REFS); $ret = "public function parse(\$s) {\n" .
+protected function _1() { extract($this->_env, EXTR_REFS); $ret = "public function parse(\$s) {\n" .
            "    \$this->_s = \$s;\n" .
            "    \$this->_p = \$this->_maxp = 0;\n" .
            "    \$this->_expected = array();\n" .
@@ -224,7 +223,7 @@ protected function _2() { extract($this->_env, EXTR_REFS); $ret = "public functi
     return $ret;
 
 }
-protected function _3() { extract($this->_env, EXTR_REFS); $ret = "";
+protected function _2() { extract($this->_env, EXTR_REFS); $ret = "";
 
     foreach ($self->codes as $code) {
         $ret .= $code . "\n";
@@ -233,13 +232,8 @@ protected function _3() { extract($this->_env, EXTR_REFS); $ret = "";
     return $ret;
 
 }
-protected function _4($name, $node) { extract($this->_env, EXTR_REFS); $self->i = 0;
+protected function _3($name, $node) { extract($this->_env, EXTR_REFS); $self->i = 0;
     $self->bound = array();
-
-    $self->env = NULL;
-    if (isset($self->inits[$name])) {
-        $self->env = $self->inits[$name];
-    }
 
     return "private function _parse_$name() {\n" .
                 i($this->_walk($node)) .
@@ -247,7 +241,7 @@ protected function _4($name, $node) { extract($this->_env, EXTR_REFS); $self->i 
            "}\n";
 
 }
-protected function _5($node) { extract($this->_env, EXTR_REFS); $saved_bound = $self->bound;
+protected function _4($node) { extract($this->_env, EXTR_REFS); $saved_bound = $self->bound;
     $self->bound = array();
 
     $ret = $this->_walk($node);
@@ -257,7 +251,17 @@ protected function _5($node) { extract($this->_env, EXTR_REFS); $saved_bound = $
     return $ret;
 
 }
-protected function _6($nodes) { extract($this->_env, EXTR_REFS); $myi = $self->i;
+protected function _5($i, $node) { extract($this->_env, EXTR_REFS); return "array_push(\$this->_environment_stack, {$i});\n" .
+           $this->_walk($node) .
+           "array_pop(\$this->_environment_stack);\n";
+
+}
+protected function _6($node) { extract($this->_env, EXTR_REFS); return "array_push(\$this->_environment_stack, -1);\n" .
+           $this->_walk($node) .
+           "array_pop(\$this->_environment_stack);\n";
+
+}
+protected function _7($nodes) { extract($this->_env, EXTR_REFS); $myi = $self->i;
     $self->i++;
 
     $ret = "\$_{$myi} = array(FALSE, NULL);\n" .
@@ -282,7 +286,7 @@ protected function _6($nodes) { extract($this->_env, EXTR_REFS); $myi = $self->i
     return $ret;
 
 }
-protected function _7($nodes) { extract($this->_env, EXTR_REFS); $is_simple = c(new is_simple, array($this->_nodetype(), $nodes));
+protected function _8($nodes) { extract($this->_env, EXTR_REFS); $is_simple = c(new is_simple, array($this->_nodetype(), $nodes));
 
     $myi  = $self->i;
 
@@ -333,7 +337,7 @@ protected function _7($nodes) { extract($this->_env, EXTR_REFS); $is_simple = c(
     return $ret;
 
 }
-protected function _8($node, $code) { extract($this->_env, EXTR_REFS); $myi = $self->i;
+protected function _9($node, $code) { extract($this->_env, EXTR_REFS); $myi = $self->i;
     $self->i = $myi + 1;
     $saved_bound = $self->bound;
 
@@ -349,12 +353,12 @@ protected function _8($node, $code) { extract($this->_env, EXTR_REFS); $myi = $s
     return $ret;
 
 }
-protected function _9($varname, $node) { extract($this->_env, EXTR_REFS); $self->bound[$varname] = $self->i;
+protected function _10($varname, $node) { extract($this->_env, EXTR_REFS); $self->bound[$varname] = $self->i;
 
     return $this->_walk($node);
 
 }
-protected function _10($node) { extract($this->_env, EXTR_REFS); $myi = $self->i;
+protected function _11($node) { extract($this->_env, EXTR_REFS); $myi = $self->i;
     $self->i = $myi + 1;
 
     $ret = "\$_pos{$myi} = \$this->_p;\n" .
@@ -367,7 +371,7 @@ protected function _10($node) { extract($this->_env, EXTR_REFS); $myi = $self->i
     return $ret;
 
 }
-protected function _11($node) { extract($this->_env, EXTR_REFS); $myi = $self->i;
+protected function _12($node) { extract($this->_env, EXTR_REFS); $myi = $self->i;
     $self->i = $myi + 1;
 
     $ret = "\$_{$myi} = array(TRUE, NULL);\n" .
@@ -384,7 +388,7 @@ protected function _11($node) { extract($this->_env, EXTR_REFS); $myi = $self->i
     return $ret;
 
 }
-protected function _12($node) { extract($this->_env, EXTR_REFS); $is_simple = c(new is_simple, $node);
+protected function _13($node) { extract($this->_env, EXTR_REFS); $is_simple = c(new is_simple, $node);
 
     $myi = $self->i;
     $self->i = $myi + 1;
@@ -407,10 +411,10 @@ protected function _12($node) { extract($this->_env, EXTR_REFS); $is_simple = c(
     return $ret;
 
 }
-protected function _13($name) { extract($this->_env, EXTR_REFS); return "\$_{$self->i} = \$this->_parse_$name();\n";
+protected function _14($name) { extract($this->_env, EXTR_REFS); return "\$_{$self->i} = \$this->_parse_$name();\n";
 
 }
-protected function _14($s) { extract($this->_env, EXTR_REFS); $encapsed_s = '"' . $self->common->walk(array("format_", $s)) . '"';
+protected function _15($s) { extract($this->_env, EXTR_REFS); $encapsed_s = '"' . $self->common->walk(array("format_", $s)) . '"';
 
     return "\$_{$self->i} = array(FALSE, NULL);\n" .
            "if ((\$_{$self->i}_ = substr(\$this->_s, \$this->_p, " . strlen($s) . ")) === " . $encapsed_s . ") {\n" .
@@ -421,7 +425,7 @@ protected function _14($s) { extract($this->_env, EXTR_REFS); $encapsed_s = '"' 
            "}\n";
 
 }
-protected function _15($match) { extract($this->_env, EXTR_REFS); $or = array();
+protected function _16($match) { extract($this->_env, EXTR_REFS); $or = array();
     $str = "";
 
     foreach ($match as $r) {
@@ -447,7 +451,7 @@ protected function _15($match) { extract($this->_env, EXTR_REFS); $or = array();
            "}\n";
 
 }
-protected function _16() { extract($this->_env, EXTR_REFS); return "\$_{$self->i} = array(FALSE, NULL);\n" .
+protected function _17() { extract($this->_env, EXTR_REFS); return "\$_{$self->i} = array(FALSE, NULL);\n" .
            "if (isset(\$this->_s[\$this->_p])) {\n" .
            "    \$_{$self->i} = array(TRUE, \$this->_s[\$this->_p]);\n" .
            "    \$this->_p++;\n" .
@@ -456,10 +460,10 @@ protected function _16() { extract($this->_env, EXTR_REFS); return "\$_{$self->i
            "}\n";
 
 }
-protected function _17($code) { extract($this->_env, EXTR_REFS); return "\$_{$self->i} = array((bool) " . $this->_walk(array("code_", $code)) . ", NULL);\n";
+protected function _18($code) { extract($this->_env, EXTR_REFS); return "\$_{$self->i} = array((bool) " . $this->_walk(array("code_", $code)) . ", NULL);\n";
 
 }
-protected function _18() { extract($this->_env, EXTR_REFS); return "\$_before{$self->i} = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", (string) substr(\$this->_s, 0, \$this->_p));\n" .
+protected function _19() { extract($this->_env, EXTR_REFS); return "\$_before{$self->i} = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", (string) substr(\$this->_s, 0, \$this->_p));\n" .
            "\$_line{$self->i} = 1;\n" .
            "if ((\$_pos{$self->i} = strrpos(\$_before{$self->i}, \"\\n\")) !== FALSE) {\n" .
            "    \$_line{$self->i} = substr_count(\$_before{$self->i}, \"\\n\") + 1;\n" .
@@ -468,7 +472,7 @@ protected function _18() { extract($this->_env, EXTR_REFS); return "\$_before{$s
            "\$_{$self->i} = array(TRUE, array(\$_line{$self->i}, strlen(\$_before{$self->i}) + 1));\n";
 
 }
-protected function _19($code) { extract($this->_env, EXTR_REFS); $input = array();
+protected function _20($code) { extract($this->_env, EXTR_REFS); $input = array();
 
     foreach ($self->bound as $varname => $i) {
         $input[] = "'{$varname}' => &\$_{$i}[1]";
@@ -476,7 +480,7 @@ protected function _19($code) { extract($this->_env, EXTR_REFS); $input = array(
 
     $name = "_" . count($self->codes);
     $self->codes[] = "private function " . $name . "() {\n" .
-                     ($self->env !== NULL ? "    extract(\$this->_envs[{$self->env}], EXTR_OVERWRITE | EXTR_REFS);\n" : "") .
+                          i($self->common->walk(array("extract_environment_"))) .
                      "    extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);\n" .
                           i($code) .
                      "\n}\n";
@@ -484,7 +488,7 @@ protected function _19($code) { extract($this->_env, EXTR_REFS); $input = array(
     return "\$this->$name(array(" . implode(", ", $input) . "))";
 
 }
-protected function _20($on) { extract($this->_env, EXTR_REFS); return "if (\$this->_p >= \$this->_maxp) {\n" .
+protected function _21($on) { extract($this->_env, EXTR_REFS); return "if (\$this->_p >= \$this->_maxp) {\n" .
            "    if (\$this->_p > \$this->_maxp) {\n" .
            "        \$this->_maxp = \$this->_p;\n" .
            "        \$this->_expected = array();\n" .
@@ -495,8 +499,8 @@ protected function _20($on) { extract($this->_env, EXTR_REFS); return "if (\$thi
            "}\n";
 
 }
-protected function _21() { extract($this->_env, EXTR_REFS); var_dump($this->_node());
-    throw new InvalidArgumentException("What? What?? What???!");
+protected function _22() { extract($this->_env, EXTR_REFS); var_dump($this->_node());
+    die("Unexpected node.\n");
 
 }
 

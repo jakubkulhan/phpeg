@@ -142,6 +142,17 @@ $self = (object) array(
         
                 list($instructions, $newcodes) = c(new compile_machine, $definition);
         
+                $instructions = array_merge(
+                    array(
+                        array("push", array("register", "env"), array("register", "stack")),
+                        array("set", array("value", array()), array("register", "env")),
+                    ),
+                    $instructions,
+                    array(
+                        array("pop", array("register", "stack"), array("register", "env")),
+                    )
+                );
+        
                 $startn = count($codes);
                 $codes = array_merge($codes, $newcodes);
                 for ($i = $startn, $n = $startn + count($newcodes); $i < $n; ++$i) {

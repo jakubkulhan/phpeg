@@ -1,7 +1,6 @@
 -init {
     $self = (object) array(
         "inits" => array(),
-        "initscount" => 0,
         "generator" => NULL,
     );
 }
@@ -14,19 +13,10 @@
         array("constructor_")
     ));
 
-    foreach ($inits as $i => $init) {
-        list($for, $code) = $init;
-
-        foreach ($for as $j) {
-            $self->inits[$j] = $i;
-        }
-
+    $self->inits = $inits;
+    foreach ($self->inits as $i => $code) {
         $all[2][] = array("init_", $i, $code);
-
-        $self->initscount++;
     }
-
-    $all[2][] = array("inits_", $self->inits);
 
     if ($invoke) {
         $all[2][] = array("invoke_", $invoke[0], $invoke[1]);
@@ -66,23 +56,26 @@ class_ (name, nodes) {
 constructor_ {
     $inits = array();
 
-    for ($i = 0; $i < $self->initscount; ++$i) {
+    for ($i = 0, $c = count($self->inits); $i < $c; ++$i) {
         $inits[] = "\$this->_init$i();";
     }
 
     $inits = implode("\n", $inits) . "\n";
 
-    return "private \$_envs = array();\n" .
+    return "private \$_environments = array(-1 => array());\n" .
+           "private \$_environment_stack = array();\n" .
            "public function __construct() {\n" .
                i($inits) .
            "}\n";
 }
 
+extract_environment_ -> "extract(\$this->_environments[\$this->_environment_stack[count(\$this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);";
+
 init_ (i, code) {
     return "private function _init$i() {\n" .
-           "    \$this->_envs[$i] = array();\n" .
+           "    \$this->_environments[$i] = array();\n" .
                 i($code) .
-           "    \$this->_envs[$i] = get_defined_vars();\n" .
+           "    \$this->_environments[$i] = get_defined_vars();\n" .
            "}\n";
 }
 

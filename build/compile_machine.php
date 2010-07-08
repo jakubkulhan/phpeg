@@ -96,47 +96,55 @@ $self = (object) array(
             list($_, $_0) = $node;
             $ret = $this->_4($_0);
         break;
-        case 'and':
-        case 'not':
-            list($_, $_0) = $node;
-            $ret = $this->_5($_0);
+        case 'environment':
+            list($_, $_0, $_1) = $node;
+            $ret = $this->_5($_0, $_1);
         break;
-        case 'optional':
+        case 'empty_environment':
             list($_, $_0) = $node;
             $ret = $this->_6($_0);
         break;
-        case 'zero_or_more':
+        case 'and':
+        case 'not':
             list($_, $_0) = $node;
             $ret = $this->_7($_0);
         break;
-        case 'one_or_more':
+        case 'optional':
             list($_, $_0) = $node;
             $ret = $this->_8($_0);
         break;
-        case 'apply':
+        case 'zero_or_more':
             list($_, $_0) = $node;
             $ret = $this->_9($_0);
         break;
-        case 'literal':
+        case 'one_or_more':
             list($_, $_0) = $node;
             $ret = $this->_10($_0);
         break;
-        case 'range':
+        case 'apply':
             list($_, $_0) = $node;
             $ret = $this->_11($_0);
         break;
-        case 'any':
-            $ret = $this->_12();
+        case 'literal':
+            list($_, $_0) = $node;
+            $ret = $this->_12($_0);
         break;
-        case 'semantic_predicate':
+        case 'range':
             list($_, $_0) = $node;
             $ret = $this->_13($_0);
         break;
-        case 'position':
+        case 'any':
             $ret = $this->_14();
         break;
+        case 'semantic_predicate':
+            list($_, $_0) = $node;
+            $ret = $this->_15($_0);
+        break;
+        case 'position':
+            $ret = $this->_16();
+        break;
         default:
-            $ret = $this->_15();
+            $ret = $this->_17();
         break;
         }
 
@@ -242,6 +250,9 @@ protected function _2($node, $code) { extract($this->_env, EXTR_REFS); $n = coun
 
     return array_merge(
         array(
+            // converts %env to array of references, so one can mutate state
+            // FIXME: inlines are bad, m'kay...
+            array("inline", "foreach (\$_env as \$_a => \$_) { \$_env[\$_a] =& \$_env[\$_a]; }"),
             array("push", array("register", "env"), array("register", "stack")),
         ),
         $this->_walk($node),
@@ -273,7 +284,29 @@ protected function _4($node) { extract($this->_env, EXTR_REFS); return array_mer
     );
 
 }
-protected function _5($node) { extract($this->_env, EXTR_REFS); return array_merge(
+protected function _5($i, $node) { extract($this->_env, EXTR_REFS); return array_merge(
+        array(
+            array("inline", "array_push(\$this->_environment_stack, {$i});"),
+        ),
+        $this->_walk($node),
+        array(
+            array("inline", "array_pop(\$this->_environment_stack);"),
+        )
+    );
+
+}
+protected function _6($node) { extract($this->_env, EXTR_REFS); return array_merge(
+        array(
+            array("inline", "array_push(\$this->_environment_stack, -1);"),
+        ),
+        $this->_walk($node),
+        array(
+            array("inline", "array_pop(\$this->_environment_stack);"),
+        )
+    );
+
+}
+protected function _7($node) { extract($this->_env, EXTR_REFS); return array_merge(
         array(
             array("push", array("register", "p"), array("register", "stack")),
         ),
@@ -290,7 +323,7 @@ protected function _5($node) { extract($this->_env, EXTR_REFS); return array_mer
     );
 
 }
-protected function _6($node) { extract($this->_env, EXTR_REFS); return array_merge(
+protected function _8($node) { extract($this->_env, EXTR_REFS); return array_merge(
         array(
             array("push", array("register", "p"), array("register", "stack")),
         ),
@@ -305,7 +338,7 @@ protected function _6($node) { extract($this->_env, EXTR_REFS); return array_mer
     );
 
 }
-protected function _7($node) { extract($this->_env, EXTR_REFS); $is_simple = c(new is_simple, $node);
+protected function _9($node) { extract($this->_env, EXTR_REFS); $is_simple = c(new is_simple, $node);
     $ret = $this->_walk($node);
 
     return array_merge(
@@ -329,7 +362,7 @@ protected function _7($node) { extract($this->_env, EXTR_REFS); $is_simple = c(n
     );
 
 }
-protected function _8($node) { extract($this->_env, EXTR_REFS); $is_simple = c(new is_simple, $node);
+protected function _10($node) { extract($this->_env, EXTR_REFS); $is_simple = c(new is_simple, $node);
     $ret = $this->_walk($node);
 
     return array_merge(
@@ -358,43 +391,47 @@ protected function _8($node) { extract($this->_env, EXTR_REFS); $is_simple = c(n
     );
 
 }
-protected function _9($name) { extract($this->_env, EXTR_REFS); return array(
+protected function _11($name) { extract($this->_env, EXTR_REFS); return array(
         array("push", array("offset", 2), array("register", "stack")),
         array("jump", array("label", $name)),
     );
 
 }
-protected function _10($s) { extract($this->_env, EXTR_REFS); return array(
+protected function _12($s) { extract($this->_env, EXTR_REFS); return array(
         array("literal", $s),
     );
 
 }
-protected function _11($match) { extract($this->_env, EXTR_REFS); return array(
+protected function _13($match) { extract($this->_env, EXTR_REFS); return array(
         array("range", $match),
     );
 
 }
-protected function _12() { extract($this->_env, EXTR_REFS); return array(
+protected function _14() { extract($this->_env, EXTR_REFS); return array(
         array("any"),
     );
 
 }
-protected function _13($code) { extract($this->_env, EXTR_REFS); $n = count($self->codes);
+protected function _15($code) { extract($this->_env, EXTR_REFS); $n = count($self->codes);
     $self->codes[$n] = $code;
 
     return array(
+        // converts %env to array of references, so one can mutate state
+        // FIXME: inlines are bad, m'kay...
+        array("inline", "foreach (\$_env as \$_a => \$_) { \$_env[\$_a] =& \$_env[\$_a]; }"),
         array("run", $n, array("register", "env")),
         array("set", array("not", array("register", "value")), array("register", "fail")),
         array("set", array("value", NULL), array("register", "value")),
     );
 
 }
-protected function _14() { extract($this->_env, EXTR_REFS); return array(
+protected function _16() { extract($this->_env, EXTR_REFS); return array(
         array("position"),
     );
 
 }
-protected function _15() { extract($this->_env, EXTR_REFS); throw new InvalidArgumentException("What? What?? What???!");
+protected function _17() { extract($this->_env, EXTR_REFS); var_dump($this->_node());
+    die("Unexpected node.\n");
 
 }
 

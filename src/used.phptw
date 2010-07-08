@@ -21,7 +21,9 @@ first, all (nodes) {
     return array_keys($used);
 }
 
-optional, zero_or_more, one_or_more, quarantine (node) -> WALK($node)
+environment (i, node) -> WALK($node)
+
+optional, zero_or_more, one_or_more, quarantine, empty_environment (node) -> WALK($node)
 
 action (node, code) -> WALK($node)
 

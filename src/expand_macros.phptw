@@ -2,15 +2,35 @@
     $self = (object) array(
         "macros" => array(),
         "replaces" => array(),
+        "environments" => array(),
     );
 }
 
--invoke (definitions) {
+-invoke (provided, definitions) {
+    foreach ($provided as $file => $about) {
+        if (!$about->init) {
+            continue;
+        }
+
+        foreach ($about->reindex as $k => $r) {
+            $self->environments[$r] = $file;
+        }
+    }
+
     $self->macros = c(new select_nodes, array("macro"), $definitions);
+
     return WALKEACH(c(new select_nodes, array("rule"), $definitions));
 }
 
-rule (name, node) -> array(NODETYPE(), $name, WALK($node))
+rule (name, node) -> WALK(array("environment_", INDEX(), $node))
+
+environment_ (index, node) {
+    if (isset($self->environments[$index])) {
+        return array("environment", $self->environments[$index], WALK($node));
+    } else {
+        return array("empty_environment", WALK($node));
+    }
+}
 
 all, first (nodes) -> array(NODETYPE(), WALKEACH($nodes))
 
@@ -19,8 +39,6 @@ action (node, code) -> array(NODETYPE(), WALK($node), $code)
 and, not, optional, zero_or_more, one_or_more, quarantine (node) -> array(NODETYPE(), WALK($node))
 
 bind (varname, node) -> array(NODETYPE(), $varname, WALK($node))
-
-_ -> NODE()
 
 apply (name) {
     if (($replaces = end($self->replaces)) && isset($replaces[$name])) {
@@ -41,7 +59,8 @@ expand (name, arguments) {
     $realarguments = array();
 
     foreach ($arguments as $argument) {
-        $realarguments[] = array("quarantine", WALK($argument));
+        $realarguments[] =
+            array("quarantine", WALK(array("environment_", INDEX(), $argument)));
     }
 
     if (empty($parameters)) {
@@ -54,5 +73,7 @@ expand (name, arguments) {
 
     array_pop($self->replaces);
 
-    return array("quarantine", $ret);
+    return array("quarantine", WALK(array("environment_", $name, $ret)));
 }
+
+_ -> NODE()

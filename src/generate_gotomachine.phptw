@@ -1,6 +1,5 @@
 -init {
     $self = (object) array(
-        "inits" => array(),
         "program" => array(),
         "codes" => array(),
         "code_to_label" => array(),
@@ -16,10 +15,6 @@
 }
 
 prolog_ -> ""
-
-inits_ (inits) {
-    $self->inits = $inits;
-}
 
 parse_ {
     $ret = "public function parse(\$_s) {\n" .
@@ -51,9 +46,9 @@ parse_ {
 
     foreach ($self->codes as $k => $code) {
         $ret .= "private function _$k() {\n" .
-                (isset($self->code_to_label[$k]) && isset($self->inits[$self->code_to_label[$k]]) ? "    extract(\$this->_envs[" . $self->inits[$self->code_to_label[$k]] . "], EXTR_OVERWRITE | EXTR_REFS);\n" : "") .
+                     i($self->common->walk(array("extract_environment_"))) .
                 "    extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);\n" .
-                i($code) .
+                     i($code) .
                 "\n}\n";
     }
 
@@ -120,6 +115,8 @@ not (v) -> "!" . WALK($v)
 register (r) -> "\$_{$r}"
 
 register_index (r, i) -> "\$_{$r}[" . WALK(array("phpize_", $i)) . "]"
+
+inline (code) -> $code
 
 position {
     return "\$_a = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", (string) substr(\$_s, 0, \$_p)); " .
@@ -200,6 +197,5 @@ failed_ (on) {
 
 _ {
     var_dump(NODE());
-    throw new InvalidArgumentException("What? What?? What???!");
-        $ret .= ")";
+    die("Unexpected node.\n");
 }

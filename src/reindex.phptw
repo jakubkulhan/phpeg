@@ -26,7 +26,9 @@ first, all (nodes) -> array(NODETYPE(), WALKEACH($nodes));
 
 action (node, code) -> array(NODETYPE(), WALK($node), $code)
 
-and, not, optional, zero_or_more, one_or_more, quarantine (node) -> array(NODETYPE(), WALK($node))
+environment (i, node) -> array(NODETYPE(), $i, WALK($node))
+
+and, not, optional, zero_or_more, one_or_more, quarantine, empty_environment (node) -> array(NODETYPE(), WALK($node))
 
 bind (varname, node) -> array(NODETYPE(), $varname, WALK($node))
 

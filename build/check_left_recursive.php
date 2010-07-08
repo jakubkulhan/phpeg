@@ -76,42 +76,40 @@ $self = (object) array(
         $ret = NULL;
 
         switch ($node[0]) {
-        case 'rule':
-            list($_, $_0, $_1) = $node;
-            $ret = $this->_0($_0, $_1);
-        break;
         case 'first':
             list($_, $_0) = $node;
-            $ret = $this->_1($_0);
+            $ret = $this->_0($_0);
         break;
         case 'all':
             list($_, $_0) = $node;
-            $ret = $this->_2($_0);
+            $ret = $this->_1($_0);
         break;
         case 'action':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_3($_0, $_1);
+            $ret = $this->_2($_0, $_1);
         break;
         case 'optional':
         case 'zero_or_more':
         case 'one_or_more':
+        case 'quarantine':
+        case 'empty_environment':
             list($_, $_0) = $node;
-            $ret = $this->_4($_0);
+            $ret = $this->_3($_0);
+        break;
+        case 'environment':
+            list($_, $_0, $_1) = $node;
+            $ret = $this->_4($_0, $_1);
         break;
         case 'bind':
             list($_, $_0, $_1) = $node;
             $ret = $this->_5($_0, $_1);
         break;
-        case 'expand':
-            list($_, $_0, $_1) = $node;
-            $ret = $this->_6($_0, $_1);
-        break;
         case 'apply':
             list($_, $_0) = $node;
-            $ret = $this->_7($_0);
+            $ret = $this->_6($_0);
         break;
         default:
-            $ret = $this->_8();
+            $ret = $this->_7();
         break;
         }
 
@@ -119,15 +117,16 @@ $self = (object) array(
         return $ret;
     }
 
-    public function __invoke($file, $rules)
+    public function __invoke($provided, $definitions)
     {
         /*$this->_init();*/
         extract($this->_env, EXTR_REFS);
-        $this->_walkeach($rules);
+        $self->leftmost = $this->_walkeach($definitions);
         
             $left_recursive = array();
         
             foreach ($self->leftmost as $name => $leftmost) {
+                $leftmost = array_unique($leftmost);
                 $chains = array();
                 foreach ($leftmost as $l) {
                     $chains[] = array($l);
@@ -156,12 +155,24 @@ $self = (object) array(
                 } while (!$done);
             }
         
+            $left_recursive = array_unique($left_recursive);
+        
             if (!empty($left_recursive)) {
-                foreach ($left_recursive as $i => $l) {
-                    $left_recursive[$i] = implode(" -> ", $l);
+                $index_to_name = array();
+                foreach ($provided as $file => $about) {
+                    foreach ($about->reindex as $name => $k) {
+                        $index_to_name[$k] = $name . "(" . $file . ")";
+                    }
                 }
         
-                die("Left recursive rules in file {$file}:\n" .
+                foreach ($left_recursive as $i => $l) {
+                    $left_recursive[$i] = $index_to_name[array_shift($l)];
+                    foreach ($l as $k) {
+                        $left_recursive[$i] .= " -> " . $index_to_name[$k];
+                    }
+                }
+        
+                die("Left recursive rules:\n" .
                     "  " . implode("\n  ", $left_recursive) . "\n");
             }
         
@@ -169,24 +180,21 @@ $self = (object) array(
 
     }
 
-protected function _0($name, $node) { extract($this->_env, EXTR_REFS); $self->leftmost[$name] = array_flip(array_flip($this->_walk($node)));
-
+protected function _0($nodes) { extract($this->_env, EXTR_REFS); return call_user_func_array("array_merge", $this->_walkeach($nodes));
 }
-protected function _1($nodes) { extract($this->_env, EXTR_REFS); return call_user_func_array("array_merge", $this->_walkeach($nodes));
+protected function _1($nodes) { extract($this->_env, EXTR_REFS); return $this->_walk($nodes[0]);
 }
-protected function _2($nodes) { extract($this->_env, EXTR_REFS); return $this->_walk($nodes[0]);
+protected function _2($node, $code) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
 }
-protected function _3($node, $code) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
+protected function _3($node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
 }
-protected function _4($node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
+protected function _4($i, $node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
 }
 protected function _5($varname, $node) { extract($this->_env, EXTR_REFS); return $this->_walk($node);
 }
-protected function _6($name, $arguments) { extract($this->_env, EXTR_REFS); return empty($arguments) ? array() : call_user_func_array("array_merge", $this->_walkeach($arguments));
+protected function _6($name) { extract($this->_env, EXTR_REFS); return array($name);
 }
-protected function _7($name) { extract($this->_env, EXTR_REFS); return is_string($name) ? array($name) : array();
-}
-protected function _8() { extract($this->_env, EXTR_REFS); return array();
+protected function _7() { extract($this->_env, EXTR_REFS); return array();
 }
 
 }
