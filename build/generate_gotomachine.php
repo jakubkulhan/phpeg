@@ -244,7 +244,7 @@ protected function _2($a) { extract($this->_env, EXTR_REFS); if (is_array($a)) {
 }
 protected function _3($src, $dst) { extract($this->_env, EXTR_REFS); return $this->_walk($dst) . " = " . $this->_walk($src) . ";";
 }
-protected function _4($src, $dst) { extract($this->_env, EXTR_REFS); return "array_push(" . $this->_walk($dst) . ", " . $this->_walk($src) . ");";
+protected function _4($src, $dst) { extract($this->_env, EXTR_REFS); return $this->_walk($dst) . "[] = " . $this->_walk($src) . ";";
 }
 protected function _5($src, $dst) { extract($this->_env, EXTR_REFS); return ($dst !== NULL ? $this->_walk($dst) . " = " : "") . "array_pop(" . $this->_walk($src) . ");";;
 }
@@ -270,11 +270,7 @@ protected function _9($label, $addr) { extract($this->_env, EXTR_REFS); $ret = "
     return $ret;
 
 }
-protected function _10($n, $env) { extract($this->_env, EXTR_REFS); return "foreach (" . $this->_walk($env) ." as \$_a => \$_) { " .
-               $this->_walk($env) . "[\$_a] =& " . $this->_walk($env) . "[\$_a]; " .
-           "} " .
-           "\$_value = \$this->_$n(\$_env); ";
-
+protected function _10($n, $env) { extract($this->_env, EXTR_REFS); return "\$_value = \$this->_$n(" . $this->_walk($env) . ");";
 }
 protected function _11($v) { extract($this->_env, EXTR_REFS); return $this->_walk(array("phpize_", $v));
 }
@@ -359,8 +355,7 @@ protected function _21($on) { extract($this->_env, EXTR_REFS); return "if (\$_p 
 
 }
 protected function _22() { extract($this->_env, EXTR_REFS); var_dump($this->_node());
-    throw new InvalidArgumentException("What? What?? What???!");
-        $ret .= ")";
+    die("Unexpected node.\n");
 
 }
 

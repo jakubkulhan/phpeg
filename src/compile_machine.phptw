@@ -143,7 +143,7 @@ quarantine (node) {
 environment (i, node) {
     return array_merge(
         array(
-            array("inline", "array_push(\$this->_environment_stack, {$i});"),
+            array("inline", "\$this->_environment_stack[] = {$i};"),
         ),
         WALK($node),
         array(
@@ -158,7 +158,7 @@ environment (i, node) {
 empty_environment (node) {
     return array_merge(
         array(
-            array("inline", "array_push(\$this->_environment_stack, -1);"),
+            array("inline", "\$this->_environment_stack[] = -1;"),
         ),
         WALK($node),
         array(

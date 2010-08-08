@@ -251,12 +251,12 @@ protected function _4($node) { extract($this->_env, EXTR_REFS); $saved_bound = $
     return $ret;
 
 }
-protected function _5($i, $node) { extract($this->_env, EXTR_REFS); return "array_push(\$this->_environment_stack, {$i});\n" .
+protected function _5($i, $node) { extract($this->_env, EXTR_REFS); return "\$this->_environment_stack[] = {$i};\n" .
            $this->_walk($node) .
            "array_pop(\$this->_environment_stack);\n";
 
 }
-protected function _6($node) { extract($this->_env, EXTR_REFS); return "array_push(\$this->_environment_stack, -1);\n" .
+protected function _6($node) { extract($this->_env, EXTR_REFS); return "\$this->_environment_stack[] = -1;\n" .
            $this->_walk($node) .
            "array_pop(\$this->_environment_stack);\n";
 

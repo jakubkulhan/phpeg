@@ -78,7 +78,7 @@ phpize_ (a) {
 
 set (src, dst) -> WALK($dst) . " = " . WALK($src) . ";"
 
-push (src, dst) -> "array_push(" . WALK($dst) . ", " . WALK($src) . ");"
+push (src, dst) -> WALK($dst) . "[] = " . WALK($src) . ";"
 
 pop (src, dst) -> ($dst !== NULL ? WALK($dst) . " = " : "") . "array_pop(" . WALK($src) . ");";
 

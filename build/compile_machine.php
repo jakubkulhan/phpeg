@@ -286,7 +286,7 @@ protected function _4($node) { extract($this->_env, EXTR_REFS); return array_mer
 }
 protected function _5($i, $node) { extract($this->_env, EXTR_REFS); return array_merge(
         array(
-            array("inline", "array_push(\$this->_environment_stack, {$i});"),
+            array("inline", "\$this->_environment_stack[] = {$i};"),
         ),
         $this->_walk($node),
         array(
@@ -297,7 +297,7 @@ protected function _5($i, $node) { extract($this->_env, EXTR_REFS); return array
 }
 protected function _6($node) { extract($this->_env, EXTR_REFS); return array_merge(
         array(
-            array("inline", "array_push(\$this->_environment_stack, -1);"),
+            array("inline", "\$this->_environment_stack[] = -1;"),
         ),
         $this->_walk($node),
         array(
