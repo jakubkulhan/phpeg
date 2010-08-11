@@ -238,7 +238,7 @@ protected function _1($nodes) { extract($this->_env, EXTR_REFS); $is_simple = c(
         $ret
     );
 
-    // last instruction transfers value from stack to %value register
+    // last instruction transfers value from %stack to %value register
     $ret[] = array("pop", array("register", "stack"), array("register", "value"));
 
 
@@ -350,7 +350,7 @@ protected function _9($node) { extract($this->_env, EXTR_REFS); $is_simple = c(n
         array(
             array("jumpif", array("register", "fail"), array("offset", 7)),
             array("pop", array("register", "stack"), array("register", "a")),
-            array($is_simple ? "append" : "push", array("register", "value"), array("register", "a")),
+            array($is_simple ? "append" : "arrayappend", array("register", "value"), array("register", "a")),
             array("pop", array("register", "stack"), NULL),
             array("push", array("register", "p"), array("register", "stack")),
             array("push", array("register", "a"), array("register", "stack")),
@@ -376,7 +376,7 @@ protected function _10($node) { extract($this->_env, EXTR_REFS); $is_simple = c(
             array("jumpif", array("register", "fail"), array("offset", 9)),
             array("pop", array("register", "stack"), NULL),
             array("pop", array("register", "stack"), array("register", "a")),
-            array($is_simple ? "append" : "push", array("register", "value"), array("register", "a")),
+            array($is_simple ? "append" : "arrayappend", array("register", "value"), array("register", "a")),
             array("pop", array("register", "stack"), NULL),
             array("push", array("register", "p"), array("register", "stack")),
             array("push", array("register", "a"), array("register", "stack")),

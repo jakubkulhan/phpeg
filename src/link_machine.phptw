@@ -9,7 +9,7 @@
     reset($definitions);
 
     $ret = array(
-        array("set", array("value", array()), array("register", "stack")),
+        array("stackinit", array("register", "stack")),
         array("set", array("value", FALSE), array("register", "fail")),
         array("set", array("value", NULL), array("register", "value")),
         array("set", array("value", NULL), array("register", "a")),
@@ -64,8 +64,9 @@
     return array($ret, $codes, $code_to_label, $self->returns);
 }
 
+stackinit (reg) -> array(NODETYPE(), $reg)
 
-set, push, pop, append (src, dst) -> array(NODETYPE(), WALK($src), WALK($dst))
+set, push, pop, append, arrayappend (src, dst) -> array(NODETYPE(), WALK($src), WALK($dst))
 
 jump (addr) -> array(NODETYPE(), WALK($addr))
 

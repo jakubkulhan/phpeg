@@ -41,7 +41,7 @@ class parse_phpeg {
         return array(TRUE, $result, NULL);
     }
     private function _parse_0() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         do {
             $_2 = $this->_parse_14();
             if (!$_2[0]) {
@@ -79,9 +79,9 @@ class parse_phpeg {
                             $_7 = array(FALSE, NULL);
                             break;
                         }
-                        array_push($this->_environment_stack, -1);
+                        $this->_environment_stack[] = -1;
                         do {
-                            array_push($this->_environment_stack, -1);
+                            $this->_environment_stack[] = -1;
                             $_11 = $this->_parse_11();
                             array_pop($this->_environment_stack);
                             if (!$_11[0]) {
@@ -92,7 +92,7 @@ class parse_phpeg {
                             do {
                                 $_pos12 = $this->_p;
                                 do {
-                                    array_push($this->_environment_stack, -1);
+                                    $this->_environment_stack[] = -1;
                                     $_15 = array(FALSE, NULL);
                                     if (($_15_ = substr($this->_s, $this->_p, 1)) === "\\") {
                                         $_15 = array(TRUE, $_15_);
@@ -113,7 +113,7 @@ class parse_phpeg {
                                         $_15 = array(FALSE, NULL);
                                         break;
                                     }
-                                    array_push($this->_environment_stack, -1);
+                                    $this->_environment_stack[] = -1;
                                     $_16 = $this->_parse_11();
                                     array_pop($this->_environment_stack);
                                     if (!$_16[0]) {
@@ -518,7 +518,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_1() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         do {
             $_2 = $this->_parse_11();
             if (!$_2[0]) {
@@ -579,7 +579,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_2() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         do {
             $_2 = $this->_parse_11();
             if (!$_2[0]) {
@@ -635,10 +635,10 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_3() {
-        array_push($this->_environment_stack, -1);
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
+        $this->_environment_stack[] = -1;
         do {
-            array_push($this->_environment_stack, -1);
+            $this->_environment_stack[] = -1;
             $_3 = $this->_parse_4();
             array_pop($this->_environment_stack);
             if (!$_3[0]) {
@@ -649,7 +649,7 @@ class parse_phpeg {
             do {
                 $_pos4 = $this->_p;
                 do {
-                    array_push($this->_environment_stack, -1);
+                    $this->_environment_stack[] = -1;
                     do {
                         $_8 = $this->_parse_14();
                         if (!$_8[0]) {
@@ -687,7 +687,7 @@ class parse_phpeg {
                         $_7 = array(FALSE, NULL);
                         break;
                     }
-                    array_push($this->_environment_stack, -1);
+                    $this->_environment_stack[] = -1;
                     $_8 = $this->_parse_4();
                     array_pop($this->_environment_stack);
                     if (!$_8[0]) {
@@ -725,11 +725,11 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_4() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         do {
-            array_push($this->_environment_stack, -1);
+            $this->_environment_stack[] = -1;
             do {
-                array_push($this->_environment_stack, -1);
+                $this->_environment_stack[] = -1;
                 $_4 = $this->_parse_5();
                 array_pop($this->_environment_stack);
                 if (!$_4[0]) {
@@ -740,14 +740,14 @@ class parse_phpeg {
                 do {
                     $_pos5 = $this->_p;
                     do {
-                        array_push($this->_environment_stack, -1);
+                        $this->_environment_stack[] = -1;
                         $_8 = $this->_parse_15();
                         array_pop($this->_environment_stack);
                         if (!$_8[0]) {
                             $_8 = array(FALSE, NULL);
                             break;
                         }
-                        array_push($this->_environment_stack, -1);
+                        $this->_environment_stack[] = -1;
                         $_9 = $this->_parse_5();
                         array_pop($this->_environment_stack);
                         if (!$_9[0]) {
@@ -808,7 +808,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_5() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         $_0 = array(FALSE, NULL);
         $_pos0 = $this->_p;
         do {
@@ -1014,7 +1014,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_6() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         do {
             $_2 = $this->_parse_7();
             if (!$_2[0]) {
@@ -1121,7 +1121,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_7() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         $_0 = array(FALSE, NULL);
         $_pos0 = $this->_p;
         do {
@@ -1199,9 +1199,9 @@ class parse_phpeg {
                 }
                 $_7 = array(TRUE, NULL);
                 $_pos7 = $this->_p;
-                array_push($this->_environment_stack, -1);
+                $this->_environment_stack[] = -1;
                 do {
-                    array_push($this->_environment_stack, -1);
+                    $this->_environment_stack[] = -1;
                     $_10 = $this->_parse_3();
                     array_pop($this->_environment_stack);
                     if (!$_10[0]) {
@@ -1212,7 +1212,7 @@ class parse_phpeg {
                     do {
                         $_pos11 = $this->_p;
                         do {
-                            array_push($this->_environment_stack, -1);
+                            $this->_environment_stack[] = -1;
                             do {
                                 $_15 = $this->_parse_14();
                                 if (!$_15[0]) {
@@ -1250,7 +1250,7 @@ class parse_phpeg {
                                 $_14 = array(FALSE, NULL);
                                 break;
                             }
-                            array_push($this->_environment_stack, -1);
+                            $this->_environment_stack[] = -1;
                             $_15 = $this->_parse_3();
                             array_pop($this->_environment_stack);
                             if (!$_15[0]) {
@@ -1602,7 +1602,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_8() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         do {
             $_2 = array(FALSE, NULL);
             if (($_2_ = substr($this->_s, $this->_p, 1)) === "[") {
@@ -1795,7 +1795,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_9() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         $_0 = array(FALSE, NULL);
         $_pos0 = $this->_p;
         do {
@@ -1992,7 +1992,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_10() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         $_0 = array(FALSE, NULL);
         $_pos0 = $this->_p;
         do {
@@ -2300,7 +2300,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_11() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         $_s0 = '';
         do {
             $_1 = array(FALSE, NULL);
@@ -2359,7 +2359,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_12() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         $_0 = array(FALSE, NULL);
         $_pos0 = $this->_p;
         do {
@@ -2541,7 +2541,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_13() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         $_1 = array(TRUE, array());
         do {
             $_pos1 = $this->_p;
@@ -2695,7 +2695,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_14() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         $_0 = array(TRUE, '');
         do {
             $_pos0 = $this->_p;
@@ -2926,7 +2926,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_15() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         $_0 = array(FALSE, array());
         do {
             $_pos0 = $this->_p;
@@ -3158,7 +3158,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_16() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         $_0 = array(FALSE, NULL);
         $_pos0 = $this->_p;
         do {
@@ -3246,7 +3246,7 @@ class parse_phpeg {
         return $_0;
     }
     private function _parse_17() {
-        array_push($this->_environment_stack, -1);
+        $this->_environment_stack[] = -1;
         do {
             $_2 = array(FALSE, NULL);
             if (($_2_ = substr($this->_s, $this->_p, 1)) === "(") {
@@ -3274,9 +3274,9 @@ class parse_phpeg {
             }
             $_4 = array(TRUE, NULL);
             $_pos4 = $this->_p;
-            array_push($this->_environment_stack, -1);
+            $this->_environment_stack[] = -1;
             do {
-                array_push($this->_environment_stack, -1);
+                $this->_environment_stack[] = -1;
                 $_7 = $this->_parse_11();
                 array_pop($this->_environment_stack);
                 if (!$_7[0]) {
@@ -3287,7 +3287,7 @@ class parse_phpeg {
                 do {
                     $_pos8 = $this->_p;
                     do {
-                        array_push($this->_environment_stack, -1);
+                        $this->_environment_stack[] = -1;
                         do {
                             $_12 = $this->_parse_14();
                             if (!$_12[0]) {
@@ -3325,7 +3325,7 @@ class parse_phpeg {
                             $_11 = array(FALSE, NULL);
                             break;
                         }
-                        array_push($this->_environment_stack, -1);
+                        $this->_environment_stack[] = -1;
                         $_12 = $this->_parse_11();
                         array_pop($this->_environment_stack);
                         if (!$_12[0]) {

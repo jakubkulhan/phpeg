@@ -88,7 +88,7 @@ all (nodes) {
         $ret
     );
 
-    // last instruction transfers value from stack to %value register
+    // last instruction transfers value from %stack to %value register
     $ret[] = array("pop", array("register", "stack"), array("register", "value"));
 
 
@@ -214,7 +214,7 @@ zero_or_more (node) {
         array(
             array("jumpif", array("register", "fail"), array("offset", 7)),
             array("pop", array("register", "stack"), array("register", "a")),
-            array($is_simple ? "append" : "push", array("register", "value"), array("register", "a")),
+            array($is_simple ? "append" : "arrayappend", array("register", "value"), array("register", "a")),
             array("pop", array("register", "stack"), NULL),
             array("push", array("register", "p"), array("register", "stack")),
             array("push", array("register", "a"), array("register", "stack")),
@@ -241,7 +241,7 @@ one_or_more (node) {
             array("jumpif", array("register", "fail"), array("offset", 9)),
             array("pop", array("register", "stack"), NULL),
             array("pop", array("register", "stack"), array("register", "a")),
-            array($is_simple ? "append" : "push", array("register", "value"), array("register", "a")),
+            array($is_simple ? "append" : "arrayappend", array("register", "value"), array("register", "a")),
             array("pop", array("register", "stack"), NULL),
             array("push", array("register", "p"), array("register", "stack")),
             array("push", array("register", "a"), array("register", "stack")),

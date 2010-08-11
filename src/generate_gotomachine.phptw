@@ -78,11 +78,15 @@ phpize_ (a) {
 
 set (src, dst) -> WALK($dst) . " = " . WALK($src) . ";"
 
-push (src, dst) -> WALK($dst) . "[] = " . WALK($src) . ";"
-
-pop (src, dst) -> ($dst !== NULL ? WALK($dst) . " = " : "") . "array_pop(" . WALK($src) . ");";
-
 append (src, dst) -> WALK($dst) . " .= " . WALK($src) . ";"
+
+arrayappend (src, dst) -> WALK($dst) . "[] = " . WALK($src) . ";"
+
+stackinit (reg) -> WALK($reg) . "_sp = -1; " . WALK($reg) . " = array();"
+
+push (src, dst) -> "++" . WALK($dst) . "_sp; " . WALK($dst) . "[" . WALK($dst) . "_sp] = " . WALK($src) . ";"
+
+pop (src, dst) -> ($dst !== NULL ? WALK($dst) . " = " . WALK($src) . "[" . WALK($src) . "_sp];" : "") . "--" . WALK($src) . "_sp;";
 
 jump (addr) {
     $addr = WALK($addr);
