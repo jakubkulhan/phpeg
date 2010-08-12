@@ -250,10 +250,7 @@ protected function _2($node, $code) { extract($this->_env, EXTR_REFS); $n = coun
 
     return array_merge(
         array(
-            // converts %env to array of references, so one can mutate state
-            // FIXME: inlines are bad, m'kay...
-            array("set", array("value", array()), array("register", "b")),
-            array("inline", "foreach (\$_env as \$_a => \$_) { \$_b[\$_a] =& \$_env[\$_a]; }"),
+            array("refarray", array("register", "env"), array("register", "b")),
             array("push", array("register", "b"), array("register", "stack")),
         ),
         $this->_walk($node),
@@ -417,9 +414,7 @@ protected function _15($code) { extract($this->_env, EXTR_REFS); $n = count($sel
     $self->codes[$n] = $code;
 
     return array(
-        // converts %env to array of references, so one can mutate state
-        // FIXME: inlines are bad, m'kay...
-        array("inline", "foreach (\$_env as \$_a => \$_) { \$_env[\$_a] =& \$_env[\$_a]; }"),
+        array("refarray", array("register", "env"), array("register", "env")),
         array("run", $n, array("register", "env")),
         array("set", array("not", array("register", "value")), array("register", "fail")),
         array("set", array("value", NULL), array("register", "value")),

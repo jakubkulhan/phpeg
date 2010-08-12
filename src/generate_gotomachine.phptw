@@ -78,6 +78,13 @@ phpize_ (a) {
 
 set (src, dst) -> WALK($dst) . " = " . WALK($src) . ";"
 
+refarray (src, dst) {
+    return (WALK($src) !== WALK($dst) ? WALK($dst) . " = array(); " : "") .
+           "foreach (" . WALK($src) . " as \$_ref => \$_) { " .
+               WALK($dst) . "[\$_ref] =& " . WALK($src) . "[\$_ref]; " .
+           "}";
+}
+
 append (src, dst) -> WALK($dst) . " .= " . WALK($src) . ";"
 
 arrayappend (src, dst) -> WALK($dst) . "[] = " . WALK($src) . ";"
@@ -86,7 +93,10 @@ stackinit (reg) -> WALK($reg) . "_sp = -1; " . WALK($reg) . " = array();"
 
 push (src, dst) -> "++" . WALK($dst) . "_sp; " . WALK($dst) . "[" . WALK($dst) . "_sp] = " . WALK($src) . ";"
 
-pop (src, dst) -> ($dst !== NULL ? WALK($dst) . " = " . WALK($src) . "[" . WALK($src) . "_sp];" : "") . "--" . WALK($src) . "_sp;";
+pop (src, dst) {
+    return ($dst !== NULL ? WALK($dst) . " = " . WALK($src) . "[" . WALK($src) . "_sp]; " : "") .
+    "--" . WALK($src) . "_sp;";
+}
 
 jump (addr) {
     $addr = WALK($addr);
