@@ -112,12 +112,26 @@ jump (addr) {
 jumpif (cond, addr) -> "if (" . WALK($cond) . ") { " . WALK(array("jump", $addr)) . " }"
 
 return (label, addr) {
-    $ret = "return array(FALSE, NULL, NULL);";
     $addr = WALK($addr);
-    foreach ($self->returns[$label] as $to) {
-        $ret = "if ($addr === $to) { goto L$to; } else { $ret }";
+
+    assert(count($self->returns[$label]) > 0);
+
+    if (count($self->returns[$label]) === 1) {
+        $to = $self->returns[$label][0];
+        return "if ($addr !== $to) return array(FALSE, NULL, " . var_export($label, TRUE) . "); " .
+               "goto L" . $to . ";";
+
+    } else {
+        $ret = "";
+
+        foreach ($self->returns[$label] as $to) {
+            $ret .= "if ($addr === $to) { goto L$to; } else ";
+        }
+
+        $ret .= "{ return array(FALSE, NULL, " . var_export($label, TRUE) . "); }";
+
+        return $ret;
     }
-    return $ret;
 }
 
 run (n, env) -> "\$_value = \$this->_$n(" . WALK($env) . ");"

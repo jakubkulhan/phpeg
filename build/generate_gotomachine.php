@@ -286,12 +286,26 @@ protected function _10($addr) { extract($this->_env, EXTR_REFS); $addr = $this->
 }
 protected function _11($cond, $addr) { extract($this->_env, EXTR_REFS); return "if (" . $this->_walk($cond) . ") { " . $this->_walk(array("jump", $addr)) . " }";
 }
-protected function _12($label, $addr) { extract($this->_env, EXTR_REFS); $ret = "return array(FALSE, NULL, NULL);";
-    $addr = $this->_walk($addr);
-    foreach ($self->returns[$label] as $to) {
-        $ret = "if ($addr === $to) { goto L$to; } else { $ret }";
+protected function _12($label, $addr) { extract($this->_env, EXTR_REFS); $addr = $this->_walk($addr);
+
+    assert(count($self->returns[$label]) > 0);
+
+    if (count($self->returns[$label]) === 1) {
+        $to = $self->returns[$label][0];
+        return "if ($addr !== $to) return array(FALSE, NULL, " . var_export($label, TRUE) . "); " .
+               "goto L" . $to . ";";
+
+    } else {
+        $ret = "";
+
+        foreach ($self->returns[$label] as $to) {
+            $ret .= "if ($addr === $to) { goto L$to; } else ";
+        }
+
+        $ret .= "{ return array(FALSE, NULL, " . var_export($label, TRUE) . "); }";
+
+        return $ret;
     }
-    return $ret;
 
 }
 protected function _13($n, $env) { extract($this->_env, EXTR_REFS); return "\$_value = \$this->_$n(" . $this->_walk($env) . ");";
