@@ -251,14 +251,14 @@ protected function _4($node) { extract($this->_env, EXTR_REFS); $saved_bound = $
     return $ret;
 
 }
-protected function _5($i, $node) { extract($this->_env, EXTR_REFS); return "\$this->_environment_stack[] = {$i};\n" .
+protected function _5($i, $node) { extract($this->_env, EXTR_REFS); return $self->common->walk(array("push_environment_", $i)) .
            $this->_walk($node) .
-           "array_pop(\$this->_environment_stack);\n";
+           $self->common->walk(array("pop_environment_"));
 
 }
-protected function _6($node) { extract($this->_env, EXTR_REFS); return "\$this->_environment_stack[] = -1;\n" .
+protected function _6($node) { extract($this->_env, EXTR_REFS); return $self->common->walk(array("push_environment_", -1)) .
            $this->_walk($node) .
-           "array_pop(\$this->_environment_stack);\n";
+           $self->common->walk(array("pop_environment_"));
 
 }
 protected function _7($nodes) { extract($this->_env, EXTR_REFS); $myi = $self->i;

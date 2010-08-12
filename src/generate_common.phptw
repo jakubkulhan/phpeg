@@ -64,12 +64,17 @@ constructor_ {
 
     return "private \$_environments = array(-1 => array());\n" .
            "private \$_environment_stack = array();\n" .
+           "private \$_environment_stack_sp = -1;\n" .
            "public function __construct() {\n" .
                i($inits) .
            "}\n";
 }
 
 extract_environment_ -> "extract(\$this->_environments[\$this->_environment_stack[count(\$this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);";
+
+push_environment_ (env) -> "\$this->_environment_stack[++\$this->_environment_stack_sp] = " . $env . ";"
+
+pop_environment_ -> "--\$this->_environment_stack_sp;"
 
 init_ (i, code) {
     return "private function _init$i() {\n" .

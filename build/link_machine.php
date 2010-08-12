@@ -77,40 +77,36 @@ $self = (object) array(
         $ret = NULL;
 
         switch ($node[0]) {
-        case 'stackinit':
-            list($_, $_0) = $node;
-            $ret = $this->_0($_0);
-        break;
         case 'set':
         case 'push':
         case 'pop':
         case 'append':
         case 'arrayappend':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_1($_0, $_1);
+            $ret = $this->_0($_0, $_1);
         break;
         case 'jump':
             list($_, $_0) = $node;
-            $ret = $this->_2($_0);
+            $ret = $this->_1($_0);
         break;
         case 'jumpif':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_3($_0, $_1);
+            $ret = $this->_2($_0, $_1);
         break;
         case 'run':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_4($_0, $_1);
+            $ret = $this->_3($_0, $_1);
         break;
         case 'offset':
             list($_, $_0) = $node;
-            $ret = $this->_5($_0);
+            $ret = $this->_4($_0);
         break;
         case 'label':
             list($_, $_0) = $node;
-            $ret = $this->_6($_0);
+            $ret = $this->_5($_0);
         break;
         default:
-            $ret = $this->_7();
+            $ret = $this->_6();
         break;
         }
 
@@ -181,23 +177,21 @@ $self = (object) array(
 
     }
 
-protected function _0($reg) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $reg);
+protected function _0($src, $dst) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk($src), $this->_walk($dst));
 }
-protected function _1($src, $dst) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk($src), $this->_walk($dst));
+protected function _1($addr) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk($addr));
 }
-protected function _2($addr) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk($addr));
+protected function _2($cond, $addr) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk($cond), $this->_walk($addr));
 }
-protected function _3($cond, $addr) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $this->_walk($cond), $this->_walk($addr));
+protected function _3($n, $env) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $n, $this->_walk($env));
 }
-protected function _4($n, $env) { extract($this->_env, EXTR_REFS); return array($this->_nodetype(), $n, $this->_walk($env));
+protected function _4($offset) { extract($this->_env, EXTR_REFS); return array("value", $this->_index() + $offset);
 }
-protected function _5($offset) { extract($this->_env, EXTR_REFS); return array("value", $this->_index() + $offset);
-}
-protected function _6($label) { extract($this->_env, EXTR_REFS); $self->returns[$label][] = $this->_index() + 1;
+protected function _5($label) { extract($this->_env, EXTR_REFS); $self->returns[$label][] = $this->_index() + 1;
     return array("value", $self->labels[$label]);
 
 }
-protected function _7() { extract($this->_env, EXTR_REFS); return $this->_node();
+protected function _6() { extract($this->_env, EXTR_REFS); return $this->_node();
 }
 
 }

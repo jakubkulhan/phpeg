@@ -27,6 +27,7 @@ class compile_machine
         $this->_env = array();
 $self = (object) array(
         "codes" => array(),
+        "environment" => -255,
     );
 
         $this->_env = get_defined_vars();
@@ -282,26 +283,48 @@ protected function _4($node) { extract($this->_env, EXTR_REFS); return array_mer
     );
 
 }
-protected function _5($i, $node) { extract($this->_env, EXTR_REFS); return array_merge(
+protected function _5($i, $node) { extract($this->_env, EXTR_REFS); if ($self->environment === $i) {
+        return $this->_walk($node);
+    }
+
+    $saved_environment = $self->environment;
+    $self->environment = $i;
+
+    $ret = array_merge(
         array(
-            array("inline", "\$this->_environment_stack[] = {$i};"),
+            array("pushenv", $i),
         ),
         $this->_walk($node),
         array(
-            array("inline", "array_pop(\$this->_environment_stack);"),
+            array("popenv"),
         )
     );
 
+    $self->environment = $saved_environment;
+
+    return $ret;
+
 }
-protected function _6($node) { extract($this->_env, EXTR_REFS); return array_merge(
+protected function _6($node) { extract($this->_env, EXTR_REFS); if ($self->environment === -1) {
+        return $this->_walk($node);
+    }
+
+    $saved_environment = $self->environment;
+    $self->environment = -1;
+
+    $ret = array_merge(
         array(
-            array("inline", "\$this->_environment_stack[] = -1;"),
+            array("pushenv", -1),
         ),
         $this->_walk($node),
         array(
-            array("inline", "array_pop(\$this->_environment_stack);"),
+            array("popenv"),
         )
     );
+
+    $self->environment = $saved_environment;
+
+    return $ret;
 
 }
 protected function _7($node) { extract($this->_env, EXTR_REFS); return array_merge(

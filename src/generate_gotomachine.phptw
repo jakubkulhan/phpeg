@@ -91,7 +91,7 @@ arrayappend (src, dst) -> WALK($dst) . "[] = " . WALK($src) . ";"
 
 stackinit (reg) -> WALK($reg) . "_sp = -1; " . WALK($reg) . " = array();"
 
-push (src, dst) -> "++" . WALK($dst) . "_sp; " . WALK($dst) . "[" . WALK($dst) . "_sp] = " . WALK($src) . ";"
+push (src, dst) -> WALK($dst) . "[++" . WALK($dst) . "_sp] = " . WALK($src) . ";"
 
 pop (src, dst) {
     return ($dst !== NULL ? WALK($dst) . " = " . WALK($src) . "[" . WALK($src) . "_sp]; " : "") .
@@ -144,7 +144,9 @@ register (r) -> "\$_{$r}"
 
 register_index (r, i) -> "\$_{$r}[" . WALK(array("phpize_", $i)) . "]"
 
-inline (code) -> $code
+pushenv (env) -> $self->common->walk(array("push_environment_", $env))
+
+popenv -> $self->common->walk(array("pop_environment_"))
 
 position {
     return "\$_a = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", (string) substr(\$_s, 0, \$_p)); " .

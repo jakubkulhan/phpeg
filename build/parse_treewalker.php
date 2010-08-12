@@ -8,6 +8,7 @@ class parse_treewalker {
     
     private $_environments = array(-1 => array());
     private $_environment_stack = array();
+    private $_environment_stack_sp = -1;
     public function __construct() {
         
     }
@@ -41,8 +42,7 @@ class parse_treewalker {
         return array(TRUE, $result, NULL);
     }
     private function _parse_0() {
-        $this->_environment_stack[] = -1;
-        do {
+        $this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
             $_2 = $this->_parse_3();
             if (!$_2[0]) {
                 $_2 = array(FALSE, NULL);
@@ -79,12 +79,9 @@ class parse_treewalker {
                             $_7 = array(FALSE, NULL);
                             break;
                         }
-                        $this->_environment_stack[] = -1;
-                        do {
-                            $this->_environment_stack[] = -1;
-                            $_11 = $this->_parse_6();
-                            array_pop($this->_environment_stack);
-                            if (!$_11[0]) {
+                        $this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
+                            $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_11 = $this->_parse_6();
+                            --$this->_environment_stack_sp;if (!$_11[0]) {
                                 $_11 = array(FALSE, NULL);
                                 break;
                             }
@@ -92,8 +89,7 @@ class parse_treewalker {
                             do {
                                 $_pos12 = $this->_p;
                                 do {
-                                    $this->_environment_stack[] = -1;
-                                    $_15 = array(FALSE, NULL);
+                                    $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_15 = array(FALSE, NULL);
                                     if (($_15_ = substr($this->_s, $this->_p, 1)) === "\\") {
                                         $_15 = array(TRUE, $_15_);
                                         $this->_p += 1;
@@ -108,15 +104,12 @@ class parse_treewalker {
                                             }
                                         }
                                     }
-                                    array_pop($this->_environment_stack);
-                                    if (!$_15[0]) {
+                                    --$this->_environment_stack_sp;if (!$_15[0]) {
                                         $_15 = array(FALSE, NULL);
                                         break;
                                     }
-                                    $this->_environment_stack[] = -1;
-                                    $_16 = $this->_parse_6();
-                                    array_pop($this->_environment_stack);
-                                    if (!$_16[0]) {
+                                    $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_16 = $this->_parse_6();
+                                    --$this->_environment_stack_sp;if (!$_16[0]) {
                                         $_15 = array(FALSE, NULL);
                                         break;
                                     }
@@ -142,8 +135,7 @@ class parse_treewalker {
                         if ($_10[0]) {
                             $_9 = array(TRUE, $this->_1(array('first' => &$_11[1], 'rest' => &$_12[1])));
                         }
-                        array_pop($this->_environment_stack);
-                        if (!$_9[0]) {
+                        --$this->_environment_stack_sp;if (!$_9[0]) {
                             $_7 = array(FALSE, NULL);
                             break;
                         }
@@ -375,12 +367,11 @@ class parse_treewalker {
         if ($_1[0]) {
             $_0 = array(TRUE, $this->_6(array('declarations' => &$_3[1], 'definitions' => &$_4[1])));
         }
-        array_pop($this->_environment_stack);
+        --$this->_environment_stack_sp;
         return $_0;
     }
     private function _parse_1() {
-        $this->_environment_stack[] = -1;
-        do {
+        $this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
             $_2 = array(FALSE, NULL);
             $_pos2 = $this->_p;
             do {
@@ -409,12 +400,9 @@ class parse_treewalker {
                     $_2 = $_3;
                     break;
                 }
-                $this->_environment_stack[] = -1;
-                do {
-                    $this->_environment_stack[] = -1;
-                    $_6 = $this->_parse_6();
-                    array_pop($this->_environment_stack);
-                    if (!$_6[0]) {
+                $this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
+                    $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_6 = $this->_parse_6();
+                    --$this->_environment_stack_sp;if (!$_6[0]) {
                         $_6 = array(FALSE, NULL);
                         break;
                     }
@@ -422,8 +410,7 @@ class parse_treewalker {
                     do {
                         $_pos7 = $this->_p;
                         do {
-                            $this->_environment_stack[] = -1;
-                            do {
+                            $this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
                                 $_11 = $this->_parse_3();
                                 if (!$_11[0]) {
                                     $_11 = array(FALSE, NULL);
@@ -455,15 +442,12 @@ class parse_treewalker {
                                 }
                             } while(0);
                             $_10 = $_11;
-                            array_pop($this->_environment_stack);
-                            if (!$_10[0]) {
+                            --$this->_environment_stack_sp;if (!$_10[0]) {
                                 $_10 = array(FALSE, NULL);
                                 break;
                             }
-                            $this->_environment_stack[] = -1;
-                            $_11 = $this->_parse_6();
-                            array_pop($this->_environment_stack);
-                            if (!$_11[0]) {
+                            $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_11 = $this->_parse_6();
+                            --$this->_environment_stack_sp;if (!$_11[0]) {
                                 $_10 = array(FALSE, NULL);
                                 break;
                             }
@@ -489,8 +473,7 @@ class parse_treewalker {
                 if ($_5[0]) {
                     $_4 = array(TRUE, $this->_9(array('first' => &$_6[1], 'rest' => &$_7[1])));
                 }
-                array_pop($this->_environment_stack);
-                if (!$_4[0]) {
+                --$this->_environment_stack_sp;if (!$_4[0]) {
                     $this->_p = $_pos2;
                 } else {
                     $_2 = $_4;
@@ -539,12 +522,11 @@ class parse_treewalker {
         if ($_1[0]) {
             $_0 = array(TRUE, $this->_10(array('match' => &$_2[1], 'parameters' => &$_4[1], 'code' => &$_6[1])));
         }
-        array_pop($this->_environment_stack);
+        --$this->_environment_stack_sp;
         return $_0;
     }
     private function _parse_2() {
-        $this->_environment_stack[] = -1;
-        do {
+        $this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
             $_2 = array(FALSE, NULL);
             if (($_2_ = substr($this->_s, $this->_p, 1)) === "(") {
                 $_2 = array(TRUE, $_2_);
@@ -571,12 +553,9 @@ class parse_treewalker {
             }
             $_4 = array(TRUE, NULL);
             $_pos4 = $this->_p;
-            $this->_environment_stack[] = -1;
-            do {
-                $this->_environment_stack[] = -1;
-                $_7 = $this->_parse_6();
-                array_pop($this->_environment_stack);
-                if (!$_7[0]) {
+            $this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
+                $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_7 = $this->_parse_6();
+                --$this->_environment_stack_sp;if (!$_7[0]) {
                     $_7 = array(FALSE, NULL);
                     break;
                 }
@@ -584,8 +563,7 @@ class parse_treewalker {
                 do {
                     $_pos8 = $this->_p;
                     do {
-                        $this->_environment_stack[] = -1;
-                        do {
+                        $this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
                             $_12 = $this->_parse_3();
                             if (!$_12[0]) {
                                 $_12 = array(FALSE, NULL);
@@ -617,15 +595,12 @@ class parse_treewalker {
                             }
                         } while(0);
                         $_11 = $_12;
-                        array_pop($this->_environment_stack);
-                        if (!$_11[0]) {
+                        --$this->_environment_stack_sp;if (!$_11[0]) {
                             $_11 = array(FALSE, NULL);
                             break;
                         }
-                        $this->_environment_stack[] = -1;
-                        $_12 = $this->_parse_6();
-                        array_pop($this->_environment_stack);
-                        if (!$_12[0]) {
+                        $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_12 = $this->_parse_6();
+                        --$this->_environment_stack_sp;if (!$_12[0]) {
                             $_11 = array(FALSE, NULL);
                             break;
                         }
@@ -651,8 +626,7 @@ class parse_treewalker {
             if ($_6[0]) {
                 $_5 = array(TRUE, $this->_12(array('first' => &$_7[1], 'rest' => &$_8[1])));
             }
-            array_pop($this->_environment_stack);
-            if (!$_5[0]) {
+            --$this->_environment_stack_sp;if (!$_5[0]) {
                 $this->_p = $_pos4;
             } else {
                 $_4 = $_5;
@@ -691,12 +665,11 @@ class parse_treewalker {
         if ($_1[0]) {
             $_0 = array(TRUE, $this->_13(array('parameters' => &$_4[1])));
         }
-        array_pop($this->_environment_stack);
+        --$this->_environment_stack_sp;
         return $_0;
     }
     private function _parse_3() {
-        $this->_environment_stack[] = -1;
-        $_0 = array(TRUE, '');
+        $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_0 = array(TRUE, '');
         do {
             $_pos0 = $this->_p;
             $_1 = array(FALSE, NULL);
@@ -922,12 +895,11 @@ class parse_treewalker {
                 $_0[1] .= $_1[1];
             }
         } while ($_1[0]);
-        array_pop($this->_environment_stack);
+        --$this->_environment_stack_sp;
         return $_0;
     }
     private function _parse_4() {
-        $this->_environment_stack[] = -1;
-        $_0 = array(FALSE, array());
+        $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_0 = array(FALSE, array());
         do {
             $_pos0 = $this->_p;
             $_1 = array(FALSE, NULL);
@@ -1154,12 +1126,11 @@ class parse_treewalker {
                 $_0[1][] = $_1[1];
             }
         } while ($_1[0]);
-        array_pop($this->_environment_stack);
+        --$this->_environment_stack_sp;
         return $_0;
     }
     private function _parse_5() {
-        $this->_environment_stack[] = -1;
-        $_0 = array(FALSE, NULL);
+        $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_0 = array(FALSE, NULL);
         $_pos0 = $this->_p;
         do {
             $_1 = array(FALSE, NULL);
@@ -1242,12 +1213,11 @@ class parse_treewalker {
                 break;
             }
         } while(0);
-        array_pop($this->_environment_stack);
+        --$this->_environment_stack_sp;
         return $_0;
     }
     private function _parse_6() {
-        $this->_environment_stack[] = -1;
-        $_s0 = '';
+        $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_s0 = '';
         do {
             $_1 = array(FALSE, NULL);
             if (isset($this->_s[$this->_p]) && is_int($_1_ = ord($this->_s[$this->_p])) && ((97 <= $_1_ && $_1_ <= 122) || (65 <= $_1_ && $_1_ <= 90) || ($_1_ === 95))) {
@@ -1301,12 +1271,11 @@ class parse_treewalker {
         } while(0);
         $_0 = $_1;
         $_0[1] = $_s0;
-        array_pop($this->_environment_stack);
+        --$this->_environment_stack_sp;
         return $_0;
     }
     private function _parse_7() {
-        $this->_environment_stack[] = -1;
-        $_0 = array(FALSE, NULL);
+        $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_0 = array(FALSE, NULL);
         $_pos0 = $this->_p;
         do {
             do {
@@ -1483,12 +1452,11 @@ class parse_treewalker {
                 break;
             }
         } while(0);
-        array_pop($this->_environment_stack);
+        --$this->_environment_stack_sp;
         return $_0;
     }
     private function _parse_8() {
-        $this->_environment_stack[] = -1;
-        $_1 = array(TRUE, array());
+        $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_1 = array(TRUE, array());
         do {
             $_pos1 = $this->_p;
             $_2 = array(FALSE, NULL);
@@ -1637,7 +1605,7 @@ class parse_treewalker {
         if ($_1[0]) {
             $_0 = array(TRUE, $this->_18(array('inside' => &$_1[1])));
         }
-        array_pop($this->_environment_stack);
+        --$this->_environment_stack_sp;
         return $_0;
     }
     private function _0() {
