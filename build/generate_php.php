@@ -303,7 +303,7 @@ protected function _8($nodes) { extract($this->_env, EXTR_REFS); $is_simple = c(
         break;
     }
 
-    if ($reti === NULL) {
+    if (!(isset($reti) && $reti !== NULL)) {
         $reti = $myi;
     }
 

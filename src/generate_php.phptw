@@ -146,7 +146,7 @@ all (nodes) {
         break;
     }
 
-    if ($reti === NULL) {
+    if (!(isset($reti) && $reti !== NULL)) {
         $reti = $myi;
     }
 
