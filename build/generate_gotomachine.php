@@ -274,7 +274,7 @@ protected function _7($reg) { extract($this->_env, EXTR_REFS); return $this->_wa
 protected function _8($src, $dst) { extract($this->_env, EXTR_REFS); return $this->_walk($dst) . "[++" . $this->_walk($dst) . "_sp] = " . $this->_walk($src) . ";";
 }
 protected function _9($src, $dst) { extract($this->_env, EXTR_REFS); return ($dst !== NULL ? $this->_walk($dst) . " = " . $this->_walk($src) . "[" . $this->_walk($src) . "_sp]; " : "") .
-    "--" . $this->_walk($src) . "_sp;";
+    "unset(" . $this->_walk($src) . "[" . $this->_walk($src) . "_sp--]);";
 
 }
 protected function _10($addr) { extract($this->_env, EXTR_REFS); $addr = $this->_walk($addr);

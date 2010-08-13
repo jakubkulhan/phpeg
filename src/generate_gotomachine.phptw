@@ -95,7 +95,7 @@ push (src, dst) -> WALK($dst) . "[++" . WALK($dst) . "_sp] = " . WALK($src) . ";
 
 pop (src, dst) {
     return ($dst !== NULL ? WALK($dst) . " = " . WALK($src) . "[" . WALK($src) . "_sp]; " : "") .
-    "--" . WALK($src) . "_sp;";
+    "unset(" . WALK($src) . "[" . WALK($src) . "_sp--]);";
 }
 
 jump (addr) {
