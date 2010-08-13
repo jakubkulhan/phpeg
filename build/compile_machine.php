@@ -170,18 +170,24 @@ protected function _0($nodes) { extract($this->_env, EXTR_REFS); foreach ($nodes
 
     while ($node = array_pop($nodes)) {
         $ret = array_merge(
-            array(
-                array("push", array("register", "p"), array("register", "stack")),
-            ),
             $node,
             array(
-                array("pop", array("register", "stack"), array("register", "a")),
                 array("jumpif", array("not", array("register", "fail")), array("offset", count($ret) + 2)),
-                array("set", array("register", "a"), array("register", "p")),
+                array("set", array("top", array("register", "stack"), array("value", 0)), array("register", "p")),
             ),
             $ret
         );
     }
+
+    $ret = array_merge(
+        array(
+            array("push", array("register", "p"), array("register", "stack")),
+        ),
+        $ret,
+        array(
+            array("pop", array("register", "stack"), NULL),
+        )
+    );
 
     return $ret;
 
@@ -207,14 +213,11 @@ protected function _1($nodes) { extract($this->_env, EXTR_REFS); $is_simple = c(
         $nodes[$k] = $this->_walk($node);
 
         if ($is_simple) {
-            $nodes[$k][] = array("pop", array("register", "stack"), array("register", "a"));
-            $nodes[$k][] = array("append", array("register", "value"), array("register", "a"));
-            $nodes[$k][] = array("push", array("register", "a"), array("register", "stack"));
+            $nodes[$k][] = array("append", array("register", "value"), array("top", array("register", "stack"), array("value", 0)));
 
         } else if ($push) {
             $push = FALSE;
-            $nodes[$k][] = array("pop", array("register", "stack"), NULL);
-            $nodes[$k][] = array("push", array("register", "value"), array("register", "stack"));
+            $nodes[$k][] = array("set", array("register", "value"), array("top", array("register", "stack"), array("value", 0)));
         }
     }
 
@@ -369,13 +372,10 @@ protected function _9($node) { extract($this->_env, EXTR_REFS); $is_simple = c(n
         ),
         $ret,
         array(
-            array("jumpif", array("register", "fail"), array("offset", 7)),
-            array("pop", array("register", "stack"), array("register", "a")),
-            array($is_simple ? "append" : "arrayappend", array("register", "value"), array("register", "a")),
-            array("pop", array("register", "stack"), NULL),
-            array("push", array("register", "p"), array("register", "stack")),
-            array("push", array("register", "a"), array("register", "stack")),
-            array("jump", array("offset", -(6 + count($ret)))),
+            array("jumpif", array("register", "fail"), array("offset", 4)),
+            array($is_simple ? "append" : "arrayappend", array("register", "value"), array("top", array("register", "stack"), array("value", 0))),
+            array("set", array("register", "p"), array("top", array("register", "stack"), array("value", 1))),
+            array("jump", array("offset", -(3 + count($ret)))),
             array("pop", array("register", "stack"), array("register", "value")),
             array("pop", array("register", "stack"), array("register", "p")),
             array("set", array("value", FALSE), array("register", "fail")),
@@ -394,15 +394,11 @@ protected function _10($node) { extract($this->_env, EXTR_REFS); $is_simple = c(
         ),
         $ret,
         array(
-            array("jumpif", array("register", "fail"), array("offset", 9)),
-            array("pop", array("register", "stack"), NULL),
-            array("pop", array("register", "stack"), array("register", "a")),
-            array($is_simple ? "append" : "arrayappend", array("register", "value"), array("register", "a")),
-            array("pop", array("register", "stack"), NULL),
-            array("push", array("register", "p"), array("register", "stack")),
-            array("push", array("register", "a"), array("register", "stack")),
-            array("push", array("value", FALSE), array("register", "stack")),
-            array("jump", array("offset", -(8 + count($ret)))),
+            array("jumpif", array("register", "fail"), array("offset", 5)),
+            array("set", array("value", FALSE), array("top", array("register", "stack"), array("value", 0))),
+            array($is_simple ? "append" : "arrayappend", array("register", "value"), array("top", array("register", "stack"), array("value", 1))),
+            array("set", array("register", "p"), array("top", array("register", "stack"), array("value", 2))),
+            array("jump", array("offset", -(4 + count($ret)))),
             array("pop", array("register", "stack"), array("register", "a")),
             array("pop", array("register", "stack"), array("register", "value")),
             array("pop", array("register", "stack"), array("register", "p")),

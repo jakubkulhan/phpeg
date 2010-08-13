@@ -98,6 +98,8 @@ pop (src, dst) {
     "unset(" . WALK($src) . "[" . WALK($src) . "_sp--]);";
 }
 
+top (src, sub) ->  WALK($src) . "[" . WALK($src) . "_sp" . ($sub !== array("value", 0) ? " - " . WALK($sub) : "") . "]";
+
 jump (addr) {
     $addr = WALK($addr);
 

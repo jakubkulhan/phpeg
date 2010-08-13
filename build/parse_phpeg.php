@@ -81,7 +81,7 @@ class parse_phpeg {
                         }
                         $this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
                             $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_11 = $this->_parse_11();
-                            --$this->_environment_stack_sp;if (!$_11[0]) {
+                            unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_11[0]) {
                                 $_11 = array(FALSE, NULL);
                                 break;
                             }
@@ -104,12 +104,12 @@ class parse_phpeg {
                                             }
                                         }
                                     }
-                                    --$this->_environment_stack_sp;if (!$_15[0]) {
+                                    unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_15[0]) {
                                         $_15 = array(FALSE, NULL);
                                         break;
                                     }
                                     $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_16 = $this->_parse_11();
-                                    --$this->_environment_stack_sp;if (!$_16[0]) {
+                                    unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_16[0]) {
                                         $_15 = array(FALSE, NULL);
                                         break;
                                     }
@@ -135,7 +135,7 @@ class parse_phpeg {
                         if ($_10[0]) {
                             $_9 = array(TRUE, $this->_1(array('first' => &$_11[1], 'rest' => &$_12[1])));
                         }
-                        --$this->_environment_stack_sp;if (!$_9[0]) {
+                        unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_9[0]) {
                             $_7 = array(FALSE, NULL);
                             break;
                         }
@@ -506,7 +506,7 @@ class parse_phpeg {
         if ($_1[0]) {
             $_0 = array(TRUE, $this->_9(array('declarations' => &$_3[1], 'definitions' => &$_4[1])));
         }
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_1() {
@@ -566,7 +566,7 @@ class parse_phpeg {
         if ($_1[0]) {
             $_0 = array(TRUE, $this->_10(array('name' => &$_2[1], 'parameters' => &$_3[1], 'expression' => &$_7[1])));
         }
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_2() {
@@ -621,13 +621,13 @@ class parse_phpeg {
         if ($_1[0]) {
             $_0 = array(TRUE, $this->_11(array('name' => &$_2[1], 'expression' => &$_6[1])));
         }
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_3() {
         $this->_environment_stack[++$this->_environment_stack_sp] = -1;$this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
             $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_3 = $this->_parse_4();
-            --$this->_environment_stack_sp;if (!$_3[0]) {
+            unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_3[0]) {
                 $_3 = array(FALSE, NULL);
                 break;
             }
@@ -667,12 +667,12 @@ class parse_phpeg {
                         }
                     } while(0);
                     $_7 = $_8;
-                    --$this->_environment_stack_sp;if (!$_7[0]) {
+                    unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_7[0]) {
                         $_7 = array(FALSE, NULL);
                         break;
                     }
                     $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_8 = $this->_parse_4();
-                    --$this->_environment_stack_sp;if (!$_8[0]) {
+                    unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_8[0]) {
                         $_7 = array(FALSE, NULL);
                         break;
                     }
@@ -698,18 +698,18 @@ class parse_phpeg {
         if ($_2[0]) {
             $_1 = array(TRUE, $this->_13(array('first' => &$_3[1], 'rest' => &$_4[1])));
         }
-        --$this->_environment_stack_sp;$_0 = array(FALSE, NULL);
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);$_0 = array(FALSE, NULL);
         if ($_1[0]) {
             $_0 = array(TRUE, $this->_14(array('expressions' => &$_1[1])));
         }
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_4() {
         $this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
             $this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
                 $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_4 = $this->_parse_5();
-                --$this->_environment_stack_sp;if (!$_4[0]) {
+                unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_4[0]) {
                     $_4 = array(FALSE, NULL);
                     break;
                 }
@@ -718,12 +718,12 @@ class parse_phpeg {
                     $_pos5 = $this->_p;
                     do {
                         $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_8 = $this->_parse_15();
-                        --$this->_environment_stack_sp;if (!$_8[0]) {
+                        unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_8[0]) {
                             $_8 = array(FALSE, NULL);
                             break;
                         }
                         $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_9 = $this->_parse_5();
-                        --$this->_environment_stack_sp;if (!$_9[0]) {
+                        unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_9[0]) {
                             $_8 = array(FALSE, NULL);
                             break;
                         }
@@ -749,7 +749,7 @@ class parse_phpeg {
             if ($_3[0]) {
                 $_2 = array(TRUE, $this->_16(array('first' => &$_4[1], 'rest' => &$_5[1])));
             }
-            --$this->_environment_stack_sp;if (!$_2[0]) {
+            unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_2[0]) {
                 $_2 = array(FALSE, NULL);
                 break;
             }
@@ -776,7 +776,7 @@ class parse_phpeg {
         if ($_1[0]) {
             $_0 = array(TRUE, $this->_17(array('expressions' => &$_2[1], 'action' => &$_4[1])));
         }
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_5() {
@@ -981,7 +981,7 @@ class parse_phpeg {
                 break;
             }
         } while(0);
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_6() {
@@ -1087,7 +1087,7 @@ class parse_phpeg {
         if ($_1[0]) {
             $_0 = array(TRUE, $this->_26(array('expression' => &$_2[1], 'suffix' => &$_3[1])));
         }
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_7() {
@@ -1170,7 +1170,7 @@ class parse_phpeg {
                 $_pos7 = $this->_p;
                 $this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
                     $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_10 = $this->_parse_3();
-                    --$this->_environment_stack_sp;if (!$_10[0]) {
+                    unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_10[0]) {
                         $_10 = array(FALSE, NULL);
                         break;
                     }
@@ -1210,12 +1210,12 @@ class parse_phpeg {
                                 }
                             } while(0);
                             $_14 = $_15;
-                            --$this->_environment_stack_sp;if (!$_14[0]) {
+                            unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_14[0]) {
                                 $_14 = array(FALSE, NULL);
                                 break;
                             }
                             $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_15 = $this->_parse_3();
-                            --$this->_environment_stack_sp;if (!$_15[0]) {
+                            unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_15[0]) {
                                 $_14 = array(FALSE, NULL);
                                 break;
                             }
@@ -1241,7 +1241,7 @@ class parse_phpeg {
                 if ($_9[0]) {
                     $_8 = array(TRUE, $this->_29(array('first' => &$_10[1], 'rest' => &$_11[1])));
                 }
-                --$this->_environment_stack_sp;if (!$_8[0]) {
+                unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_8[0]) {
                     $this->_p = $_pos7;
                 } else {
                     $_7 = $_8;
@@ -1559,7 +1559,7 @@ class parse_phpeg {
                 break;
             }
         } while(0);
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_8() {
@@ -1751,7 +1751,7 @@ class parse_phpeg {
         if ($_1[0]) {
             $_0 = array(TRUE, $this->_39(array('matches' => &$_3[1])));
         }
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_9() {
@@ -1947,7 +1947,7 @@ class parse_phpeg {
                 break;
             }
         } while(0);
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_10() {
@@ -2254,7 +2254,7 @@ class parse_phpeg {
                 break;
             }
         } while(0);
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_11() {
@@ -2312,7 +2312,7 @@ class parse_phpeg {
         } while(0);
         $_0 = $_1;
         $_0[1] = $_s0;
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_12() {
@@ -2493,7 +2493,7 @@ class parse_phpeg {
                 break;
             }
         } while(0);
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_13() {
@@ -2646,7 +2646,7 @@ class parse_phpeg {
         if ($_1[0]) {
             $_0 = array(TRUE, $this->_54(array('inside' => &$_1[1])));
         }
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_14() {
@@ -2876,7 +2876,7 @@ class parse_phpeg {
                 $_0[1] .= $_1[1];
             }
         } while ($_1[0]);
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_15() {
@@ -3107,7 +3107,7 @@ class parse_phpeg {
                 $_0[1][] = $_1[1];
             }
         } while ($_1[0]);
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_16() {
@@ -3194,7 +3194,7 @@ class parse_phpeg {
                 break;
             }
         } while(0);
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _parse_17() {
@@ -3227,7 +3227,7 @@ class parse_phpeg {
             $_pos4 = $this->_p;
             $this->_environment_stack[++$this->_environment_stack_sp] = -1;do {
                 $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_7 = $this->_parse_11();
-                --$this->_environment_stack_sp;if (!$_7[0]) {
+                unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_7[0]) {
                     $_7 = array(FALSE, NULL);
                     break;
                 }
@@ -3267,12 +3267,12 @@ class parse_phpeg {
                             }
                         } while(0);
                         $_11 = $_12;
-                        --$this->_environment_stack_sp;if (!$_11[0]) {
+                        unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_11[0]) {
                             $_11 = array(FALSE, NULL);
                             break;
                         }
                         $this->_environment_stack[++$this->_environment_stack_sp] = -1;$_12 = $this->_parse_11();
-                        --$this->_environment_stack_sp;if (!$_12[0]) {
+                        unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_12[0]) {
                             $_11 = array(FALSE, NULL);
                             break;
                         }
@@ -3298,7 +3298,7 @@ class parse_phpeg {
             if ($_6[0]) {
                 $_5 = array(TRUE, $this->_56(array('first' => &$_7[1], 'rest' => &$_8[1])));
             }
-            --$this->_environment_stack_sp;if (!$_5[0]) {
+            unset($this->_environment_stack[$this->_environment_stack_sp--]);if (!$_5[0]) {
                 $this->_p = $_pos4;
             } else {
                 $_4 = $_5;
@@ -3337,7 +3337,7 @@ class parse_phpeg {
         if ($_1[0]) {
             $_0 = array(TRUE, $this->_57(array('parameters' => &$_4[1])));
         }
-        --$this->_environment_stack_sp;
+        unset($this->_environment_stack[$this->_environment_stack_sp--]);
         return $_0;
     }
     private function _0() {

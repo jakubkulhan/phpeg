@@ -118,68 +118,72 @@ $self = (object) array(
             list($_, $_0, $_1) = $node;
             $ret = $this->_9($_0, $_1);
         break;
+        case 'top':
+            list($_, $_0, $_1) = $node;
+            $ret = $this->_10($_0, $_1);
+        break;
         case 'jump':
             list($_, $_0) = $node;
-            $ret = $this->_10($_0);
+            $ret = $this->_11($_0);
         break;
         case 'jumpif':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_11($_0, $_1);
+            $ret = $this->_12($_0, $_1);
         break;
         case 'return':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_12($_0, $_1);
+            $ret = $this->_13($_0, $_1);
         break;
         case 'run':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_13($_0, $_1);
+            $ret = $this->_14($_0, $_1);
         break;
         case 'value':
             list($_, $_0) = $node;
-            $ret = $this->_14($_0);
+            $ret = $this->_15($_0);
         break;
         case 'not':
             list($_, $_0) = $node;
-            $ret = $this->_15($_0);
+            $ret = $this->_16($_0);
         break;
         case 'register':
             list($_, $_0) = $node;
-            $ret = $this->_16($_0);
+            $ret = $this->_17($_0);
         break;
         case 'register_index':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_17($_0, $_1);
+            $ret = $this->_18($_0, $_1);
         break;
         case 'pushenv':
             list($_, $_0) = $node;
-            $ret = $this->_18($_0);
+            $ret = $this->_19($_0);
         break;
         case 'popenv':
-            $ret = $this->_19();
-        break;
-        case 'position':
             $ret = $this->_20();
         break;
-        case 'any':
+        case 'position':
             $ret = $this->_21();
+        break;
+        case 'any':
+            $ret = $this->_22();
         break;
         case 'literal':
             list($_, $_0) = $node;
-            $ret = $this->_22($_0);
+            $ret = $this->_23($_0);
         break;
         case 'range':
             list($_, $_0) = $node;
-            $ret = $this->_23($_0);
+            $ret = $this->_24($_0);
         break;
         case 'end':
-            $ret = $this->_24();
+            $ret = $this->_25();
         break;
         case 'failed_':
             list($_, $_0) = $node;
-            $ret = $this->_25($_0);
+            $ret = $this->_26($_0);
         break;
         default:
-            $ret = $this->_26();
+            $ret = $this->_27();
         break;
         }
 
@@ -277,7 +281,9 @@ protected function _9($src, $dst) { extract($this->_env, EXTR_REFS); return ($ds
     "unset(" . $this->_walk($src) . "[" . $this->_walk($src) . "_sp--]);";
 
 }
-protected function _10($addr) { extract($this->_env, EXTR_REFS); $addr = $this->_walk($addr);
+protected function _10($src, $sub) { extract($this->_env, EXTR_REFS); return $this->_walk($src) . "[" . $this->_walk($src) . "_sp" . ($sub !== array("value", 0) ? " - " . $this->_walk($sub) : "") . "]";;
+}
+protected function _11($addr) { extract($this->_env, EXTR_REFS); $addr = $this->_walk($addr);
 
     if ($addr[0] !== "$") {
         return "goto L$addr;";
@@ -287,9 +293,9 @@ protected function _10($addr) { extract($this->_env, EXTR_REFS); $addr = $this->
     }
 
 }
-protected function _11($cond, $addr) { extract($this->_env, EXTR_REFS); return "if (" . $this->_walk($cond) . ") { " . $this->_walk(array("jump", $addr)) . " }";
+protected function _12($cond, $addr) { extract($this->_env, EXTR_REFS); return "if (" . $this->_walk($cond) . ") { " . $this->_walk(array("jump", $addr)) . " }";
 }
-protected function _12($label, $addr) { extract($this->_env, EXTR_REFS); $addr = $this->_walk($addr);
+protected function _13($label, $addr) { extract($this->_env, EXTR_REFS); $addr = $this->_walk($addr);
 
     assert(count($self->returns[$label]) > 0);
 
@@ -311,21 +317,21 @@ protected function _12($label, $addr) { extract($this->_env, EXTR_REFS); $addr =
     }
 
 }
-protected function _13($n, $env) { extract($this->_env, EXTR_REFS); return "\$_value = \$this->_$n(" . $this->_walk($env) . ");";
+protected function _14($n, $env) { extract($this->_env, EXTR_REFS); return "\$_value = \$this->_$n(" . $this->_walk($env) . ");";
 }
-protected function _14($v) { extract($this->_env, EXTR_REFS); return $this->_walk(array("phpize_", $v));
+protected function _15($v) { extract($this->_env, EXTR_REFS); return $this->_walk(array("phpize_", $v));
 }
-protected function _15($v) { extract($this->_env, EXTR_REFS); return "!" . $this->_walk($v);
+protected function _16($v) { extract($this->_env, EXTR_REFS); return "!" . $this->_walk($v);
 }
-protected function _16($r) { extract($this->_env, EXTR_REFS); return "\$_{$r}";
+protected function _17($r) { extract($this->_env, EXTR_REFS); return "\$_{$r}";
 }
-protected function _17($r, $i) { extract($this->_env, EXTR_REFS); return "\$_{$r}[" . $this->_walk(array("phpize_", $i)) . "]";
+protected function _18($r, $i) { extract($this->_env, EXTR_REFS); return "\$_{$r}[" . $this->_walk(array("phpize_", $i)) . "]";
 }
-protected function _18($env) { extract($this->_env, EXTR_REFS); return $self->common->walk(array("push_environment_", $env));
+protected function _19($env) { extract($this->_env, EXTR_REFS); return $self->common->walk(array("push_environment_", $env));
 }
-protected function _19() { extract($this->_env, EXTR_REFS); return $self->common->walk(array("pop_environment_"));
+protected function _20() { extract($this->_env, EXTR_REFS); return $self->common->walk(array("pop_environment_"));
 }
-protected function _20() { extract($this->_env, EXTR_REFS); return "\$_a = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", (string) substr(\$_s, 0, \$_p)); " .
+protected function _21() { extract($this->_env, EXTR_REFS); return "\$_a = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", (string) substr(\$_s, 0, \$_p)); " .
            "\$_b = 1; " .
            "if ((\$_c = strrpos(\$_a, \"\\n\")) !== FALSE) { " .
                "\$_b = substr_count(\$_a, \"\\n\") + 1; " .
@@ -335,7 +341,7 @@ protected function _20() { extract($this->_env, EXTR_REFS); return "\$_a = str_r
            "\$_value = array(\$_b, strlen(\$_a) + 1);";
 
 }
-protected function _21() { extract($this->_env, EXTR_REFS); return "\$_fail = TRUE; " .
+protected function _22() { extract($this->_env, EXTR_REFS); return "\$_fail = TRUE; " .
            "if (isset(\$_s[\$_p])) { " .
                "\$_fail = FALSE; " .
                "\$_value = \$_s[\$_p]; " .
@@ -345,7 +351,7 @@ protected function _21() { extract($this->_env, EXTR_REFS); return "\$_fail = TR
            "}";
 
 }
-protected function _22($s) { extract($this->_env, EXTR_REFS); $encapsed_s = '"' . $self->common->walk(array("format_", $s)) . '"';
+protected function _23($s) { extract($this->_env, EXTR_REFS); $encapsed_s = '"' . $self->common->walk(array("format_", $s)) . '"';
 
     return "\$_fail = TRUE; " .
            "if (" . (strlen($s) === 1 ? "isset(\$_s[\$_p]) && " : "") .
@@ -360,7 +366,7 @@ protected function _22($s) { extract($this->_env, EXTR_REFS); $encapsed_s = '"' 
            "}";
 
 }
-protected function _23($match) { extract($this->_env, EXTR_REFS); $or = array();
+protected function _24($match) { extract($this->_env, EXTR_REFS); $or = array();
     $str = "";
 
     foreach ($match as $r) {
@@ -387,9 +393,9 @@ protected function _23($match) { extract($this->_env, EXTR_REFS); $or = array();
            "}";
 
 }
-protected function _24() { extract($this->_env, EXTR_REFS); return "goto Lend;";
+protected function _25() { extract($this->_env, EXTR_REFS); return "goto Lend;";
 }
-protected function _25($on) { extract($this->_env, EXTR_REFS); return "if (\$_p >= \$_maxp) { " .
+protected function _26($on) { extract($this->_env, EXTR_REFS); return "if (\$_p >= \$_maxp) { " .
                "if (\$_p > \$_maxp) { " .
                    "\$_maxp = \$_p; " .
                    "\$_expected = array(); " .
@@ -400,7 +406,7 @@ protected function _25($on) { extract($this->_env, EXTR_REFS); return "if (\$_p 
            "} ";
 
 }
-protected function _26() { extract($this->_env, EXTR_REFS); var_dump($this->_node());
+protected function _27() { extract($this->_env, EXTR_REFS); var_dump($this->_node());
     die("Unexpected node.\n");
 
 }
