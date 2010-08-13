@@ -348,7 +348,10 @@ protected function _21() { extract($this->_env, EXTR_REFS); return "\$_fail = TR
 protected function _22($s) { extract($this->_env, EXTR_REFS); $encapsed_s = '"' . $self->common->walk(array("format_", $s)) . '"';
 
     return "\$_fail = TRUE; " .
-           "if ((\$_a = substr(\$_s, \$_p, " . strlen($s) . ")) === " . $encapsed_s . ") { " .
+           "if (" . (strlen($s) === 1 ? "isset(\$_s[\$_p]) && " : "") .
+               "(\$_a = " . (strlen($s) === 1 ? "\$_s[\$_p]" : "substr(\$_s, \$_p, " . strlen($s) . ")") .
+               ") === " . $encapsed_s . ") " .
+           "{ " .
                "\$_fail = FALSE; " .
                "\$_value = \$_a; " .
                "\$_p += " . strlen($s) . "; " .
