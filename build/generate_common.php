@@ -188,11 +188,11 @@ protected function _3() { extract($this->_env, EXTR_REFS); $inits = array();
            "}\n";
 
 }
-protected function _4() { extract($this->_env, EXTR_REFS); return "extract(\$this->_environments[\$this->_environment_stack[count(\$this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);";;
+protected function _4() { extract($this->_env, EXTR_REFS); return "extract(\$this->_environments[\$this->_environment_stack[\$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);";;
 }
 protected function _5($env) { extract($this->_env, EXTR_REFS); return "\$this->_environment_stack[++\$this->_environment_stack_sp] = " . $env . ";";
 }
-protected function _6() { extract($this->_env, EXTR_REFS); return "--\$this->_environment_stack_sp;";
+protected function _6() { extract($this->_env, EXTR_REFS); return "unset(\$this->_environment_stack[\$this->_environment_stack_sp--]);";
 }
 protected function _7($i, $code) { extract($this->_env, EXTR_REFS); return "private function _init$i() {\n" .
            "    \$this->_environments[$i] = array();\n" .

@@ -70,11 +70,11 @@ constructor_ {
            "}\n";
 }
 
-extract_environment_ -> "extract(\$this->_environments[\$this->_environment_stack[count(\$this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);";
+extract_environment_ -> "extract(\$this->_environments[\$this->_environment_stack[\$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);";
 
 push_environment_ (env) -> "\$this->_environment_stack[++\$this->_environment_stack_sp] = " . $env . ";"
 
-pop_environment_ -> "--\$this->_environment_stack_sp;"
+pop_environment_ -> "unset(\$this->_environment_stack[\$this->_environment_stack_sp--]);"
 
 init_ (i, code) {
     return "private function _init$i() {\n" .

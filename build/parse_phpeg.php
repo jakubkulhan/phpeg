@@ -3341,105 +3341,105 @@ class parse_phpeg {
         return $_0;
     }
     private function _0() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return $s . $next;
     
     }
     
     private function _1() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return $first . implode("", $rest);
     
     }
     
     private function _2() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("namespace", $namespace);
     
     }
     
     private function _3() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("name", $name);
     
     }
     
     private function _4() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("init", $code);
     
     }
     
     private function _5() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("invoke", (array) $parameters, $code);
     
     }
     
     private function _6() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return TRUE;
     
     }
     
     private function _7() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return $name;
     
     }
     
     private function _8() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("import", $spec, $path);
     
     }
     
     private function _9() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("phpeg", array_merge($declarations, $definitions));
     
     }
     
     private function _10() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("macro", $name, $parameters, $expression);
     
     }
     
     private function _11() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("rule", $name, $expression);
     
     }
     
     private function _12() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return $next;
     
     }
     
     private function _13() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array_merge(array($first), $rest);
     
     }
     
     private function _14() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         if (count($expressions) < 2) {
                     return $expressions[0];
@@ -3451,21 +3451,21 @@ class parse_phpeg {
     }
     
     private function _15() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return $next;
     
     }
     
     private function _16() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array_merge(array($first), $rest);
     
     }
     
     private function _17() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         $ret = count($expressions) < 2
                        ? $expressions[0]
@@ -3481,280 +3481,280 @@ class parse_phpeg {
     }
     
     private function _18() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("and", $expression);
     
     }
     
     private function _19() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("not", $expression);
     
     }
     
     private function _20() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("semantic_predicate", $code);
     
     }
     
     private function _21() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("bind", $varname, array("position"));
     
     }
     
     private function _22() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("bind", $varname, $expression);
     
     }
     
     private function _23() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return "optional";
     
     }
     
     private function _24() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return "zero_or_more";
     
     }
     
     private function _25() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return "one_or_more";
     
     }
     
     private function _26() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return $suffix ? array($suffix, $expression) : $expression;
     
     }
     
     private function _27() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return $name;
     
     }
     
     private function _28() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return $next;
     
     }
     
     private function _29() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array_merge(array($first), $rest);
     
     }
     
     private function _30() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("expand", $importname ? array($importname, $macroname) : $macroname, (array) $arguments);
     
     }
     
     private function _31() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return $name;
     
     }
     
     private function _32() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("apply", $importname ? array($importname, $rulename) : $rulename);
     
     }
     
     private function _33() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return $expression;
     
     }
     
     private function _34() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("literal", $literal);
     
     }
     
     private function _35() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("range", $range);
     
     }
     
     private function _36() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array("any");
     
     }
     
     private function _37() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array(ord($a), ord($b));
     
     }
     
     private function _38() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return ord($c);
     
     }
     
     private function _39() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return $matches;
     
     }
     
     private function _40() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return implode("", $value);
     
     }
     
     private function _41() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return implode("", $value);
     
     }
     
     private function _42() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return "\n";
     
     }
     
     private function _43() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return "\r";
     
     }
     
     private function _44() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return "\t";
     
     }
     
     private function _45() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return "\\";
     
     }
     
     private function _46() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return '"';
     
     }
     
     private function _47() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return "'";
     
     }
     
     private function _48() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return ']';
     
     }
     
     private function _49() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return chr(hexdec($a . $b));
     
     }
     
     private function _50() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return ltrim($code);
     
     }
     
     private function _51() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return "return " . trim($code) . ";";
     
     }
     
     private function _52() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return $c;
     
     }
     
     private function _53() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return "{" . $i . "}";
     
     }
     
     private function _54() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return implode("", $inside);
     
     }
     
     private function _55() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return $next;
     
     }
     
     private function _56() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return array_merge(array($first), $rest);
     
     }
     
     private function _57() {
-        extract($this->_environments[$this->_environment_stack[count($this->_environment_stack) - 1]], EXTR_OVERWRITE | EXTR_REFS);
+        extract($this->_environments[$this->_environment_stack[$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);
         extract(func_get_arg(0), EXTR_OVERWRITE | EXTR_REFS);
         return (array) $parameters;
     
