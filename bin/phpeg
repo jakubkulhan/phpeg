@@ -30,7 +30,7 @@ function i($s, $i = '    ')
 $help = FALSE;
 $input = '-';
 $output = '-';
-$types = array('php', 'gotomachine');
+$types = array('gotomachine', 'php');
 $type = current($types);
 
 for ($i = 1; $i < $_SERVER['argc']; ++$i) {
@@ -60,7 +60,7 @@ E;
             }
             $type = $_SERVER['argv'][$i + 1];
             if (strcasecmp($type, 'help') === 0) {
-                die("available types: " . implode('', $types) . "\n");
+                die("available types: " . implode(', ', $types) . "\n");
             }
             if (!in_array($type, $types)) {
                 die("output type $type not available.\n");
