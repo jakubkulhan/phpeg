@@ -124,6 +124,7 @@ $self = (object) array(
                 array("stackinit", array("register", "stack")),
                 array("set", array("value", FALSE), array("register", "fail")),
                 array("set", array("value", NULL), array("register", "value")),
+                array("set", array("value", array()), array("register", "cache")),
                 array("set", array("value", NULL), array("register", "a")),
                 array("set", array("value", NULL), array("register", "b")),
                 array("set", array("value", NULL), array("register", "c")),
@@ -145,12 +146,28 @@ $self = (object) array(
         
                 $instructions = array_merge(
                     array(
+                        array("push", array("value", $label . "@"), array("register", "stack")),
+                        array("append", array("register", "p"), array("top", array("register", "stack"), array("value", 0))),
+                        array("jumpif", array("not", array("isset", array("register_index", "cache", array("top", array("register", "stack"), array("value", 0))))),
+                                        array("offset", 7)),
+                        array("pop", array("register", "stack"), array("register", "a")),
+                        array("set", array("register_index", "cache", array("register", "a")), array("register", "b")),
+                        array("set", array("register_index", "b", 0), array("register", "fail")),
+                        array("set", array("register_index", "b", 1), array("register", "value")),
+                        array("set", array("register_index", "b", 2), array("register", "p")),
+                        array("jump", array("offset", 10 + count($instructions))),
                         array("push", array("register", "env"), array("register", "stack")),
                         array("set", array("value", array()), array("register", "env")),
                     ),
                     $instructions,
                     array(
                         array("pop", array("register", "stack"), array("register", "env")),
+                        array("pop", array("register", "stack"), array("register", "a")),
+                        array("set", array("value", array()), array("register", "b")),
+                        array("set", array("register", "fail"), array("register_index", "b", 0)),
+                        array("set", array("register", "value"), array("register_index", "b", 1)),
+                        array("set", array("register", "p"), array("register_index", "b", 2)),
+                        array("set", array("register", "b"), array("register_index", "cache", array("register", "a"))),
                     )
                 );
         

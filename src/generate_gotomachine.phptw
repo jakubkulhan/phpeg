@@ -78,6 +78,8 @@ phpize_ (a) {
 
 set (src, dst) -> WALK($dst) . " = " . WALK($src) . ";"
 
+isset(src) -> "isset(" . WALK($src) . ")"
+
 refarray (src, dst) {
     return (WALK($src) !== WALK($dst) ? WALK($dst) . " = array(); " : "") .
            "foreach (" . WALK($src) . " as \$_ref => \$_) { " .
@@ -144,7 +146,7 @@ not (v) -> "!" . WALK($v)
 
 register (r) -> "\$_{$r}"
 
-register_index (r, i) -> "\$_{$r}[" . WALK(array("phpize_", $i)) . "]"
+register_index (r, i) -> "\$_{$r}[" . (is_array($i) ? WALK($i) : WALK(array("phpize_", $i))) . "]"
 
 pushenv (env) -> $self->common->walk(array("push_environment_", $env))
 
