@@ -208,6 +208,7 @@ protected function _8($parameters, $code) { extract($this->_env, EXTR_REFS); for
     $parameters = implode(", ", $parameters);
 
     return "public function __invoke($parameters) {\n" .
+               "foreach (\$this->_environments as \$_env) { extract(\$_env, EXTR_OVERWRITE | EXTR_REFS); }\n" .
                i($code) .
            "}\n";
 

@@ -92,6 +92,7 @@ invoke_ (parameters, code) {
     $parameters = implode(", ", $parameters);
 
     return "public function __invoke($parameters) {\n" .
+               "foreach (\$this->_environments as \$_env) { extract(\$_env, EXTR_OVERWRITE | EXTR_REFS); }\n" .
                i($code) .
            "}\n";
 }

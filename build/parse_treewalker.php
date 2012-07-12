@@ -10,6 +10,7 @@ class parse_treewalker {
     }
     
     public function __invoke($s) {
+    foreach ($this->_environments as $_env) { extract($_env, EXTR_OVERWRITE | EXTR_REFS); }
         return $this->parse($s);
     }
     
