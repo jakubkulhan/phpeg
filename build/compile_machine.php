@@ -197,6 +197,9 @@ protected function _1($nodes) { extract($this->_env, EXTR_REFS); $is_simple = c(
 
     $first = TRUE;
     $push = FALSE;
+
+    $nodes_instructions = array();
+
     foreach ($nodes as $k => $node) {
         if ($first) {
             $type = $node[0];
@@ -206,24 +209,29 @@ protected function _1($nodes) { extract($this->_env, EXTR_REFS); $is_simple = c(
 
             if (!in_array($type, array("and", "not", "semantic_predicate"))) {
                 $first = FALSE;
-                $push = TRUE;
+                $push = $k;
             }
         }
 
-        $nodes[$k] = $this->_walk($node);
-
-        if ($is_simple) {
-            $nodes[$k][] = array("append", array("register", "value"), array("top", array("register", "stack"), array("value", 0)));
-
-        } else if ($push) {
-            $push = FALSE;
-            $nodes[$k][] = array("set", array("register", "value"), array("top", array("register", "stack"), array("value", 0)));
-        }
+        $nodes_instructions[$k] = $this->_walk($node);
     }
 
-    $ret = array_merge($ret, array_pop($nodes));
+    $ret = array();
 
-    while ($node = array_pop($nodes)) {
+    while ($node = array_pop($nodes_instructions)) {
+        $k = count($nodes_instructions);
+
+        if ($is_simple) {
+            $ret = array_merge(array(
+                array("append", array("register", "value"), array("top", array("register", "stack"), array("value", 0))),
+            ), $ret);
+
+        } else if ($k === $push) {
+            $ret = array_merge(array(
+                array("set", array("register", "value"), array("top", array("register", "stack"), array("value", 0))),
+            ), $ret);
+        }
+
         $ret = array_merge(
             $node,
             array(
