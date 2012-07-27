@@ -17,7 +17,8 @@ prolog_ {
     return "private \$_s;\n" .
            "private \$_p;\n" .
            "private \$_maxp;\n" .
-           "private \$_expected;\n";
+           "private \$_expected;\n" .
+           "private \$_memo;\n";
 }
 
 parse_ {
@@ -25,6 +26,7 @@ parse_ {
            "    \$this->_s = \$s;\n" .
            "    \$this->_p = \$this->_maxp = 0;\n" .
            "    \$this->_expected = array();\n" .
+           "    \$this->_memo = array();\n" .
            "    list(\$ok, \$result) = \$this->_parse_0();\n" .
            "    if (!\$ok) {\n" .
            "        \$before = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", substr(\$s, 0, \$this->_maxp));\n" .
@@ -70,7 +72,13 @@ rule_ (name, node) {
     $self->bound = array();
 
     return "private function _parse_$name() {\n" .
+           "    if (isset(\$this->_memo[$name . '@' . \$this->_p])) {\n" .
+           "        list(\$_0, \$this->_p) = \$this->_memo[$name . '@' . \$this->_p];\n" .
+           "        return \$_0;\n" .
+           "    }\n" .
+           "    \$_startp = \$this->_p;" .
                 i(WALK($node)) .
+           "    \$this->_memo[$name . '@' . \$_startp] = array(\$_0, \$this->_p);\n" .
            "    return \$_0;\n" .
            "}\n";
 }

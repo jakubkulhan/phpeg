@@ -186,13 +186,15 @@ $self = (object) array(
 protected function _0() { extract($this->_env, EXTR_REFS); return "private \$_s;\n" .
            "private \$_p;\n" .
            "private \$_maxp;\n" .
-           "private \$_expected;\n";
+           "private \$_expected;\n" .
+           "private \$_memo;\n";
 
 }
 protected function _1() { extract($this->_env, EXTR_REFS); $ret = "public function parse(\$s) {\n" .
            "    \$this->_s = \$s;\n" .
            "    \$this->_p = \$this->_maxp = 0;\n" .
            "    \$this->_expected = array();\n" .
+           "    \$this->_memo = array();\n" .
            "    list(\$ok, \$result) = \$this->_parse_0();\n" .
            "    if (!\$ok) {\n" .
            "        \$before = str_replace(array(\"\\r\\n\", \"\\r\"), \"\\n\", substr(\$s, 0, \$this->_maxp));\n" .
@@ -236,7 +238,13 @@ protected function _3($name, $node) { extract($this->_env, EXTR_REFS); $self->i 
     $self->bound = array();
 
     return "private function _parse_$name() {\n" .
+           "    if (isset(\$this->_memo[$name . '@' . \$this->_p])) {\n" .
+           "        list(\$_0, \$this->_p) = \$this->_memo[$name . '@' . \$this->_p];\n" .
+           "        return \$_0;\n" .
+           "    }\n" .
+           "    \$_startp = \$this->_p;" .
                 i($this->_walk($node)) .
+           "    \$this->_memo[$name . '@' . \$_startp] = array(\$_0, \$this->_p);\n" .
            "    return \$_0;\n" .
            "}\n";
 
