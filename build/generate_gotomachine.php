@@ -199,9 +199,9 @@ $self = (object) array(
     {
         /*$this->_init();*/
         extract($this->_env, EXTR_REFS);
-        list($namespace, $name, $inits, $invoke, $definitions) = c(new process_input, $input);
+        list($namespace, $name, $inits, $invoke, $constructor, $privates, $definitions) = c(new process_input, $input);
             list($self->program, $self->codes, $self->code_to_label, $self->returns) = c(new link_machine, $definitions);
-            return c($self->common = new generate_common, $this, $namespace, $name, $inits, $invoke);
+            return c($self->common = new generate_common, $this, $namespace, $name, $inits, $invoke, $constructor, $privates);
 
     }
 

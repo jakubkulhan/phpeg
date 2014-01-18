@@ -18,6 +18,12 @@ phpeg
                  / "-invoke" __ parameters:parameters? __ code:code __
                    -> array("invoke", (array) $parameters, $code)
 
+                 / "-constructor" __ parameters:parameters? __ code:code __
+                   -> array("constructor", (array) $parameters, $code)
+
+                 / "-private" __ name:id __
+                   -> array("private", $name)
+
                  / "-import" _
                    spec:( "." _     -> TRUE
                         / name:id _ -> $name

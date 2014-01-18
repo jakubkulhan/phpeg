@@ -38,6 +38,8 @@ $self = (object) array(
         "file" => NULL,
         "imported_by" => array(),
         "defined" => array(),
+        "constructor" => array(),
+        "privates" => array(),
     );
 
         $this->_env = get_defined_vars();
@@ -115,10 +117,18 @@ $self = (object) array(
             list($_, $_0, $_1) = $node;
             $ret = $this->_6($_0, $_1);
         break;
+        case 'constructor':
+            list($_, $_0, $_1) = $node;
+            $ret = $this->_7($_0, $_1);
+        break;
+        case 'private':
+            list($_, $_0) = $node;
+            $ret = $this->_8($_0);
+        break;
         case 'rule':
         case 'macro':
             list($_, $_0) = $node;
-            $ret = $this->_7($_0);
+            $ret = $this->_9($_0);
         break;
         }
 
@@ -151,7 +161,7 @@ $self = (object) array(
 
     }
 
-protected function _0($nodes) { extract($this->_env, EXTR_REFS); $this->_walkeach(c(new select_nodes, array("namespace", "name", "init", "invoke"), $nodes));
+protected function _0($nodes) { extract($this->_env, EXTR_REFS); $this->_walkeach(c(new select_nodes, array("namespace", "name", "init", "invoke", "constructor", "private"), $nodes));
 
     c(new check_macros_recursive, $self->file, c(new select_nodes, array("macro"), $nodes));
 
@@ -169,6 +179,8 @@ protected function _0($nodes) { extract($this->_env, EXTR_REFS); $this->_walkeac
         "name" => $self->name,
         "init" => $self->init,
         "invoke" => $self->invoke,
+        "constructor" => $self->constructor,
+        "privates" => $self->privates,
         "reindex" => $reindex,
         "start" => $self->n,
         "count" => count($self->definitions),
@@ -300,7 +312,15 @@ protected function _6($arguments, $code) { extract($this->_env, EXTR_REFS); if (
     return FALSE;
 
 }
-protected function _7($name) { extract($this->_env, EXTR_REFS); return $name;
+protected function _7($arguments, $code) { extract($this->_env, EXTR_REFS); $self->constructor = array($arguments, $code);
+    return FALSE;
+
+}
+protected function _8($name) { extract($this->_env, EXTR_REFS); $self->privates[] = $name;
+    return FALSE;
+
+}
+protected function _9($name) { extract($this->_env, EXTR_REFS); return $name;
 }
 
 }

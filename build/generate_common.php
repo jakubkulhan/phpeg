@@ -89,33 +89,38 @@ $self = (object) array(
             list($_, $_0, $_1) = $node;
             $ret = $this->_2($_0, $_1);
         break;
+        case 'privates_':
+            list($_, $_0) = $node;
+            $ret = $this->_3($_0);
+        break;
         case 'constructor_':
-            $ret = $this->_3();
+            list($_, $_0) = $node;
+            $ret = $this->_4($_0);
         break;
         case 'extract_environment_':
-            $ret = $this->_4();
+            $ret = $this->_5();
         break;
         case 'push_environment_':
             list($_, $_0) = $node;
-            $ret = $this->_5($_0);
+            $ret = $this->_6($_0);
         break;
         case 'pop_environment_':
-            $ret = $this->_6();
+            $ret = $this->_7();
         break;
         case 'init_':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_7($_0, $_1);
+            $ret = $this->_8($_0, $_1);
         break;
         case 'invoke_':
             list($_, $_0, $_1) = $node;
-            $ret = $this->_8($_0, $_1);
+            $ret = $this->_9($_0, $_1);
         break;
         case 'format_':
             list($_, $_0) = $node;
-            $ret = $this->_9($_0);
+            $ret = $this->_10($_0);
         break;
         default:
-            $ret = $this->_10();
+            $ret = $this->_11();
         break;
         }
 
@@ -123,7 +128,7 @@ $self = (object) array(
         return $ret;
     }
 
-    public function __invoke($generator, $namespace, $name, $inits, $invoke)
+    public function __invoke($generator, $namespace, $name, $inits, $invoke, $constructor, $privates)
     {
         /*$this->_init();*/
         extract($this->_env, EXTR_REFS);
@@ -131,7 +136,8 @@ $self = (object) array(
         
             $all = array("class_", $name, array(
                 array("prolog_"),
-                array("constructor_")
+                array("privates_", $privates),
+                array("constructor_", $constructor)
             ));
         
             $self->inits = $inits;
@@ -172,10 +178,26 @@ protected function _2($name, $nodes) { extract($this->_env, EXTR_REFS); return "
            "}\n";
 
 }
-protected function _3() { extract($this->_env, EXTR_REFS); $inits = array();
+protected function _3($names) { extract($this->_env, EXTR_REFS); $ret = "";
+    foreach ($names as $name) {
+        $ret .= "private \$$name;\n";
+    }
+    return $ret;
+
+}
+protected function _4($info) { extract($this->_env, EXTR_REFS); $inits = array();
 
     for ($i = 0, $c = count($self->inits); $i < $c; ++$i) {
         $inits[] = "\$this->_init$i();";
+    }
+
+    $arguments = "";
+    $body = "";
+    if ($info) {
+        $arguments = implode(", ", array_map(function ($arg) {
+            return "\$$arg";
+        }, $info[0]));
+        $body = $info[1];
     }
 
     $inits = implode("\n", $inits) . "\n";
@@ -183,25 +205,26 @@ protected function _3() { extract($this->_env, EXTR_REFS); $inits = array();
     return "private \$_environments = array(-1 => array());\n" .
            "private \$_environment_stack = array();\n" .
            "private \$_environment_stack_sp = -1;\n" .
-           "public function __construct() {\n" .
+           "public function __construct($arguments) {\n" .
                i($inits) .
+               i($body) .
            "}\n";
 
 }
-protected function _4() { extract($this->_env, EXTR_REFS); return "extract(\$this->_environments[\$this->_environment_stack[\$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);";;
+protected function _5() { extract($this->_env, EXTR_REFS); return "extract(\$this->_environments[\$this->_environment_stack[\$this->_environment_stack_sp]], EXTR_OVERWRITE | EXTR_REFS);";;
 }
-protected function _5($env) { extract($this->_env, EXTR_REFS); return "\$this->_environment_stack[++\$this->_environment_stack_sp] = " . $env . ";";
+protected function _6($env) { extract($this->_env, EXTR_REFS); return "\$this->_environment_stack[++\$this->_environment_stack_sp] = " . $env . ";";
 }
-protected function _6() { extract($this->_env, EXTR_REFS); return "unset(\$this->_environment_stack[\$this->_environment_stack_sp--]);";
+protected function _7() { extract($this->_env, EXTR_REFS); return "unset(\$this->_environment_stack[\$this->_environment_stack_sp--]);";
 }
-protected function _7($i, $code) { extract($this->_env, EXTR_REFS); return "private function _init$i() {\n" .
+protected function _8($i, $code) { extract($this->_env, EXTR_REFS); return "private function _init$i() {\n" .
            "    \$this->_environments[$i] = array();\n" .
                 i($code) .
            "    \$this->_environments[$i] = get_defined_vars();\n" .
            "}\n";
 
 }
-protected function _8($parameters, $code) { extract($this->_env, EXTR_REFS); foreach ($parameters as &$parameter) {
+protected function _9($parameters, $code) { extract($this->_env, EXTR_REFS); foreach ($parameters as &$parameter) {
         $parameter = "$$parameter";
     }
 
@@ -213,7 +236,7 @@ protected function _8($parameters, $code) { extract($this->_env, EXTR_REFS); for
            "}\n";
 
 }
-protected function _9($s) { extract($this->_env, EXTR_REFS); if (empty($s)) {
+protected function _10($s) { extract($this->_env, EXTR_REFS); if (empty($s)) {
         return $s;
     }
 
@@ -236,7 +259,7 @@ protected function _9($s) { extract($this->_env, EXTR_REFS); if (empty($s)) {
     return $formatted;
 
 }
-protected function _10() { extract($this->_env, EXTR_REFS); return $self->generator->walk($this->_node());
+protected function _11() { extract($this->_env, EXTR_REFS); return $self->generator->walk($this->_node());
 }
 
 }

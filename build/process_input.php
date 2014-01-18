@@ -155,6 +155,8 @@ $self = (object) array(
             $name = NULL;
             $inits = array();
             $invoke = NULL;
+            $constructor = NULL;
+            $privates = NULL;
         
             foreach ($provides as $file => $about) {
                 if ($about->init) {
@@ -193,10 +195,12 @@ $self = (object) array(
                         }
                     }
                     $invoke = $about->invoke;
+                    $constructor = $about->constructor;
+                    $privates = $about->privates;
                 }
             }
         
-            return array($namespace, $name, $inits, $invoke, $this->_walkeach($definitions));
+            return array($namespace, $name, $inits, $invoke, $constructor, $privates, $this->_walkeach($definitions));
 
     }
 

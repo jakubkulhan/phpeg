@@ -40,6 +40,8 @@
     $name = NULL;
     $inits = array();
     $invoke = NULL;
+    $constructor = NULL;
+    $privates = NULL;
 
     foreach ($provides as $file => $about) {
         if ($about->init) {
@@ -78,10 +80,12 @@
                 }
             }
             $invoke = $about->invoke;
+            $constructor = $about->constructor;
+            $privates = $about->privates;
         }
     }
 
-    return array($namespace, $name, $inits, $invoke, WALKEACH($definitions));
+    return array($namespace, $name, $inits, $invoke, $constructor, $privates, WALKEACH($definitions));
 }
 
 rule (node) -> WALK($node)

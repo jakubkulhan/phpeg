@@ -178,8 +178,8 @@ $self = (object) array(
     {
         /*$this->_init();*/
         extract($this->_env, EXTR_REFS);
-        list($namespace, $name, $inits, $invoke, $self->definitions) = c(new process_input, $input);
-            return c($self->common = new generate_common, $this, $namespace, $name, $inits, $invoke);
+        list($namespace, $name, $inits, $invoke, $constructor, $privates, $self->definitions) = c(new process_input, $input);
+            return c($self->common = new generate_common, $this, $namespace, $name, $inits, $invoke, $constructor, $privates);
 
     }
 

@@ -5,12 +5,13 @@
     );
 }
 
--invoke (generator, namespace, name, inits, invoke) {
+-invoke (generator, namespace, name, inits, invoke, constructor, privates) {
     $self->generator = $generator;
 
     $all = array("class_", $name, array(
         array("prolog_"),
-        array("constructor_")
+        array("privates_", $privates),
+        array("constructor_", $constructor)
     ));
 
     $self->inits = $inits;
@@ -53,11 +54,28 @@ class_ (name, nodes) {
            "}\n";
 }
 
-constructor_ {
+privates_ (names) {
+    $ret = "";
+    foreach ($names as $name) {
+        $ret .= "private \$$name;\n";
+    }
+    return $ret;
+}
+
+constructor_ (info) {
     $inits = array();
 
     for ($i = 0, $c = count($self->inits); $i < $c; ++$i) {
         $inits[] = "\$this->_init$i();";
+    }
+
+    $arguments = "";
+    $body = "";
+    if ($info) {
+        $arguments = implode(", ", array_map(function ($arg) {
+            return "\$$arg";
+        }, $info[0]));
+        $body = $info[1];
     }
 
     $inits = implode("\n", $inits) . "\n";
@@ -65,8 +83,9 @@ constructor_ {
     return "private \$_environments = array(-1 => array());\n" .
            "private \$_environment_stack = array();\n" .
            "private \$_environment_stack_sp = -1;\n" .
-           "public function __construct() {\n" .
+           "public function __construct($arguments) {\n" .
                i($inits) .
+               i($body) .
            "}\n";
 }
 
