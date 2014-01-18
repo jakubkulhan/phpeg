@@ -246,7 +246,7 @@ protected function _10($s) { extract($this->_env, EXTR_REFS); if (empty($s)) {
         if ($c === '\\') { $formatted .= '\\\\'; }
         else if ($c === '"') { $formatted .= '\\"'; }
         else if ($c === "'") { $formatted .= "\\'"; }
-        else if (ctype_print($c) || $c === " ") { $formatted .= $c; }
+        else if ((ctype_print($c) || $c === " ") && $c !== "\$") { $formatted .= $c; }
         else if ($c === "\t") { $formatted .= '\t'; }
         else if ($c === "\n") { $formatted .= '\n'; }
         else if ($c === "\r") { $formatted .= '\r'; }
